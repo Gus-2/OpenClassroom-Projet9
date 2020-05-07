@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="2dp"
+            android:layout_margin="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_margin="5dp">
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_house_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:textSize="25sp"
+                    android:textAlignment="center"
+                    android:text="House Details" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_type_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:textSize="22sp"
+                    tools:text="Type" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_surface_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:textSize="22sp"
+                    tools:text="Surface" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_state_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:textSize="22sp"
+                    tools:text="State" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_real_estate_agent_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:textSize="22sp"
+                    tools:text="Real Estate Agent" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="2dp"
+            android:layout_margin="10dp">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:orientation="vertical">
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_rooms_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rooms"
+                    android:textAlignment="center"
+                    android:textSize="25sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_kitchen_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_rooms_detail"
+                    app:layout_constraintEnd_toStartOf="@id/tv_number_kitchen_detail"
+                    android:text="Kitchen" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_number_kitchen_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_rooms_detail"
+                    android:text="0" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_bathrooms_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_kitchen_detail"
+                    app:layout_constraintEnd_toStartOf="@id/tv_number_bathrooms_detail"
+                    android:text="Bathroom" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_number_bathrooms_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_kitchen_detail"
+                    android:text="0" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_bedroom_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_bathrooms_detail"
+                    app:layout_constraintEnd_toStartOf="@id/tv_number_bedroom_detail"
+                    android:text="Bedroom" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_number_bedroom_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_bathrooms_detail"
+                    android:text="0" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_living_room_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_bedroom_detail"
+                    app:layout_constraintEnd_toStartOf="@id/tv_number_living_room_detail"
+                    android:text="Living room" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_number_living_room_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_bedroom_detail"
+                    android:text="0" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_toilet_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_living_room_detail"
+                    app:layout_constraintEnd_toStartOf="@id/tv_number_toilet_detail"
+                    android:text="Toilet" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_number_toilet_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_living_room_detail"
+                    android:text="0" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_cellar_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_toilet_detail"
+                    app:layout_constraintEnd_toStartOf="@id/tv_number_cellar_detail"
+                    android:text="Cellar" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_number_cellar_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_toilet_detail"
+                    android:text="0" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_pool_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_cellar_detail"
+                    app:layout_constraintEnd_toStartOf="@id/tv_number_pool_detail"
+                    android:text="Pool" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_number_pool_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_cellar_detail"
+                    android:text="0" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="2dp"
+            android:layout_margin="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_margin="5dp">
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_description_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:textSize="25sp"
+                    android:textAlignment="center"
+                    android:text="@string/description" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_description_content_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:textSize="22sp"
+                    android:lines="3"
+                    tools:text="Description Content" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="2dp"
+            android:layout_margin="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_margin="5dp">
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_address_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:textSize="25sp"
+                    android:textAlignment="center"
+                    android:text="Address" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_street_number_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:textSize="22sp"
+                    tools:text="Street+number" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_district_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:textSize="22sp"
+                    tools:text="District" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_postcode_city_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:textSize="22sp"
+                    tools:text="Postcode, City" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_country_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:textSize="22sp"
+                    tools:text="Country" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_additionnal_information_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:textSize="22sp"
+                    tools:text="Additionnal information" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="2dp"
+            android:layout_margin="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_margin="5dp">
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_points_of_interests_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:textSize="25sp"
+                    android:textAlignment="center"
+                    android:text="Point Of Interests" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_point_of_interest_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="2dp"
+            android:layout_margin="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_margin="5dp">
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_maps_detail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:textSize="25sp"
+                    android:textAlignment="center"
+                    android:text="Maps" />
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/iv_map_detail">
+                </ImageView>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
