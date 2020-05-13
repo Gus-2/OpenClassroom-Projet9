@@ -161,6 +161,10 @@ public class RealEstateViewModel extends ViewModel {
         });
     }
 
+    public List<RoomNumber> getRoomNumberForHouse(long idHouse){
+        return roomNumberDataRepository.getRoomForHouse(idHouse);
+    }
+
     // Type Point Of Interest
     public LiveData<List<TypePointOfInterest>> getTypePointOfInterest() {
         return typePointOfInterestDataRepository.getTypePointOfInterest();

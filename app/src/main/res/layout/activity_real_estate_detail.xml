@@ -9,25 +9,29 @@
         android:layout_height="wrap_content"
         android:id="@+id/app_bar_detail_activity"
         android:theme="@style/AppTheme">
-
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="250dp"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:contentScrim="@color/colorPrimary"
-            >
-
+            app:contentScrim="@color/colorPrimary">
             <androidx.viewpager2.widget.ViewPager2
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/vp_real_estate_detail">
-
             </androidx.viewpager2.widget.ViewPager2>
 
-
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_detail_activity"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                android:fitsSystemWindows="true"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
+
     <include layout="@layout/real_estate_detail_content"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,9 +40,5 @@
         app:layout_anchor="@id/app_bar_detail_activity"
         app:layout_anchorGravity="bottom|right|end"
         android:layout_marginEnd="20dp"/>
-
-
-
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

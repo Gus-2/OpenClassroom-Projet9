@@ -9,10 +9,12 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -79,17 +81,23 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     }
 
-    private void configureList() {
-        sharedViewModel.getListData().observe(getViewLifecycleOwner(), new androidx.lifecycle.Observer<HashMap<String, Object>>() {
-            @Override
-            public void onChanged(HashMap<String, Object> databaseValue) {
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.search){
+            //openDialog();
+            return true;
+        }
+        return false;
+    }
 
-                listHouses = (List<House>) databaseValue.get(MainActivity.HOUSES);
-                listPhotos = (List<Photo>) databaseValue.get(MainActivity.PHOTOS);
-                listHouseTypes = (List<HouseType>) databaseValue.get(MainActivity.HOUSES_TYPES);
-                listAddress = (List<Address>) databaseValue.get(MainActivity.ADDRESS);
-                displayHousesOnTheMap();
-            }
+    private void configureList() {
+        sharedViewModel.getListData().observe(getViewLifecycleOwner(), databaseValue -> {
+
+            listHouses = (List<House>) databaseValue.get(MainActivity.HOUSES);
+            listPhotos = (List<Photo>) databaseValue.get(MainActivity.PHOTOS);
+            listHouseTypes = (List<HouseType>) databaseValue.get(MainActivity.HOUSES_TYPES);
+            listAddress = (List<Address>) databaseValue.get(MainActivity.ADDRESS);
+            displayHousesOnTheMap();
         });
     }
 

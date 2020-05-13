@@ -22,7 +22,6 @@
         android:layout_height="56dp"
         android:layout_gravity="bottom"
         android:backgroundTint="@color/colorPrimary"
-        app:menu="@menu/menu"
         app:navigationIcon="@drawable/ic_map_white_32dp"
 
         />

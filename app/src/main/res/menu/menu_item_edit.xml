@@ -1,7 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/search"
-        android:icon="@drawable/ic_search_white_32dp"
+    <item android:id="@+id/edit"
+        android:icon="@drawable/ic_edit_blue_36dp"
         android:title="@string/search"
         app:showAsAction="always"/>
 </menu>

@@ -22,9 +22,9 @@
     <string name="city">City</string>
     <string name="postcode">Postcode</string>
     <string name="additional_information">Additional information</string>
-    <string name="availibilty_date">Availibilty Date</string>
-    <string name="availibility_date">Availibility date</string>
-    <string name="add_availibility_date">Add availibility date</string>
+    <string name="availibilty_date">Availability Date</string>
+    <string name="availibility_date">Availability date</string>
+    <string name="add_availibility_date">Add availability date</string>
     <string name="point_of_interests">Point Of Interests</string>
     <string name="add_a_point_of_interest">Add a point of interest</string>
     <string name="real_estate_agent">Real Estate Agent</string>
@@ -48,6 +48,7 @@
     <string name="real_estate_agent_name">%1$s %2$s</string>
     <string name="availability_date_not_specified">Availability date not specified</string>
     <string name="number_format_room">%d</string>
+    <string name="number_format_double">%1$,.2f</string>
     <string name="couldnt_get_place_location">Couldn\'t get the place location</string>
     <string name="price_not_specified">Price not specified !</string>
     <string name="description_not_specified">Description not specified !</string>
@@ -56,4 +57,18 @@
     <string name="address_district_city">%1$s %2$s</string>
     <string name="city_not_specified">City not specified</string>
     <string name="no_add_information">No additional information</string>
+    <string name="search">Search</string>
+    <string name="info_success_update">The information has been succesfully updated !</string>
+    <string name="non_specified">NS</string>
+    <string name="unspecified_description">Description unspecified</string>
+    <string name="unspecified">Unspecified</string>
+    <string name="date_unspecified">Date unspecified</string>
+    <string name="search_dialog">Search Dialog</string>
+    <string name="select_date">Select date</string>
+    <string name="photo_number">Photo number</string>
+    <string name="cancel">Cancel</string>
+    <string name="tag_search_dialog">search dialog</string>
+    <string name="no_district_defined">No district defined</string>
+    <string name="no_price_available">No Price Available</string>
+    <string name="no_surface_available">No Surface Available</string>
 </resources>

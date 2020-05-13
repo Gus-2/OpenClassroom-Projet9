@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedViewModel sharedViewModel;
     private HashMap<String, Object> databaseValues;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         getLocationPermission();
         if(iseServicesOk()){
             bottomAppBar = findViewById(R.id.bottom_app_bar);
+            setSupportActionBar(bottomAppBar);
             addHouse = findViewById(R.id.fab_add_house);
             configureViewModels();
             databaseValues = new HashMap<>();
@@ -164,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
             weakReference.get().databaseValues.put(ADDRESS, weakReference.get().realEstateViewModel.getAddress());
             weakReference.get().databaseValues.put(PHOTOS, weakReference.get().realEstateViewModel.getPhoto());
             weakReference.get().databaseValues.put(REAL_ESTATE_AGENT, weakReference.get().realEstateViewModel.getRealEstateAgent());
-            weakReference.get().databaseValues.put(ROOM_NUMBER, weakReference.get().realEstateViewModel.getRoomNumber());
             return null;
         }
 

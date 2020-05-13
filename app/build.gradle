@@ -16,6 +16,7 @@ android {
             buildConfigField "String", "${constantName}", "\"${constantValue}\""
         }
         addConstant("API_KEY", API_KEY)
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -26,8 +27,8 @@ android {
     }
 
     compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
 }
@@ -71,4 +72,7 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
 
+    // Range Seekbar
+    implementation 'me.bendik.simplerangeview:simplerangeview:0.2.0'
+    implementation 'com.android.support:multidex:1.0.3'
 }

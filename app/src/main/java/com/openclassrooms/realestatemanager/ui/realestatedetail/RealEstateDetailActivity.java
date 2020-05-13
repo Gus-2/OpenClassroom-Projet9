@@ -1,12 +1,17 @@
 package com.openclassrooms.realestatemanager.ui.realestatedetail;
 
-import android.graphics.Point;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,13 +32,10 @@ import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 import com.openclassrooms.realestatemanager.tools.DateConverter;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
-import com.openclassrooms.realestatemanager.ui.realestateform.AdapterPointOfInterest;
 import com.openclassrooms.realestatemanager.ui.realestateform.FormActivity;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
-import com.openclassrooms.realestatemanager.ui.viewmodels.SharedViewModel;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +44,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RealEstateDetailActivity extends AppCompatActivity {
+    private final static String HOUSE_POINT_OF_INTEREST = "HOUSE_POINT_OF_INTEREST";
+    private final static int REQUEST_CODE = 20;
+    private final static int RESULT_CODE = 30;
 
     @BindView(R.id.tv_type_detail)
     MaterialTextView tvTypeDetail;
@@ -112,15 +117,50 @@ public class RealEstateDetailActivity extends AppCompatActivity {
             houseType = extras.getParcelable(MainActivity.HOUSES_TYPES);
             photoList = extras.getParcelableArrayList(MainActivity.PHOTOS);
             realEstateAgents = extras.getParcelableArrayList(MainActivity.REAL_ESTATE_AGENT);
-            listRoomNumber = extras.getParcelableArrayList(MainActivity.ROOM_NUMBER);
         }
+
+        Toolbar toolbar = findViewById(R.id.toolbar_detail_activity);
+        setSupportActionBar(toolbar);
+        if(getSupportActionBar() != null) getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         this.configureViewModels();
         this.initializeHouseDetail();
-        this.initializeRoomNumber();
         this.initializeDescription();
         this.initializeAddress();
         this.initializeRecyclerViewPointOfInterest();
         this.getPointsOfInterest();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_item_edit, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.edit){
+            Intent intent = new Intent(this, FormActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(MainActivity.HOUSES, house);
+            bundle.putParcelable(MainActivity.ADDRESS, address);
+            bundle.putParcelable(MainActivity.REAL_ESTATE_AGENT, realEstateAgents.get((int) house.getIdRealEstateAgent()));
+            bundle.putParcelableArrayList(MainActivity.ROOM_NUMBER, new ArrayList<>(listRoomNumber));
+            bundle.putParcelableArrayList(MainActivity.POINT_OF_INTEREST, new ArrayList<>(listPointOfInterest));
+            bundle.putParcelableArrayList(MainActivity.PHOTOS, photoList);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, REQUEST_CODE);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CODE)
+            if(resultCode == RESULT_CODE)
+                Toast.makeText(this, R.string.info_success_update, Toast.LENGTH_SHORT).show();
     }
 
     private void configureViewModels(){
@@ -178,7 +218,7 @@ public class RealEstateDetailActivity extends AppCompatActivity {
         tvBedroomDetail.setText(String.valueOf(listRoomNumber.get(2).getNumber()));
         tvLivingRoomDetail.setText(String.valueOf(listRoomNumber.get(3).getNumber()));
         tvToiletDetail.setText(String.valueOf(listRoomNumber.get(4).getNumber()));
-        tvCellarDetail.setText(String.valueOf(listRoomNumber.get(4).getNumber()));
+        tvCellarDetail.setText(String.valueOf(listRoomNumber.get(5).getNumber()));
         tvPoolDetail.setText(String.valueOf(listRoomNumber.get(6).getNumber()));
     }
 
@@ -203,6 +243,7 @@ public class RealEstateDetailActivity extends AppCompatActivity {
 
         tvRealEstateAgentDetail.setText(String.format(getString(R.string.real_estate_agent_name), realEstateAgents.get((int) house.getIdRealEstateAgent()).getName(),  realEstateAgents.get((int) house.getIdRealEstateAgent()).getFirstname()));
     }
+
     private static class GetDataFromDatabaseAsyncTask extends AsyncTask<String, Void, String> {
 
         WeakReference<RealEstateDetailActivity> weakReference;
@@ -222,6 +263,8 @@ public class RealEstateDetailActivity extends AppCompatActivity {
                 weakReference.get().listTypePointOfInterest.put(pointOfInterest.getIdPointOfInterest(), weakReference.get().realEstateViewModel.getTypePointOfInterest(pointOfInterest.getTypePointOfInterest()));
             }
 
+            weakReference.get().listRoomNumber = weakReference.get().realEstateViewModel.getRoomNumberForHouse(weakReference.get().house.getIdHouse());
+
             return null;
         }
 
@@ -229,6 +272,7 @@ public class RealEstateDetailActivity extends AppCompatActivity {
         protected void onPostExecute(String aVoid) {
             super.onPostExecute(aVoid);
             weakReference.get().adapterPointOfInterest.notifyDataSetChanged();
+            weakReference.get().initializeRoomNumber();
         }
     }
 

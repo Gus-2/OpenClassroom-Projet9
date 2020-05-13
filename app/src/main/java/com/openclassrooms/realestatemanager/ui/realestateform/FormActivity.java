@@ -37,7 +37,9 @@ import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojoapi.Coordinates;
 import com.openclassrooms.realestatemanager.tools.DataConverter;
+import com.openclassrooms.realestatemanager.tools.DateConverter;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
+import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RetrofitViewModel;
 
@@ -67,7 +69,7 @@ public class FormActivity extends AppCompatActivity {
     private final static int RESULT_LOAD_IMG = 2;
     public final static String STATE_AVAILABLE = "Available";
     public final static String COUNTRY = "United States";
-    private final static Integer[] numberRoom = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    public final static Integer[] numberRoom = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     @BindView(R.id.actv_number_bathroom)
     AutoCompleteTextView dropDownMenuNumberBathroom;
@@ -131,13 +133,15 @@ public class FormActivity extends AppCompatActivity {
     private RetrofitViewModel retrofitViewModel;
     private List<HouseType> listHouseTypes;
     private List<Uri> listUri = new ArrayList<>();
-    private List<PointOfInterest> listPointOfInterests = new ArrayList<>();
+    private List<PointOfInterest> listPointOfInterests;
     private List<RealEstateAgent> listRealEstateAgent;
     private List<RoomNumber> roomNumbersList = new ArrayList<>();
     private HashMap<Uri, Photo> hashMapUriPhoto = new HashMap<>();
     private Place place;
     private Address newAddressToInsert;
     private House houseToInsert;
+    private Bundle bundle = null;
+    private House house;
     private int pictureOrder = 0;
     private long availabilityDate = 0;
 
@@ -149,6 +153,12 @@ public class FormActivity extends AppCompatActivity {
         Places.initialize(getApplicationContext(), BuildConfig.API_KEY);
         executorService = Executors.newCachedThreadPool();
         Places.createClient(this);
+        if(getIntent().getExtras() != null){
+            bundle = getIntent().getExtras();
+            house = bundle.getParcelable(MainActivity.HOUSES);
+            fillPriceSurfaceAndDescription();
+            fillAddressAndAvailabilityDate();
+        }
         this.configureViewModels();
         this.configureDropDownHouseTypeMenu();
         this.configureNumberRoomDropDownMenus();
@@ -160,6 +170,67 @@ public class FormActivity extends AppCompatActivity {
         this.configureButtonAddPictures();
         this.configureButtonAddHouse();
         setResult(ERROR_RESULT);
+    }
+
+    private void fillAddressAndAvailabilityDate() {
+        Address address = bundle.getParcelable(MainActivity.ADDRESS);
+
+        if(address != null){
+            if(address.getStreet().equals(""))
+                editTextAddressStreet.setText(R.string.unspecified);
+            else
+                editTextAddressStreet.setText(address.getStreet());
+
+            if(address.getNumber().equals(""))
+                editTextAddressNumber.setText(R.string.unspecified);
+            else
+                editTextAddressStreet.setText(address.getNumber());
+
+            if(address.getDistrict().equals(""))
+                editTextAddressDistrict.setText(R.string.unspecified);
+            else
+                editTextAddressDistrict.setText(address.getDistrict());
+
+            if(address.getCity().equals(""))
+                editTextAddressCity.setText(R.string.unspecified);
+            else
+                editTextAddressCity.setText(address.getCity());
+
+            if(address.getPostCode().equals(""))
+                editTextAddressPostCode.setText(R.string.unspecified);
+            else
+                editTextAddressPostCode.setText(address.getPostCode());
+
+            if(address.getAdditionalInformation().equals(""))
+                editTextAddressAdditionnalInformation.setText(R.string.unspecified);
+            else
+                editTextAddressAdditionnalInformation.setText(address.getAdditionalInformation());
+        }
+
+        if(house.getAvailableDate() > 0){
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            editTextAvailibilityDate.setText(df.format(DateConverter.toDate(house.getAvailableDate())));
+        }else{
+            editTextAvailibilityDate.setText(R.string.date_unspecified);
+        }
+    }
+
+    private void fillPriceSurfaceAndDescription() {
+        if(house.getPrice() != -1)
+            editTextPrice.setText(String.format(getString(R.string.number_format_double), house.getPrice()));
+        else
+            editTextPrice.setText(R.string.non_specified);
+
+        if(house.getSurface() != -1)
+            editTextSurface.setText(String.format(getString(R.string.number_format_double), house.getSurface()));
+        else
+            editTextSurface.setText(R.string.non_specified);
+
+        if(house.getDescription().equals(""))
+            editTextDescription.setText(R.string.unspecified_description);
+        else
+            editTextSurface.setText(house.getDescription());
+
     }
 
     private void configureButtonAddHouse() {
@@ -184,8 +255,6 @@ public class FormActivity extends AppCompatActivity {
 
             houseToInsert = new House(idHouseTypeToInsert, idRealEstateAgentToInsert, price, surface, description, STATE_AVAILABLE, availabilityDate);
 
-            getLongitudeAndLatitudeForAddress(editTextAddressNumber.getText().toString() + " " +  editTextAddressStreet.getText().toString() + "," +  editTextAddressDistrict.getText().toString() + "," + editTextAddressPostCode.getText().toString() + "," + editTextAddressCity.getText().toString());
-
             roomNumbersList.add(new RoomNumber(1, Integer.parseInt(dropDownMenuNumberKitchen.getText().toString())));
             roomNumbersList.add(new RoomNumber(2, Integer.parseInt(dropDownMenuNumberBathroom.getText().toString())));
             roomNumbersList.add(new RoomNumber(3, Integer.parseInt(dropDownMenuNumberBedroom.getText().toString())));
@@ -193,6 +262,8 @@ public class FormActivity extends AppCompatActivity {
             roomNumbersList.add(new RoomNumber(5, Integer.parseInt(dropDownMenuNumberToilet.getText().toString())));
             roomNumbersList.add(new RoomNumber(6, Integer.parseInt(dropDownMenuNumberCellar.getText().toString())));
             roomNumbersList.add(new RoomNumber(7, Integer.parseInt(dropDownMenuNumberPool.getText().toString())));
+
+            getLongitudeAndLatitudeForAddress(editTextAddressNumber.getText().toString() + " " +  editTextAddressStreet.getText().toString() + "," +  editTextAddressDistrict.getText().toString() + "," + editTextAddressPostCode.getText().toString() + "," + editTextAddressCity.getText().toString());
         });
     }
 
@@ -227,6 +298,10 @@ public class FormActivity extends AppCompatActivity {
         recyclerViewPointOfInterest.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(this);
         recyclerViewPointOfInterest.setLayoutManager(layoutManager1);
+        if(bundle != null)
+            listPointOfInterests = bundle.getParcelableArrayList(MainActivity.POINT_OF_INTEREST);
+        else
+            listPointOfInterests = new ArrayList<>();
         adapterPointOfInterest = new AdapterPointOfInterest(listPointOfInterests);
         recyclerViewPointOfInterest.setAdapter(adapterPointOfInterest);
     }
@@ -243,7 +318,8 @@ public class FormActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>( getApplicationContext(), R.layout.dropdown_menu_popup_item, realEstateAgents);
         this.runOnUiThread(() -> {
             dropDownMenuRealEstateAgent.setAdapter(adapter);
-            dropDownMenuRealEstateAgent.setText(realEstateAgents[0], false);
+            if(bundle != null) dropDownMenuRealEstateAgent.setText(realEstateAgents[(int) house.getIdRealEstateAgent()-1], false);
+            else dropDownMenuRealEstateAgent.setText(realEstateAgents[0], false);
         });
     }
 
@@ -348,19 +424,30 @@ public class FormActivity extends AppCompatActivity {
     private void configureNumberRoomDropDownMenus() {
         ArrayAdapter<Integer> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.dropdown_menu_popup_item, numberRoom);
         dropDownMenuNumberKitchen.setAdapter(adapter);
-        dropDownMenuNumberKitchen.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
         dropDownMenuNumberBathroom.setAdapter(adapter);
-        dropDownMenuNumberBathroom.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
         dropDownMenuNumberBedroom.setAdapter(adapter);
-        dropDownMenuNumberBedroom.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
         dropDownMenuNumberLivingRoom.setAdapter(adapter);
-        dropDownMenuNumberLivingRoom.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
         dropDownMenuNumberToilet.setAdapter(adapter);
-        dropDownMenuNumberToilet.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
         dropDownMenuNumberCellar.setAdapter(adapter);
-        dropDownMenuNumberCellar.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
         dropDownMenuNumberPool.setAdapter(adapter);
-        dropDownMenuNumberPool.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
+        if(bundle != null){
+            List<RoomNumber> listRoomNumbers = bundle.getParcelableArrayList(MainActivity.ROOM_NUMBER);
+            dropDownMenuNumberKitchen.setText(String.format(getString(R.string.number_format_room), listRoomNumbers.get(0).getNumber()), false);
+            dropDownMenuNumberBathroom.setText(String.format(getString(R.string.number_format_room), listRoomNumbers.get(1).getNumber()), false);
+            dropDownMenuNumberBedroom.setText(String.format(getString(R.string.number_format_room), listRoomNumbers.get(2).getNumber()), false);
+            dropDownMenuNumberLivingRoom.setText(String.format(getString(R.string.number_format_room), listRoomNumbers.get(3).getNumber()), false);
+            dropDownMenuNumberToilet.setText(String.format(getString(R.string.number_format_room), listRoomNumbers.get(4).getNumber()), false);
+            dropDownMenuNumberCellar.setText(String.format(getString(R.string.number_format_room), listRoomNumbers.get(5).getNumber()), false);
+            dropDownMenuNumberPool.setText(String.format(getString(R.string.number_format_room), listRoomNumbers.get(6).getNumber()), false);
+        }else{
+            dropDownMenuNumberKitchen.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
+            dropDownMenuNumberBathroom.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
+            dropDownMenuNumberBedroom.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
+            dropDownMenuNumberLivingRoom.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
+            dropDownMenuNumberToilet.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
+            dropDownMenuNumberCellar.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
+            dropDownMenuNumberPool.setText(String.format(getString(R.string.number_format_room), numberRoom[0]), false);
+        }
     }
 
     private void configureViewModels(){
@@ -389,7 +476,10 @@ public class FormActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>( getApplicationContext(), R.layout.dropdown_menu_popup_item, houseType);
         this.runOnUiThread(() -> {
             dropDownMenuHouseType.setAdapter(adapter);
-            dropDownMenuHouseType.setText(houseType[0], false);
+            if(bundle == null)
+                dropDownMenuHouseType.setText(houseType[0], false);
+            else
+                dropDownMenuHouseType.setText(houseType[(int) house.getIdHouseType()-1], false);
         });
     }
 
@@ -456,7 +546,6 @@ public class FormActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String aVoid) {
-            super.onPostExecute(aVoid);
             weakReference.get().setResult(RESULT_OK);
             weakReference.get().finish();
         }

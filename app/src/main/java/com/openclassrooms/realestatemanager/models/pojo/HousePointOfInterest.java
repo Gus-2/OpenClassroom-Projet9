@@ -1,6 +1,9 @@
 package com.openclassrooms.realestatemanager.models.pojo;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -16,7 +19,7 @@ import androidx.room.ForeignKey;
                     parentColumns = "id_point_of_interest",
                     childColumns = "id_point_of_interest")
         })
-public class HousePointOfInterest {
+public class HousePointOfInterest implements Parcelable {
 
     @NonNull
     @ColumnInfo(name = "id_house")
@@ -30,6 +33,34 @@ public class HousePointOfInterest {
         this.idHouse = idHouse;
         this.idPointOfInterest = idPointOfInterest;
     }
+
+    protected HousePointOfInterest(Parcel in) {
+        idHouse = in.readLong();
+        idPointOfInterest = in.readLong();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(idHouse);
+        dest.writeLong(idPointOfInterest);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<HousePointOfInterest> CREATOR = new Creator<HousePointOfInterest>() {
+        @Override
+        public HousePointOfInterest createFromParcel(Parcel in) {
+            return new HousePointOfInterest(in);
+        }
+
+        @Override
+        public HousePointOfInterest[] newArray(int size) {
+            return new HousePointOfInterest[size];
+        }
+    };
 
     public long getIdHouse() {
         return idHouse;

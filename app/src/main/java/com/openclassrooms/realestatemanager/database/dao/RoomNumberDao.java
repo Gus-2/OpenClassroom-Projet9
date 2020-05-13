@@ -18,4 +18,7 @@ public interface RoomNumberDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertRoomNumber(RoomNumber roomNumber);
+
+    @Query("SELECT * FROM room_number WHERE id_house = :idHouse")
+    List<RoomNumber> getRoomNumberForHouse(long idHouse);
 }

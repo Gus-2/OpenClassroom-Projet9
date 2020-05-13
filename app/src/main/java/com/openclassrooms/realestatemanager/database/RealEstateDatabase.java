@@ -40,7 +40,7 @@ import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
         Room.class,
         RoomNumber.class,
         TypePointOfInterest.class},
-        version = 1, exportSchema = false)
+        version = 2, exportSchema = false)
 public abstract class RealEstateDatabase extends RoomDatabase {
 
     // --- SINGLETON ---

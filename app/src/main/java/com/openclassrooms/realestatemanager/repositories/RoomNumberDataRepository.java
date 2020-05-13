@@ -22,4 +22,8 @@ public class RoomNumberDataRepository {
     public long insertRoomNumber(RoomNumber roomNumber){
         return roomNumberDao.insertRoomNumber(roomNumber);
     }
+
+    public List<RoomNumber> getRoomForHouse(long idHouse){
+        return roomNumberDao.getRoomNumberForHouse(idHouse);
+    }
 }
