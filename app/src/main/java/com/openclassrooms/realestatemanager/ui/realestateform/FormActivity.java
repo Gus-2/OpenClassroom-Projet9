@@ -33,12 +33,14 @@ import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
+import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojoapi.Coordinates;
 import com.openclassrooms.realestatemanager.tools.DataConverter;
 import com.openclassrooms.realestatemanager.tools.DateConverter;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
+import com.openclassrooms.realestatemanager.tools.Utils;
 import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RetrofitViewModel;
@@ -60,6 +62,7 @@ import java.util.concurrent.Future;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.observers.DisposableObserver;
+import okhttp3.internal.Util;
 
 public class FormActivity extends AppCompatActivity {
     private final static int RESULT_OK = 80;
@@ -136,7 +139,11 @@ public class FormActivity extends AppCompatActivity {
     private List<PointOfInterest> listPointOfInterests;
     private List<RealEstateAgent> listRealEstateAgent;
     private List<RoomNumber> roomNumbersList = new ArrayList<>();
+    private List<Room> roomList;
+    private String[] tabStringRoom;
+    private HashMap<String, Long> idRoom;
     private HashMap<Uri, Photo> hashMapUriPhoto = new HashMap<>();
+    private HashMap<Uri, Bitmap> hashMapUriBitmap = new HashMap<>();
     private Place place;
     private Address newAddressToInsert;
     private House houseToInsert;
@@ -165,10 +172,11 @@ public class FormActivity extends AppCompatActivity {
         this.configureButtonAvailibilityDate();
         this.configureButtonAddPointOfInterest();
         this.configureRecycleViewPointOfInterest();
-        this.configureRecycleViewPhoto();
         this.configureDropDownRealEstateAgent();
         this.configureButtonAddPictures();
         this.configureButtonAddHouse();
+        GetDataFromDatabase getDataFromDatabase = new GetDataFromDatabase(this);
+        getDataFromDatabase.execute();
         setResult(ERROR_RESULT);
     }
 
@@ -272,7 +280,7 @@ public class FormActivity extends AppCompatActivity {
         recyclerHousePicture.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerHousePicture.setLayoutManager(layoutManager2);
-        adapterHousePicture = new AdapterPicturesHouse(listUri, hashMapUriPhoto, getApplicationContext());
+        adapterHousePicture = new AdapterPicturesHouse(listUri, hashMapUriPhoto, roomList, tabStringRoom, getApplicationContext());
         adapterHousePicture.setOnItemClickListener(position -> {
             for(Uri uri : listUri){
                 hashMapUriPhoto.get(uri).setMainPicture(false);
@@ -359,14 +367,16 @@ public class FormActivity extends AppCompatActivity {
                     Uri uri = data.getClipData().getItemAt(i).getUri();
                     Bitmap bitmap = DataConverter.convertUriToBitmap(uri, getApplicationContext());
                     listUri.add(uri);
-                    hashMapUriPhoto.put(uri, new Photo(pictureOrder, false, DataConverter.convertImageToByteArray(bitmap)));
+                    hashMapUriBitmap.put(uri, bitmap);
+                    hashMapUriPhoto.put(uri, new Photo(pictureOrder));
                     pictureOrder++;
                 }
             } else if(data.getData() != null){
                 Uri uri = data.getData();
                 Bitmap bitmap = DataConverter.convertUriToBitmap(uri, getApplicationContext());
                 listUri.add(uri);
-                hashMapUriPhoto.put(uri, new Photo(pictureOrder, false, DataConverter.convertImageToByteArray(bitmap)));
+                hashMapUriBitmap.put(uri, bitmap);
+                hashMapUriPhoto.put(uri, new Photo(pictureOrder));
                 pictureOrder++;
             }
             adapterHousePicture.notifyDataSetChanged();
@@ -539,6 +549,10 @@ public class FormActivity extends AppCompatActivity {
             }
             for(Uri uri : weakReference.get().listUri){
                 weakReference.get().hashMapUriPhoto.get(uri).setIdHouse(houseId);
+                String childPath = houseId + weakReference.get().hashMapUriPhoto.get(uri).getNumOrder() + weakReference.get().hashMapUriPhoto.get(uri).getIdRoom() + ".jpg";
+                String path = Utils.saveToInternalStorage(childPath, weakReference.get().hashMapUriBitmap.get(uri), weakReference.get().getApplicationContext());
+                weakReference.get().hashMapUriPhoto.get(uri).setPath(path);
+                weakReference.get().hashMapUriPhoto.get(uri).setChildPath(childPath);
                 weakReference.get().realEstateViewModel.insertPhoto(weakReference.get().hashMapUriPhoto.get(uri));
             }
             return null;
@@ -548,6 +562,28 @@ public class FormActivity extends AppCompatActivity {
         protected void onPostExecute(String aVoid) {
             weakReference.get().setResult(RESULT_OK);
             weakReference.get().finish();
+        }
+    }
+
+    private static class GetDataFromDatabase extends AsyncTask<String, Void, String>{
+
+        WeakReference<FormActivity> weakReference;
+
+        GetDataFromDatabase(FormActivity formActivity) {
+            this.weakReference = new WeakReference<>(formActivity);
+        }
+        @Override
+        protected String doInBackground(String... strings) {
+            List<Room> listRoomTmp = this.weakReference.get().realEstateViewModel.getRoom();
+            this.weakReference.get().roomList = new ArrayList<>(listRoomTmp);
+            this.weakReference.get().idRoom = TypeConverter.listRoom(listRoomTmp);
+            this.weakReference.get().tabStringRoom = TypeConverter.listToTableRoom(listRoomTmp);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String aVoid) {
+            weakReference.get().configureRecycleViewPhoto();
         }
     }
 }

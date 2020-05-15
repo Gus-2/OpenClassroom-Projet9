@@ -37,7 +37,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     public final static String MIN_PRICE = "MIN_PRICE";
     public final static String MIN_SURFACE = "MIN_SURFACE";
     public final static String MAX_SURFACE = "MAX_SURFACE";
-    private final static String TAG_SEARCH_DIALOG = "search dialog";
+    public final static String TAG_SEARCH_DIALOG = "search dialog";
     public static String DISTRICT = "DISTRICT";
 
     private BottomAppBar bottomAppBar;
@@ -248,7 +248,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
 
         if(numberPhoto > 0){
             for(House house : listHouses)
-                if(hashMapPhoto.get(house.getIdHouse()).size() >= numberPhoto && !listHousesDisplayed.contains(house)) listHousesDisplayed.add(house);
+                if(hashMapPhoto.get(house.getIdHouse()) != null && hashMapPhoto.get(house.getIdHouse()).size() >= numberPhoto && !listHousesDisplayed.contains(house)) listHousesDisplayed.add(house);
         }
 
         realEstateListAdapter.notifyDataSetChanged();

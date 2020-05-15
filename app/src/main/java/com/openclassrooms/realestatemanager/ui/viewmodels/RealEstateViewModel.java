@@ -140,7 +140,7 @@ public class RealEstateViewModel extends ViewModel {
     }
 
     // Room
-    public LiveData<List<Room>> getRoom() {
+    public List<Room> getRoom() {
         return roomDataRepository.getRooms();
     }
 

@@ -15,7 +15,7 @@ public class RoomDataRepository {
         this.roomDao = roomDao;
     }
 
-    public LiveData<List<Room>> getRooms(){
+    public List<Room> getRooms(){
         return roomDao.getRooms();
     }
 

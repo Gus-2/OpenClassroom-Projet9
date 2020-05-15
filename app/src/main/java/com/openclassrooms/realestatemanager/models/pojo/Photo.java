@@ -22,9 +22,11 @@ public class Photo implements Parcelable {
     @NonNull
     private long idHouse;
 
+    @ColumnInfo(name = "id_room", index = true)
+    private long idRoom;
 
-    @ColumnInfo(name = "room", index = true)
-    private String room;
+    @ColumnInfo(name = "specific_room")
+    private String specificRoom;
 
     @ColumnInfo(name = "num_order")
     @NonNull
@@ -35,31 +37,36 @@ public class Photo implements Parcelable {
     private boolean isMainPicture;
 
     @NonNull
-    private byte[] image;
+    private String path;
 
+    @NonNull
+    private String childPath;
 
-
-    public Photo(int numOrder, boolean isMainPicture, @NonNull byte[] image) {
+    public Photo(int numOrder) {
         this.numOrder = numOrder;
-        this.isMainPicture = isMainPicture;
-        this.image = image;
+        this.isMainPicture = false;
+        idRoom = -1;
     }
 
     protected Photo(Parcel in) {
         idHouse = in.readLong();
-        room = in.readString();
+        idRoom = in.readLong();
+        specificRoom = in.readString();
         numOrder = in.readInt();
         isMainPicture = in.readByte() != 0;
-        image = in.createByteArray();
+        path = in.readString();
+        childPath = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(idHouse);
-        dest.writeString(room);
+        dest.writeLong(idRoom);
+        dest.writeString(specificRoom);
         dest.writeInt(numOrder);
         dest.writeByte((byte) (isMainPicture ? 1 : 0));
-        dest.writeByteArray(image);
+        dest.writeString(path);
+        dest.writeString(childPath);
     }
 
     @Override
@@ -87,13 +94,20 @@ public class Photo implements Parcelable {
         this.idHouse = idHouse;
     }
 
-    @NonNull
-    public String getRoom() {
-        return room;
+    public long getIdRoom() {
+        return idRoom;
     }
 
-    public void setRoom(@NonNull String room) {
-        this.room = room;
+    public void setIdRoom(long idRoom) {
+        this.idRoom = idRoom;
+    }
+
+    public String getSpecificRoom() {
+        return specificRoom;
+    }
+
+    public void setSpecificRoom(String specificRoom) {
+        this.specificRoom = specificRoom;
     }
 
     public int getNumOrder() {
@@ -113,11 +127,20 @@ public class Photo implements Parcelable {
     }
 
     @NonNull
-    public byte[] getImage() {
-        return image;
+    public String getPath() {
+        return path;
     }
 
-    public void setImage(@NonNull byte[] image) {
-        this.image = image;
+    public void setPath(@NonNull String path) {
+        this.path = path;
+    }
+
+    @NonNull
+    public String getChildPath() {
+        return childPath;
+    }
+
+    public void setChildPath(@NonNull String childPath) {
+        this.childPath = childPath;
     }
 }

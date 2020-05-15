@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:paddingLeft="5dp"
     android:paddingRight="5dp"
     android:layout_width="150dp"
@@ -31,20 +31,22 @@
     </androidx.cardview.widget.CardView>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_picture_home"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:id="@+id/ddm_house_type_layout_picture"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_below="@id/cv_picture_house"
-        android:hint="Add description"
+        android:layout_margin="10dp"
+        android:hint="@string/house_type"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:layout_below="@+id/cv_picture_house">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tiet_description_picture_home"
+        <AutoCompleteTextView
+            android:id="@+id/tv_house_room_picture"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:focusableInTouchMode="true"
+            tools:ignore="LabelFor" />
 
     </com.google.android.material.textfield.TextInputLayout>
 </RelativeLayout>

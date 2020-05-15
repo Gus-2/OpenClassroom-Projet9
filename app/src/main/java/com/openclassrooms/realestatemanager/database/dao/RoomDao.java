@@ -15,7 +15,7 @@ import java.util.List;
 public interface RoomDao {
 
     @Query("SELECT * FROM rooms")
-    LiveData<List<Room>> getRooms();
+    List<Room> getRooms();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertRoom(Room room);

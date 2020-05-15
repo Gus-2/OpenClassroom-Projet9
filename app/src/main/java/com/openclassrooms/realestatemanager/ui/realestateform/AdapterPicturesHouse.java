@@ -8,15 +8,20 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
+import com.openclassrooms.realestatemanager.models.pojo.Room;
+import com.openclassrooms.realestatemanager.tools.TypeConverter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +30,8 @@ import butterknife.ButterKnife;
 public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHouse.MyViewHolder> {
     private HashMap<Uri, Photo> listPhotoHouse;
     private List<Uri> listUri;
+    private List<Room> listRoom;
+    private String[] tabStringRoom;
     private Context context;
     private OnItemClickListener mListener;
 
@@ -41,7 +48,7 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
 
         ImageView ivSetAsDefaultPicture;
 
-        TextInputEditText edPhotoDescription;
+        AutoCompleteTextView edPhotoDescription;
 
 
         public MyViewHolder(View itemView, OnItemClickListener listener) {
@@ -57,14 +64,16 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
                     }
                 }
             });
-            edPhotoDescription = itemView.findViewById(R.id.tiet_description_picture_home);
+            edPhotoDescription = itemView.findViewById(R.id.tv_house_room_picture);
         }
     }
 
-    public AdapterPicturesHouse(List<Uri> uriPhoto, HashMap<Uri, Photo> listPhotoHouse, Context context) {
+    public AdapterPicturesHouse(List<Uri> uriPhoto, HashMap<Uri, Photo> listPhotoHouse, List<Room> listRoom, String[] tabStringRoom, Context context) {
         this.listUri = uriPhoto;
         this.listPhotoHouse = listPhotoHouse;
         this.context = context;
+        this.tabStringRoom = tabStringRoom;
+        this.listRoom = listRoom;
     }
 
     @Override
@@ -100,18 +109,29 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
             holder.ivSetAsDefaultPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_crop_original_white_24dp));
         }
 
+        ArrayAdapter<String> adapter = new ArrayAdapter<>( context.getApplicationContext(), R.layout.dropdown_menu_popup_item, tabStringRoom);
+        holder.edPhotoDescription.setAdapter(adapter);
+
         holder.edPhotoDescription.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                listPhotoHouse.get(position).setRoom(s.toString());
+                for(Room room : listRoom){
+                    if(room.getRoomType().equals(s.toString()))
+                        listPhotoHouse.get(listUri.get(position)).setIdRoom(room.getIdRoom());
+                }
+                if(listPhotoHouse.get(listUri.get(position)).getIdRoom() == -1){
+                    listPhotoHouse.get(listUri.get(position)).setSpecificRoom(s.toString());
+                }
             }
         });
     }

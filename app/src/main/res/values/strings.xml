@@ -5,6 +5,7 @@
     <string name="general">Général</string>
     <string name="price">Price</string>
     <string name="surface">Surface</string>
+    <string name="surface_m">Surface m²</string>
     <string name="rooms">Rooms</string>
     <string name="kitchen">Kitchen</string>
     <string name="bathroom">Bathroom</string>

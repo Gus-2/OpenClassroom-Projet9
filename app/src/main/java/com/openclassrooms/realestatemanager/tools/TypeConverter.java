@@ -4,6 +4,7 @@ import com.openclassrooms.realestatemanager.models.pojo.Address;
 import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
+import com.openclassrooms.realestatemanager.models.pojo.Room;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -66,6 +67,29 @@ public class TypeConverter {
         return hashMapPhoto;
     }
 
+    public static String[] listToTableRoom(List<Room> listRoom){
+        String[] listRoomString = new String[listRoom.size()];
+        for(int i = 0; i < listRoom.size(); i++){
+            listRoomString[i] = listRoom.get(i).getRoomType();
+        }
+        return listRoomString;
+    }
+
+    public static HashMap<String, Long> listRoom(List<Room> listRoom){
+        HashMap<String, Long> listRoomId = new HashMap<>();
+        for(Room room : listRoom){
+            listRoomId.put(room.getRoomType(), room.getIdRoom());
+        }
+        return listRoomId;
+    }
+
+    public static long getRoomId(HashMap<String, Long> listRoomId, String room){
+        for(String key : listRoomId.keySet()){
+            if(room.equals(key)) return listRoomId.get(key);
+        }
+        return -1;
+    }
+
 
     public static String convertDoubleToStringFormat(double price){
         NumberFormat nf = DecimalFormat.getInstance(Locale.ENGLISH);
@@ -102,4 +126,5 @@ public class TypeConverter {
         }
         return value;
     }
+
 }

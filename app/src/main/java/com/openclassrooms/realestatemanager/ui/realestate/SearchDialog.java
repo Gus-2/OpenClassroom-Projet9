@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textview.MaterialTextView;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
@@ -58,6 +59,9 @@ public class SearchDialog extends AppCompatDialogFragment {
 
     @BindView(R.id.bt_add_availability_date_dialog)
     Button btAddAvailabilityDate;
+
+    @BindView(R.id.tv_price)
+    MaterialTextView tvPrice;
 
     private SearchDialogListener searchDialogListener;
     private List<HouseType> listHousesTypes;
@@ -121,13 +125,26 @@ public class SearchDialog extends AppCompatDialogFragment {
 
     private void configureSeekBarPrice() {
         if(minPrice != -1){
-            sbPrice.setOnChangeRangeListener((simpleRangeView, i, i1) -> {
-                minPriceSelected = i;
-                maxPriceSelected = i1;
-            });
+            if((maxPrice/1000) > 100){
+                sbPrice.setOnChangeRangeListener((simpleRangeView, i, i1) -> {
+                    minPriceSelected = (i/1000);
+                    maxPriceSelected = (i1/1000);
+                });
 
-            int rangePrice = (int) (maxPrice - minPrice) / 10;
-            sbPrice.setOnRangeLabelsListener((simpleRangeView, i, state) -> String.valueOf(rangePrice * i));
+                minPrice = (maxPrice - minPrice) / 10;
+                int rangePrice = ((int) ((maxPrice - minPrice)/1000) / 10);
+                sbPrice.setOnRangeLabelsListener((simpleRangeView, i, state) -> String.valueOf(rangePrice * i));
+                tvPrice.setText("Price (/1000)");
+            }else{
+                sbPrice.setOnChangeRangeListener((simpleRangeView, i, i1) -> {
+                    minPriceSelected = i;
+                    maxPriceSelected = i1;
+                });
+
+                int rangePrice = ((int) (maxPrice - minPrice) / 10);
+                sbPrice.setOnRangeLabelsListener((simpleRangeView, i, state) -> String.valueOf(rangePrice * i));
+            }
+
         }else{
             sbPrice.setOnRangeLabelsListener((simpleRangeView, i, state) -> {
                 if(i == 2)

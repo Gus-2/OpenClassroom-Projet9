@@ -11,6 +11,8 @@ import androidx.viewpager.widget.PagerAdapter;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.tools.DataConverter;
+import com.openclassrooms.realestatemanager.tools.Utils;
+
 import java.util.List;
 
 public class PicturePagerAdapter extends PagerAdapter {
@@ -41,7 +43,7 @@ public class PicturePagerAdapter extends PagerAdapter {
 
         imageView = itemView.findViewById(R.id.slider_image_view);
 
-        imageView.setImageBitmap(DataConverter.convertByteArrayToImage(imageUrls.get(position).getImage()));
+        imageView.setImageBitmap(Utils.loadImageFromStorage(imageUrls.get(position).getPath(), imageUrls.get(position).getChildPath()));
         container.addView(itemView);
         return itemView;
     }
