@@ -71,6 +71,7 @@ public class FormActivity extends AppCompatActivity {
     private final static int AUTOCOMPLETE_REQUEST_CODE = 1;
     private final static int RESULT_LOAD_IMG = 2;
     public final static String STATE_AVAILABLE = "Available";
+
     public final static String COUNTRY = "United States";
     public final static Integer[] numberRoom = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
@@ -141,7 +142,6 @@ public class FormActivity extends AppCompatActivity {
     private List<RoomNumber> roomNumbersList = new ArrayList<>();
     private List<Room> roomList;
     private String[] tabStringRoom;
-    private HashMap<String, Long> idRoom;
     private HashMap<Uri, Photo> hashMapUriPhoto = new HashMap<>();
     private HashMap<Uri, Bitmap> hashMapUriBitmap = new HashMap<>();
     private Place place;
@@ -242,6 +242,7 @@ public class FormActivity extends AppCompatActivity {
     }
 
     private void configureButtonAddHouse() {
+        if(bundle != null) buttonAddProperty.setText("Update the property");
         buttonAddProperty.setOnClickListener(v -> {
             newAddressToInsert = new Address(editTextAddressStreet.getText().toString(), editTextAddressNumber.getText().toString(), editTextAddressDistrict.getText().toString(), editTextAddressCity.getText().toString(), COUNTRY,  editTextAddressPostCode.getText().toString()
                     , editTextAddressAdditionnalInformation.getText().toString());
@@ -280,6 +281,7 @@ public class FormActivity extends AppCompatActivity {
         recyclerHousePicture.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerHousePicture.setLayoutManager(layoutManager2);
+
         adapterHousePicture = new AdapterPicturesHouse(listUri, hashMapUriPhoto, roomList, tabStringRoom, getApplicationContext());
         adapterHousePicture.setOnItemClickListener(position -> {
             for(Uri uri : listUri){
@@ -576,7 +578,6 @@ public class FormActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             List<Room> listRoomTmp = this.weakReference.get().realEstateViewModel.getRoom();
             this.weakReference.get().roomList = new ArrayList<>(listRoomTmp);
-            this.weakReference.get().idRoom = TypeConverter.listRoom(listRoomTmp);
             this.weakReference.get().tabStringRoom = TypeConverter.listToTableRoom(listRoomTmp);
             return null;
         }

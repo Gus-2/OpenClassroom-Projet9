@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String REAL_ESTATE_AGENT = "REAL_ESTATE_AGENT";
     public static final String ROOM_NUMBER = "ROOM_NUMBER";
     public static final String POINT_OF_INTEREST = "POINT_OF_INTEREST";
+    public static final String ROOM = "ROOM";
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 20;
     private final int ERROR_DIALOG_REQUEST = 9001;
@@ -164,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
             weakReference.get().databaseValues.put(ADDRESS, weakReference.get().realEstateViewModel.getAddress());
             weakReference.get().databaseValues.put(PHOTOS, weakReference.get().realEstateViewModel.getPhoto());
             weakReference.get().databaseValues.put(REAL_ESTATE_AGENT, weakReference.get().realEstateViewModel.getRealEstateAgent());
+            weakReference.get().databaseValues.put(ROOM, weakReference.get().realEstateViewModel.getRoom());
             return null;
         }
 

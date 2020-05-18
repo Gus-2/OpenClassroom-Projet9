@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.openclassrooms.realestatemanager.models.pojo.Address;
 import com.openclassrooms.realestatemanager.models.pojo.House;
+import com.openclassrooms.realestatemanager.models.pojo.HouseDateState;
 import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
@@ -76,6 +77,16 @@ public class RealEstateViewModel extends ViewModel {
 
     public long insertHouse(House house) {
             return houseDataRepository.insertHouse(house);
+    }
+
+    public void updateSoldDate(long soldDate, long houseId, String state){
+        executor.execute(() ->
+          houseDataRepository.updateSoldDate(soldDate, houseId, state)
+        );
+    }
+
+    public LiveData<HouseDateState> getHouseSate(long idHouse){
+        return houseDataRepository.getHouseState(idHouse);
     }
 
     // House's point of interest

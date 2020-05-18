@@ -15,7 +15,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.injections.Injection;
@@ -27,16 +31,19 @@ import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
+import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 import com.openclassrooms.realestatemanager.tools.DateConverter;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
+import com.openclassrooms.realestatemanager.ui.realestate.PicturePagerAdapter;
 import com.openclassrooms.realestatemanager.ui.realestateform.FormActivity;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,6 +54,7 @@ public class RealEstateDetailActivity extends AppCompatActivity {
     private final static String HOUSE_POINT_OF_INTEREST = "HOUSE_POINT_OF_INTEREST";
     private final static int REQUEST_CODE = 20;
     private final static int RESULT_CODE = 30;
+    private final static String STATE_SOLD = "Sold";
 
     @BindView(R.id.tv_type_detail)
     MaterialTextView tvTypeDetail;
@@ -92,6 +100,12 @@ public class RealEstateDetailActivity extends AppCompatActivity {
     @BindView(R.id.iv_map_detail)
     ImageView ivMapDetail;
 
+    @BindView(R.id.fab_home_sold)
+    FloatingActionButton fabHomeSold;
+
+    @BindView(R.id.vp_real_estate_detail)
+    ViewPager vpHousePictureDetail;
+
     private House house;
     private Address address;
     private ArrayList<Photo> photoList;
@@ -129,6 +143,26 @@ public class RealEstateDetailActivity extends AppCompatActivity {
         this.initializeAddress();
         this.initializeRecyclerViewPointOfInterest();
         this.getPointsOfInterest();
+        this.configureSoldHomeButton();
+        this.configureViewPager();
+    }
+
+    private void configureViewPager() {
+        if(photoList != null){
+            PicturePagerAdapter picturePagerAdapter = new PicturePagerAdapter(this, photoList, null);
+            vpHousePictureDetail.setAdapter(picturePagerAdapter);
+        }
+    }
+
+    private void configureSoldHomeButton() {
+        fabHomeSold.setOnClickListener(v -> {
+            if(!house.getState().equals(STATE_SOLD)){
+                realEstateViewModel.updateSoldDate(new Date().getTime(), house.getIdHouse(), STATE_SOLD);
+                Toast.makeText(this,  "The house has been sold !", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this,  "The house is already sold !", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -233,13 +267,16 @@ public class RealEstateDetailActivity extends AppCompatActivity {
         else
             tvSurfaceDetail.setText(R.string.house_surface_not_specified);
 
-        if(house.getState().equals(FormActivity.STATE_AVAILABLE))
-            if(house.getAvailableDate() == 0)
-                tvStateDetail.setText(R.string.availability_date_not_specified);
+        realEstateViewModel.getHouseSate(house.getIdHouse()).observe(this, houseDateState -> {
+            if(houseDateState.getState().equals(FormActivity.STATE_AVAILABLE))
+                if(house.getAvailableDate() == 0)
+                    tvStateDetail.setText(R.string.availability_date_not_specified);
+                else
+                    tvStateDetail.setText(String.format(getString(R.string.available_for), TypeConverter.convertDateToString(DateConverter.toDate(house.getAvailableDate()))));
             else
-                tvStateDetail.setText(String.format(getString(R.string.available_for), TypeConverter.convertDateToString(DateConverter.toDate(house.getAvailableDate()))));
-        else
-            tvStateDetail.setText(String.format(getString(R.string.sold), TypeConverter.convertDateToString(DateConverter.toDate(house.getSoldDate()))));
+                tvStateDetail.setText(String.format(getString(R.string.sold), TypeConverter.convertDateToString(DateConverter.toDate(houseDateState.getSoldDate()))));
+
+        });
 
         tvRealEstateAgentDetail.setText(String.format(getString(R.string.real_estate_agent_name), realEstateAgents.get((int) house.getIdRealEstateAgent()).getName(),  realEstateAgents.get((int) house.getIdRealEstateAgent()).getFirstname()));
     }

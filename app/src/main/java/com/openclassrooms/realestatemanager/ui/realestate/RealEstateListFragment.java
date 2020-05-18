@@ -23,6 +23,7 @@ import com.openclassrooms.realestatemanager.models.pojo.House;
 import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
+import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailActivity;
 import com.openclassrooms.realestatemanager.ui.viewmodels.SharedViewModel;
@@ -50,6 +51,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     private HashMap<Long, Address> hashMapAddress;
     private HashMap<Long, List<Photo>> hashMapPhoto;
     private List<RealEstateAgent> listRealEstateAgent;
+    private List<Room> listRoom;
     private ArrayList<HouseType> listHousesTypes;
     private ArrayList<String> listDistrict = new ArrayList<>();
     private double minPrice = 0;
@@ -90,6 +92,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
             hashMapHouseType = TypeConverter.convertHouseTypeListToHashMap(listHousesTypes);
             hashMapAddress = TypeConverter.convertAddressListToHashMap((List<Address>) databaseValue.get(MainActivity.ADDRESS));
             listRealEstateAgent = (List<RealEstateAgent>) databaseValue.get(MainActivity.REAL_ESTATE_AGENT);
+            listRoom = (List<Room>) databaseValue.get(MainActivity.ROOM);
             initializeAdapter();
         });
     }
@@ -190,7 +193,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
 
     private void initializeAdapter(){
          realEstateListAdapter = new RealEstateListAdapter(getContext(), listHousesDisplayed, hashMapHouseType,
-                hashMapAddress, hashMapPhoto, this);
+                hashMapAddress, hashMapPhoto, TypeConverter.listRoomToHashMap(listRoom), this);
         recyclerView.setAdapter(realEstateListAdapter);
     }
 

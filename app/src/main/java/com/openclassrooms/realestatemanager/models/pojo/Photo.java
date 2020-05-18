@@ -25,6 +25,9 @@ public class Photo implements Parcelable {
     @ColumnInfo(name = "id_room", index = true)
     private long idRoom;
 
+    @ColumnInfo(name = "num_order_room")
+    private long numOrderRoom;
+
     @ColumnInfo(name = "specific_room")
     private String specificRoom;
 
@@ -51,6 +54,7 @@ public class Photo implements Parcelable {
     protected Photo(Parcel in) {
         idHouse = in.readLong();
         idRoom = in.readLong();
+        numOrderRoom = in.readLong();
         specificRoom = in.readString();
         numOrder = in.readInt();
         isMainPicture = in.readByte() != 0;
@@ -62,6 +66,7 @@ public class Photo implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(idHouse);
         dest.writeLong(idRoom);
+        dest.writeLong(numOrderRoom);
         dest.writeString(specificRoom);
         dest.writeInt(numOrder);
         dest.writeByte((byte) (isMainPicture ? 1 : 0));
@@ -100,6 +105,14 @@ public class Photo implements Parcelable {
 
     public void setIdRoom(long idRoom) {
         this.idRoom = idRoom;
+    }
+
+    public long getNumOrderRoom() {
+        return numOrderRoom;
+    }
+
+    public void setNumOrderRoom(long numOrderRoom) {
+        this.numOrderRoom = numOrderRoom;
     }
 
     public String getSpecificRoom() {

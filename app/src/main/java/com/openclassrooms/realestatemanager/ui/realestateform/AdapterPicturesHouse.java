@@ -22,6 +22,7 @@ import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
+import com.openclassrooms.realestatemanager.tools.Utils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -126,8 +127,11 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
             @Override
             public void afterTextChanged(Editable s) {
                 for(Room room : listRoom){
-                    if(room.getRoomType().equals(s.toString()))
+                    if(room.getRoomType().equals(s.toString())){
+                        int numOrderRoom = Utils.getNumOrderRoom(listPhotoHouse, room.getIdRoom());
+                        listPhotoHouse.get(listUri.get(position)).setNumOrderRoom(numOrderRoom+1);
                         listPhotoHouse.get(listUri.get(position)).setIdRoom(room.getIdRoom());
+                    }
                 }
                 if(listPhotoHouse.get(listUri.get(position)).getIdRoom() == -1){
                     listPhotoHouse.get(listUri.get(position)).setSpecificRoom(s.toString());

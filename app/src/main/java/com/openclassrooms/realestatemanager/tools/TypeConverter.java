@@ -127,4 +127,12 @@ public class TypeConverter {
         return value;
     }
 
+    public static HashMap<Long, String> listRoomToHashMap(List<Room> listRoom){
+        HashMap<Long, String> hashMapIdRoom = new HashMap<>();
+        for(Room room : listRoom){
+            hashMapIdRoom.put(room.getIdRoom(), room.getRoomType());
+        }
+        return hashMapIdRoom;
+    }
+
 }

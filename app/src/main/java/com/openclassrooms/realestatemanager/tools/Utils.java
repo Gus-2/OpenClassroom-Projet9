@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat;
 
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
+import com.openclassrooms.realestatemanager.models.pojo.Room;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -106,5 +107,15 @@ public class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static int getNumOrderRoom(HashMap<Uri, Photo> hashMapRoom, long roomId){
+        int i = 0;
+        for(Uri uri : hashMapRoom.keySet()){
+            if(hashMapRoom.get(uri).getIdRoom() == roomId){
+                i++;
+            }
+        }
+        return i;
     }
 }

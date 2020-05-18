@@ -20,7 +20,7 @@
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/vp_real_estate"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="230dp"
                 android:layout_margin="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

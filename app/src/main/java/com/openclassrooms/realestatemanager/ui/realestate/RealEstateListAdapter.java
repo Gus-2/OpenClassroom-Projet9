@@ -29,6 +29,7 @@ public class RealEstateListAdapter extends RecyclerView.Adapter<RealEstateListAd
     private HashMap<Long, HouseType> hashMapHouseType;
     private HashMap<Long, Address> hashMapAddress;
     private HashMap<Long, List<Photo>> hashMapPhoto;
+    private HashMap<Long, String> hashMapRoom;
     private Context context;
     private OnItemClickListener onItemClickListener;
 
@@ -57,12 +58,13 @@ public class RealEstateListAdapter extends RecyclerView.Adapter<RealEstateListAd
         }
     }
 
-    RealEstateListAdapter(Context context, List<House> houses, HashMap<Long, HouseType> hashMapHouseType, HashMap<Long, Address> hashMapAddress, HashMap<Long, List<Photo>> listPhoto, OnItemClickListener onItemClickListener) {
+    RealEstateListAdapter(Context context, List<House> houses, HashMap<Long, HouseType> hashMapHouseType, HashMap<Long, Address> hashMapAddress, HashMap<Long, List<Photo>> listPhoto, HashMap<Long, String> hashMapRoom, OnItemClickListener onItemClickListener) {
         this.context = context;
         this.houses = houses;
         this.hashMapHouseType = hashMapHouseType;
         this.hashMapAddress = hashMapAddress;
         this.hashMapPhoto = listPhoto;
+        this.hashMapRoom = hashMapRoom;
         this.onItemClickListener = onItemClickListener;
     }
 
@@ -94,7 +96,7 @@ public class RealEstateListAdapter extends RecyclerView.Adapter<RealEstateListAd
             else holder.tvDistrict.setText(district);
 
         if(hashMapPhoto.get(house.getIdHouse()) != null){
-            PagerAdapter picturePagerAdapter = new PicturePagerAdapter(context, hashMapPhoto.get(house.getIdHouse()));
+            PagerAdapter picturePagerAdapter = new PicturePagerAdapter(context, hashMapPhoto.get(house.getIdHouse()), hashMapRoom);
             holder.vpPicture.setAdapter(picturePagerAdapter);
         }
     }
