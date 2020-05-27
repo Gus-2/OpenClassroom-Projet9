@@ -12,12 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
@@ -31,17 +30,17 @@ import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
-import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 import com.openclassrooms.realestatemanager.tools.DateConverter;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
 import com.openclassrooms.realestatemanager.ui.realestate.PicturePagerAdapter;
+import com.openclassrooms.realestatemanager.ui.realestate.RealEstateListFragment;
+import com.openclassrooms.realestatemanager.ui.realestateedit.EditRealEstateActivity;
 import com.openclassrooms.realestatemanager.ui.realestateform.FormActivity;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,10 +50,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RealEstateDetailActivity extends AppCompatActivity {
-    private final static String HOUSE_POINT_OF_INTEREST = "HOUSE_POINT_OF_INTEREST";
     private final static int REQUEST_CODE = 20;
     private final static int RESULT_CODE = 30;
-    private final static String STATE_SOLD = "Sold";
+    private final static int UPDATE_PICTURE = 31;
+    private final static int UPDATE_POINT_OF_INTEREST = 32;
+    public final static String STATE_SOLD = "Sold";
 
     @BindView(R.id.tv_type_detail)
     MaterialTextView tvTypeDetail;
@@ -106,61 +106,54 @@ public class RealEstateDetailActivity extends AppCompatActivity {
     @BindView(R.id.vp_real_estate_detail)
     ViewPager vpHousePictureDetail;
 
+    private long idHouse;
     private House house;
-    private Address address;
+    private Address address = null;
     private ArrayList<Photo> photoList;
     private HouseType houseType;
-    private List<RealEstateAgent> realEstateAgents;
+    private ArrayList<RealEstateAgent> realEstateAgents;
     private List<RoomNumber> listRoomNumber;
     private List<PointOfInterest> listPointOfInterest = new ArrayList<>();
     private HashMap<Long, TypePointOfInterest> listTypePointOfInterest = new HashMap<>();
+    private HashMap<Long, HouseType> listHouseTypes;
     private List<HousePointOfInterest> listHousePointOfInterest = new ArrayList<>();
     private AdapterPointOfInterestDetail adapterPointOfInterest;
     private RealEstateViewModel realEstateViewModel;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_real_estate_detail);
         ButterKnife.bind(this);
-        Bundle extras = getIntent().getExtras();
-        if(extras != null){
-            house = extras.getParcelable(MainActivity.HOUSES);
-            address = extras.getParcelable(MainActivity.ADDRESS);
-            houseType = extras.getParcelable(MainActivity.HOUSES_TYPES);
-            photoList = extras.getParcelableArrayList(MainActivity.PHOTOS);
-            realEstateAgents = extras.getParcelableArrayList(MainActivity.REAL_ESTATE_AGENT);
+        if(getIntent() != null){
+            idHouse = getIntent().getLongExtra(RealEstateListFragment.HOUSE_ID, 0);
+            realEstateAgents = new ArrayList<>(getIntent().getParcelableArrayListExtra(MainActivity.REAL_ESTATE_AGENT));
+            listHouseTypes = (HashMap<Long, HouseType>) getIntent().getSerializableExtra(MainActivity.HOUSES_TYPES);
         }
-
         Toolbar toolbar = findViewById(R.id.toolbar_detail_activity);
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null) getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        this.configureViewModels();
-        this.initializeHouseDetail();
-        this.initializeDescription();
-        this.initializeAddress();
         this.initializeRecyclerViewPointOfInterest();
-        this.getPointsOfInterest();
         this.configureSoldHomeButton();
-        this.configureViewPager();
+        this.configureViewModels();
     }
 
-    private void configureViewPager() {
-        if(photoList != null){
-            PicturePagerAdapter picturePagerAdapter = new PicturePagerAdapter(this, photoList, null);
-            vpHousePictureDetail.setAdapter(picturePagerAdapter);
-        }
+    private void configureViewPager(){
+        this.runOnUiThread(() -> {
+            if(photoList != null){
+                PicturePagerAdapter picturePagerAdapter = new PicturePagerAdapter(getApplicationContext(), photoList, null);
+                vpHousePictureDetail.setAdapter(picturePagerAdapter);
+            }
+        });
     }
 
     private void configureSoldHomeButton() {
         fabHomeSold.setOnClickListener(v -> {
             if(!house.getState().equals(STATE_SOLD)){
                 realEstateViewModel.updateSoldDate(new Date().getTime(), house.getIdHouse(), STATE_SOLD);
-                Toast.makeText(this,  "The house has been sold !", Toast.LENGTH_LONG).show();
+                Toast.makeText(this,  R.string.house_has_been_sold, Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this,  "The house is already sold !", Toast.LENGTH_LONG).show();
+                Toast.makeText(this,  R.string.house_is_already_sold, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -174,14 +167,16 @@ public class RealEstateDetailActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.edit){
-            Intent intent = new Intent(this, FormActivity.class);
+            Intent intent = new Intent(this, EditRealEstateActivity.class);
             Bundle bundle = new Bundle();
             bundle.putParcelable(MainActivity.HOUSES, house);
             bundle.putParcelable(MainActivity.ADDRESS, address);
-            bundle.putParcelable(MainActivity.REAL_ESTATE_AGENT, realEstateAgents.get((int) house.getIdRealEstateAgent()));
+            bundle.putParcelableArrayList(MainActivity.REAL_ESTATE_AGENT, realEstateAgents);
             bundle.putParcelableArrayList(MainActivity.ROOM_NUMBER, new ArrayList<>(listRoomNumber));
             bundle.putParcelableArrayList(MainActivity.POINT_OF_INTEREST, new ArrayList<>(listPointOfInterest));
+            bundle.putParcelableArrayList("HOUSE_POINT_OF_INTEREST", (ArrayList<HousePointOfInterest>) listHousePointOfInterest);
             bundle.putParcelableArrayList(MainActivity.PHOTOS, photoList);
+            bundle.putSerializable(MainActivity.HOUSES_TYPES, listHouseTypes);
             intent.putExtras(bundle);
             startActivityForResult(intent, REQUEST_CODE);
             return true;
@@ -193,18 +188,55 @@ public class RealEstateDetailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_CODE)
-            if(resultCode == RESULT_CODE)
+            if(resultCode == RESULT_CODE){
                 Toast.makeText(this, R.string.info_success_update, Toast.LENGTH_SHORT).show();
+            }
+    }
+
+    private void getPointOfInterestFromDatabase() {
+        AsyncTask.execute(() -> {
+            listHousePointOfInterest = realEstateViewModel.getHousePointOfInterestFromHouseId(house.getIdHouse());
+            for(HousePointOfInterest housePointOfInterest : listHousePointOfInterest) listPointOfInterest.add(realEstateViewModel.getPointOfInterestFromId(housePointOfInterest.getIdPointOfInterest()));
+            for(PointOfInterest pointOfInterest: listPointOfInterest) listTypePointOfInterest.put(pointOfInterest.getIdPointOfInterest(), realEstateViewModel.getTypePointOfInterest(pointOfInterest.getTypePointOfInterest()));
+            updateAdapterPointOfInterest();
+        });
+    }
+
+    private void updateAdapterPointOfInterest(){
+        this.runOnUiThread(() -> adapterPointOfInterest.notifyDataSetChanged());
     }
 
     private void configureViewModels(){
         ViewModelFactory mViewModelFactory = Injection.provideDaoViewModelFactory(this);
         this.realEstateViewModel = new ViewModelProvider(this, mViewModelFactory).get(RealEstateViewModel.class);
+        this.realEstateViewModel.getHouseFromId(idHouse).observe(this, new Observer<House>() {
+            @Override
+            public void onChanged(House houseData) {
+                house = houseData;
+                houseType = listHouseTypes.get(house.getIdHouseType());
+                initializeHouseDetail();
+                if(address == null){
+                    initializeDescription();
+                    initializeRoomNumber();
+                    initializeAddress(house.getIdAddress());
+                    getPhotoFromDatabase();
+                    getPointOfInterestFromDatabase();
+                }
+            }
+        });
     }
 
-    private void getPointsOfInterest() {
-        GetDataFromDatabaseAsyncTask dataFromDatabaseAsyncTask = new GetDataFromDatabaseAsyncTask(this);
-        dataFromDatabaseAsyncTask.execute();
+    private void initializeRoomNumber() {
+        this.realEstateViewModel.getLiveDataRoomNumberForHouse(house.getIdHouse()).observe(this, roomNumbers -> {
+            listRoomNumber = new ArrayList<>(roomNumbers);
+            tvKitchenDetail.setText(String.valueOf(roomNumbers.get(0).getNumber()));
+            tvBathroomDetail.setText(String.valueOf(roomNumbers.get(1).getNumber()));
+            tvBedroomDetail.setText(String.valueOf(roomNumbers.get(2).getNumber()));
+            tvLivingRoomDetail.setText(String.valueOf(roomNumbers.get(3).getNumber()));
+            tvToiletDetail.setText(String.valueOf(roomNumbers.get(4).getNumber()));
+            tvCellarDetail.setText(String.valueOf(roomNumbers.get(5).getNumber()));
+            tvPoolDetail.setText(String.valueOf(roomNumbers.get(6).getNumber()));
+        });
     }
 
     public void initializeRecyclerViewPointOfInterest(){
@@ -215,28 +247,32 @@ public class RealEstateDetailActivity extends AppCompatActivity {
         rvPointOfInterestDetail.setAdapter(adapterPointOfInterest);
     }
 
-    private void initializeAddress() {
-        if(!address.getStreet().equals("") || !address.getNumber().equals(""))
-            tvStreetNumberDetail.setText(String.format(this.getString(R.string.address_street_number), address.getStreet(), address.getNumber()));
-        else
-            tvStreetNumberDetail.setText(R.string.street_not_specified);
+    private void initializeAddress(long idAddress) {
+        this.realEstateViewModel.getAddress(idAddress).observe(this, addressData -> {
+            address = addressData;
+            if(!address.getStreet().equals("") || !address.getNumber().equals(""))
+                tvStreetNumberDetail.setText(String.format(this.getString(R.string.address_street_number), address.getStreet(), address.getNumber()));
+            else
+                tvStreetNumberDetail.setText(R.string.street_not_specified);
 
-        if(!address.getDistrict().equals(""))
-            tvDistrictDetail.setText(address.getDistrict());
-        else
-            tvDistrictDetail.setText(R.string.district_not_specified);
+            if(!address.getDistrict().equals(""))
+                tvDistrictDetail.setText(address.getDistrict());
+            else
+                tvDistrictDetail.setText(R.string.district_not_specified);
 
-        if(!address.getPostCode().equals("") || !address.getCity().equals(""))
-            tvPostcodeCityDetail.setText(String.format(getString(R.string.address_district_city), address.getPostCode(), address.getCity()));
-        else
-            tvPostcodeCityDetail.setText(R.string.city_not_specified);
+            if(!address.getPostCode().equals("") || !address.getCity().equals(""))
+                tvPostcodeCityDetail.setText(String.format(getString(R.string.address_district_city), address.getPostCode(), address.getCity()));
+            else
+                tvPostcodeCityDetail.setText(R.string.city_not_specified);
 
-        tvCountryDetail.setText(address.getCountry());
+            tvCountryDetail.setText(address.getCountry());
 
-        if(!address.getAdditionalInformation().equals(""))
-            tvAdditionnalInformationDetail.setText(address.getAdditionalInformation());
-        else
-            tvAdditionnalInformationDetail.setText(R.string.no_add_information);
+            if(!address.getAdditionalInformation().equals(""))
+                tvAdditionnalInformationDetail.setText(address.getAdditionalInformation());
+            else
+                tvAdditionnalInformationDetail.setText(R.string.no_add_information);
+        });
+
     }
 
     private void initializeDescription() {
@@ -244,16 +280,6 @@ public class RealEstateDetailActivity extends AppCompatActivity {
             tvDescriptionContentDetail.setText(R.string.description_not_specified);
         else
             tvDescriptionContentDetail.setText(house.getDescription());
-    }
-
-    private void initializeRoomNumber() {
-        tvKitchenDetail.setText(String.valueOf(listRoomNumber.get(0).getNumber()));
-        tvBathroomDetail.setText(String.valueOf(listRoomNumber.get(1).getNumber()));
-        tvBedroomDetail.setText(String.valueOf(listRoomNumber.get(2).getNumber()));
-        tvLivingRoomDetail.setText(String.valueOf(listRoomNumber.get(3).getNumber()));
-        tvToiletDetail.setText(String.valueOf(listRoomNumber.get(4).getNumber()));
-        tvCellarDetail.setText(String.valueOf(listRoomNumber.get(5).getNumber()));
-        tvPoolDetail.setText(String.valueOf(listRoomNumber.get(6).getNumber()));
     }
 
     private void initializeHouseDetail() {
@@ -277,40 +303,13 @@ public class RealEstateDetailActivity extends AppCompatActivity {
                 tvStateDetail.setText(String.format(getString(R.string.sold), TypeConverter.convertDateToString(DateConverter.toDate(houseDateState.getSoldDate()))));
 
         });
-
-        tvRealEstateAgentDetail.setText(String.format(getString(R.string.real_estate_agent_name), realEstateAgents.get((int) house.getIdRealEstateAgent()).getName(),  realEstateAgents.get((int) house.getIdRealEstateAgent()).getFirstname()));
+        tvRealEstateAgentDetail.setText(String.format(getString(R.string.real_estate_agent_name), realEstateAgents.get((int) house.getIdRealEstateAgent()-1).getName(),  realEstateAgents.get((int) house.getIdRealEstateAgent()-1).getFirstname()));
     }
 
-    private static class GetDataFromDatabaseAsyncTask extends AsyncTask<String, Void, String> {
-
-        WeakReference<RealEstateDetailActivity> weakReference;
-
-        GetDataFromDatabaseAsyncTask(RealEstateDetailActivity realEstateDetailActivity) {
-            this.weakReference = new WeakReference<>(realEstateDetailActivity);
-        }
-        @Override
-        protected String doInBackground(String... strings) {
-            weakReference.get().listHousePointOfInterest = weakReference.get().realEstateViewModel.getHousePointOfInterestFromHouseId(weakReference.get().house.getIdHouse());
-
-            for(HousePointOfInterest housePointOfInterest : weakReference.get().listHousePointOfInterest){
-                weakReference.get().listPointOfInterest.add(weakReference.get().realEstateViewModel.getPointOfInterestFromId(housePointOfInterest.getIdPointOfInterest()));
-            }
-
-            for(PointOfInterest pointOfInterest: weakReference.get().listPointOfInterest){
-                weakReference.get().listTypePointOfInterest.put(pointOfInterest.getIdPointOfInterest(), weakReference.get().realEstateViewModel.getTypePointOfInterest(pointOfInterest.getTypePointOfInterest()));
-            }
-
-            weakReference.get().listRoomNumber = weakReference.get().realEstateViewModel.getRoomNumberForHouse(weakReference.get().house.getIdHouse());
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String aVoid) {
-            super.onPostExecute(aVoid);
-            weakReference.get().adapterPointOfInterest.notifyDataSetChanged();
-            weakReference.get().initializeRoomNumber();
-        }
+    private void getPhotoFromDatabase(){
+        AsyncTask.execute(() -> {
+            photoList = (ArrayList<Photo>) realEstateViewModel.getPhotoFromIdHouse(house.getIdHouse());
+            configureViewPager();
+        });
     }
-
 }

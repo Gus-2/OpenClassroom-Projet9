@@ -39,6 +39,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     public final static String MIN_SURFACE = "MIN_SURFACE";
     public final static String MAX_SURFACE = "MAX_SURFACE";
     public final static String TAG_SEARCH_DIALOG = "search dialog";
+    public final static String HOUSE_ID = "HOUSE_ID";
     public static String DISTRICT = "DISTRICT";
 
     private BottomAppBar bottomAppBar;
@@ -49,8 +50,8 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     private List<House> listHousesDisplayed;
     private HashMap<Long, HouseType> hashMapHouseType;
     private HashMap<Long, Address> hashMapAddress;
-    private HashMap<Long, List<Photo>> hashMapPhoto;
-    private List<RealEstateAgent> listRealEstateAgent;
+    private HashMap<Long, ArrayList<Photo>> hashMapPhoto;
+    private ArrayList<RealEstateAgent> listRealEstateAgent;
     private List<Room> listRoom;
     private ArrayList<HouseType> listHousesTypes;
     private ArrayList<String> listDistrict = new ArrayList<>();
@@ -62,17 +63,20 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         listHouses = new ArrayList<>();
         listHousesDisplayed = new ArrayList<>();
         hashMapPhoto = new HashMap<>();
         hashMapHouseType = new HashMap<>();
         hashMapAddress = new HashMap<>();
         listRealEstateAgent = new ArrayList<>();
+        listRoom = new ArrayList<>();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.realestatelist_fragment, container, false);
+
         setHasOptionsMenu(true);
         recyclerView = result.findViewById(R.id.rc_fr_real_estate);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -87,12 +91,13 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
         sharedViewModel.getListData().observe(getViewLifecycleOwner(), databaseValue -> {
             listHouses = (List<House>) databaseValue.get(MainActivity.HOUSES);
             listHousesDisplayed = new ArrayList<>(listHouses);
-            hashMapPhoto = TypeConverter.convertPhotoListToHashMap((List<Photo>) databaseValue.get(MainActivity.PHOTOS));
+            hashMapPhoto = TypeConverter.getPhotoListToHashMap((List<Photo>) databaseValue.get(MainActivity.PHOTOS));
             listHousesTypes = (ArrayList<HouseType>) databaseValue.get(MainActivity.HOUSES_TYPES);
             hashMapHouseType = TypeConverter.convertHouseTypeListToHashMap(listHousesTypes);
             hashMapAddress = TypeConverter.convertAddressListToHashMap((List<Address>) databaseValue.get(MainActivity.ADDRESS));
-            listRealEstateAgent = (List<RealEstateAgent>) databaseValue.get(MainActivity.REAL_ESTATE_AGENT);
+            listRealEstateAgent = (ArrayList<RealEstateAgent>) databaseValue.get(MainActivity.REAL_ESTATE_AGENT);
             listRoom = (List<Room>) databaseValue.get(MainActivity.ROOM);
+            realEstateListAdapter = null;
             initializeAdapter();
         });
     }
@@ -192,7 +197,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     }
 
     private void initializeAdapter(){
-         realEstateListAdapter = new RealEstateListAdapter(getContext(), listHousesDisplayed, hashMapHouseType,
+        realEstateListAdapter = new RealEstateListAdapter(getContext(), listHousesDisplayed, hashMapHouseType,
                 hashMapAddress, hashMapPhoto, TypeConverter.listRoomToHashMap(listRoom), this);
         recyclerView.setAdapter(realEstateListAdapter);
     }
@@ -205,12 +210,10 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     @Override
     public void onItemClickt(int position) {
         Intent intent = new Intent(getActivity(), RealEstateDetailActivity.class);
-        House house = listHouses.get(position);
-        intent.putExtra(MainActivity.HOUSES, house);
-        intent.putExtra(MainActivity.HOUSES_TYPES, hashMapHouseType.get(house.getIdHouseType()));
-        intent.putParcelableArrayListExtra(MainActivity.PHOTOS, ((ArrayList<Photo>) hashMapPhoto.get(house.getIdHouse())));
-        intent.putParcelableArrayListExtra(MainActivity.REAL_ESTATE_AGENT, ((ArrayList<RealEstateAgent>) listRealEstateAgent));
-        intent.putExtra(MainActivity.ADDRESS, hashMapAddress.get(house.getIdAddress()));
+        House house = listHousesDisplayed.get(position);
+        intent.putExtra("HOUSE_ID", house.getIdHouse());
+        intent.putExtra(MainActivity.HOUSES_TYPES, hashMapHouseType);
+        intent.putParcelableArrayListExtra(MainActivity.REAL_ESTATE_AGENT, listRealEstateAgent);
         startActivity(intent);
     }
 

@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.models.pojo;
 
+import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -21,6 +22,17 @@ import androidx.room.PrimaryKey;
             childColumns = "id_house_type")
 })
 public class House implements Parcelable {
+
+    public static final String ID_HOUSE = "id_house";
+    public static final String ID_HOUSE_TYPE = "id_house_type";
+    public static final String ID_REAL_ESTATE_AGENT = "id_real_estate_agent";
+    public static final String ID_ADDRESS = "id_address";
+    public static final String PRICE = "price";
+    public static final String SURFACE = "surface";
+    public static final String DESCRIPTION = "description";
+    public static final String STATE = "state";
+    public static final String AVAILABLE_DATE = "available_date";
+    public static final String SOLD_DATE = "sold_date";
 
     @ColumnInfo(name = "id_house")
     @PrimaryKey(autoGenerate = true)
@@ -65,7 +77,10 @@ public class House implements Parcelable {
         this.description = description;
         this.state = state;
         this.availableDate = availableDate;
+        soldDate = -1;
     }
+
+    public House(){}
 
     protected House(Parcel in) {
         idHouse = in.readLong();
@@ -191,5 +206,20 @@ public class House implements Parcelable {
 
     public void setSoldDate(long soldDate) {
         this.soldDate = soldDate;
+    }
+
+    public static House fromContentValues(ContentValues values){
+        final House house = new House();
+        if(values.containsKey(ID_HOUSE)) house.setIdHouse(values.getAsLong(ID_HOUSE));
+        if(values.containsKey(ID_HOUSE_TYPE)) house.setIdHouseType(values.getAsLong(ID_HOUSE_TYPE));
+        if(values.containsKey(ID_REAL_ESTATE_AGENT)) house.setIdRealEstateAgent(values.getAsLong(ID_REAL_ESTATE_AGENT));
+        if(values.containsKey(ID_ADDRESS)) house.setIdAddress(values.getAsLong(ID_ADDRESS));
+        if(values.containsKey(PRICE)) house.setPrice(values.getAsDouble(PRICE));
+        if(values.containsKey(SURFACE)) house.setSurface(values.getAsDouble(SURFACE));
+        if(values.containsKey(DESCRIPTION)) house.setDescription(values.getAsString(DESCRIPTION));
+        if(values.containsKey(STATE)) house.setState(values.getAsString(STATE));
+        if(values.containsKey(AVAILABLE_DATE)) house.setAvailableDate(values.getAsLong(AVAILABLE_DATE));
+        if(values.containsKey(SOLD_DATE)) house.setSoldDate(values.getAsLong(SOLD_DATE));
+        return house;
     }
 }

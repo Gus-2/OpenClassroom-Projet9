@@ -26,4 +26,10 @@ public class HousePointOfInterestDataRepository {
     public List<HousePointOfInterest> getHousePointOfInterestFromHouseId(long idHouse){
         return housePointOfInterestDao.getHousePointOfInterestFromHouseId(idHouse);
     }
+
+    public LiveData<List<HousePointOfInterest>> getLiveDataHousePointOfInterestFromHouseId(long idHouse){
+        return housePointOfInterestDao.getLiveDataHousePointOfInterestFromHouseId(idHouse);
+    }
+
+
 }

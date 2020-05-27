@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.database.dao;
 
+import android.database.Cursor;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -17,6 +19,9 @@ public interface TypePointOfInterestDao {
     @Query("SELECT *  FROM type_point_of_interest")
     LiveData<List<TypePointOfInterest>> getTypePointOfInterest();
 
+    @Query("SELECT *  FROM type_point_of_interest")
+    Cursor getTypePointOfInterestWithCursor();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertTypePointOfInterest(TypePointOfInterest type);
 
@@ -25,5 +30,8 @@ public interface TypePointOfInterestDao {
 
     @Query("SELECT * FROM type_point_of_interest WHERE id_type_point_of_interest = :idTypePointOfInterest")
     TypePointOfInterest getTypePointOfInterestFromId(long idTypePointOfInterest);
+
+    @Query("SELECT * FROM type_point_of_interest WHERE id_type_point_of_interest = :idTypePointOfInterest")
+    Cursor getTypePointOfInterestFromIdWithCursor(long idTypePointOfInterest);
 
 }

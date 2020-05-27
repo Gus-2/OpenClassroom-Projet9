@@ -8,9 +8,9 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
 
 @Entity(tableName = "photos",
-        primaryKeys = {"id_house","num_order"},
         foreignKeys = {
                 @ForeignKey(entity = House.class,
                         parentColumns = "id_house",
@@ -18,7 +18,11 @@ import androidx.room.ForeignKey;
         })
 public class Photo implements Parcelable {
 
-    @ColumnInfo(name = "id_house")
+    @ColumnInfo(name = "id_photo")
+    @PrimaryKey(autoGenerate = true)
+    private long idPhoto;
+
+    @ColumnInfo(name = "id_house", index = true)
     @NonNull
     private long idHouse;
 
@@ -31,10 +35,6 @@ public class Photo implements Parcelable {
     @ColumnInfo(name = "specific_room")
     private String specificRoom;
 
-    @ColumnInfo(name = "num_order")
-    @NonNull
-    private int numOrder;
-
     @NonNull
     @ColumnInfo(name = "is_main_picture")
     private boolean isMainPicture;
@@ -45,18 +45,18 @@ public class Photo implements Parcelable {
     @NonNull
     private String childPath;
 
-    public Photo(int numOrder) {
-        this.numOrder = numOrder;
+    public Photo() {
         this.isMainPicture = false;
         idRoom = -1;
+        numOrderRoom = -1;
     }
 
     protected Photo(Parcel in) {
+        idPhoto = in.readLong();
         idHouse = in.readLong();
         idRoom = in.readLong();
         numOrderRoom = in.readLong();
         specificRoom = in.readString();
-        numOrder = in.readInt();
         isMainPicture = in.readByte() != 0;
         path = in.readString();
         childPath = in.readString();
@@ -64,11 +64,11 @@ public class Photo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(idPhoto);
         dest.writeLong(idHouse);
         dest.writeLong(idRoom);
         dest.writeLong(numOrderRoom);
         dest.writeString(specificRoom);
-        dest.writeInt(numOrder);
         dest.writeByte((byte) (isMainPicture ? 1 : 0));
         dest.writeString(path);
         dest.writeString(childPath);
@@ -90,6 +90,14 @@ public class Photo implements Parcelable {
             return new Photo[size];
         }
     };
+
+    public long getIdPhoto() {
+        return idPhoto;
+    }
+
+    public void setIdPhoto(long idPhoto) {
+        this.idPhoto = idPhoto;
+    }
 
     public long getIdHouse() {
         return idHouse;
@@ -121,14 +129,6 @@ public class Photo implements Parcelable {
 
     public void setSpecificRoom(String specificRoom) {
         this.specificRoom = specificRoom;
-    }
-
-    public int getNumOrder() {
-        return numOrder;
-    }
-
-    public void setNumOrder(int numOrder) {
-        this.numOrder = numOrder;
     }
 
     public boolean isMainPicture() {

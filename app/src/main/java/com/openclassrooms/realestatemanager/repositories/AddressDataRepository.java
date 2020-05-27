@@ -15,8 +15,12 @@ public class AddressDataRepository {
         this.addressDao = addressDao;
     }
 
-    public LiveData<Address> getAddress(int idAddress){
+    public LiveData<Address> getAddress(long idAddress){
         return addressDao.getAddress(idAddress);
+    }
+
+    public Address getAddressFromId(long idAddress){
+        return addressDao.getAddressFromId(idAddress);
     }
 
     public List<Address> getAddress(){

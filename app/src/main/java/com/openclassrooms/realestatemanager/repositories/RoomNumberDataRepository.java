@@ -26,4 +26,8 @@ public class RoomNumberDataRepository {
     public List<RoomNumber> getRoomForHouse(long idHouse){
         return roomNumberDao.getRoomNumberForHouse(idHouse);
     }
+
+    public LiveData<List<RoomNumber>> getLiveDataRoomNumberForHouse(long idHouse){
+        return roomNumberDao.getLiveDataRoomNumberForHouse(idHouse);
+    }
 }

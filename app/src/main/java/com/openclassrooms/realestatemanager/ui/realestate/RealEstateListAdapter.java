@@ -18,6 +18,8 @@ import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 
+import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,7 +30,7 @@ public class RealEstateListAdapter extends RecyclerView.Adapter<RealEstateListAd
     private List<House> houses;
     private HashMap<Long, HouseType> hashMapHouseType;
     private HashMap<Long, Address> hashMapAddress;
-    private HashMap<Long, List<Photo>> hashMapPhoto;
+    private HashMap<Long, ArrayList<Photo>> hashMapPhoto;
     private HashMap<Long, String> hashMapRoom;
     private Context context;
     private OnItemClickListener onItemClickListener;
@@ -58,7 +60,7 @@ public class RealEstateListAdapter extends RecyclerView.Adapter<RealEstateListAd
         }
     }
 
-    RealEstateListAdapter(Context context, List<House> houses, HashMap<Long, HouseType> hashMapHouseType, HashMap<Long, Address> hashMapAddress, HashMap<Long, List<Photo>> listPhoto, HashMap<Long, String> hashMapRoom, OnItemClickListener onItemClickListener) {
+    RealEstateListAdapter(Context context, List<House> houses, HashMap<Long, HouseType> hashMapHouseType, HashMap<Long, Address> hashMapAddress, HashMap<Long, ArrayList<Photo>> listPhoto, HashMap<Long, String> hashMapRoom, OnItemClickListener onItemClickListener) {
         this.context = context;
         this.houses = houses;
         this.hashMapHouseType = hashMapHouseType;

@@ -179,7 +179,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         sharedViewModel.getListData().observe(getViewLifecycleOwner(), databaseValue -> {
             listHouses = (List<House>) databaseValue.get(MainActivity.HOUSES);
             listHousesDisplayed = new ArrayList<>(listHouses);
-            hashMapPhoto = TypeConverter.convertPhotoListToHashMap((List<Photo>) databaseValue.get(MainActivity.PHOTOS));
+            //hashMapPhoto = TypeConverter.convertPhotoListToHashMap((List<Photo>) databaseValue.get(MainActivity.PHOTOS));
             listHousesTypes = (ArrayList<HouseType>) databaseValue.get(MainActivity.HOUSES_TYPES);
             hashMapHouseType = TypeConverter.convertHouseTypeListToHashMap(listHousesTypes);
             hashMapAddress = TypeConverter.convertAddressListToHashMap((List<Address>) databaseValue.get(MainActivity.ADDRESS));

@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.database.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -18,4 +19,10 @@ public interface PhotoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertPhotos(Photo photo);
+
+    @Query("SELECT * FROM photos WHERE id_house = :idHouse")
+    List<Photo> getPhotoFromIdHouse(long idHouse);
+
+    @Query("SELECT * FROM photos WHERE id_house = :idHouse")
+    LiveData<List<Photo>> getLiveDataPhotoFromIdHouse(long idHouse);
 }

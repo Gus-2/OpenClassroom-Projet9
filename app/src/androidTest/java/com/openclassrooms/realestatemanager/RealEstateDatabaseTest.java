@@ -36,7 +36,7 @@ public class RealEstateDatabaseTest {
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
-
+/*
     @Before
     public void createDb() {
         Context context = ApplicationProvider.getApplicationContext();
@@ -227,4 +227,7 @@ public class RealEstateDatabaseTest {
     public void closeDb() throws Exception {
         realEstateDatabase.close();
     }
+
+    */
+
 }

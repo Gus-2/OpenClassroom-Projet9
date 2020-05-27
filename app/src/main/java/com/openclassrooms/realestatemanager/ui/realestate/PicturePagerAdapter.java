@@ -16,18 +16,22 @@ import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.tools.DataConverter;
 import com.openclassrooms.realestatemanager.tools.Utils;
 
+import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 
 public class PicturePagerAdapter extends PagerAdapter {
     private Context context;
-    private List<Photo> listPhoto;
+    private ArrayList<Photo> listPhoto;
     private HashMap<Long, String> hashMapRoom;
+    private int size;
 
-    public PicturePagerAdapter(Context context, List<Photo> listPhoto, HashMap<Long, String> hashMapRoom){
+    public PicturePagerAdapter(Context context, ArrayList<Photo> listPhoto, HashMap<Long, String> hashMapRoom){
         this.context = context;
         this.listPhoto = listPhoto;
         this.hashMapRoom = hashMapRoom;
+        size =listPhoto.size();
     }
     @Override
     public int getCount() {
@@ -51,9 +55,9 @@ public class PicturePagerAdapter extends PagerAdapter {
         imageView = itemView.findViewById(R.id.slider_image_view);
         tvDescription = itemView.findViewById(R.id.tv_description_picture);
 
-        imageView.setImageBitmap(Utils.loadImageFromStorage(listPhoto.get(position).getPath(), listPhoto.get(position).getChildPath()));
+        Photo photo = listPhoto.get(position);
+        imageView.setImageBitmap(Utils.loadImageFromStorage(photo.getPath(), photo.getChildPath()));
         if(hashMapRoom != null){
-            Photo photo = listPhoto.get(position);
             if(photo.getIdRoom() == -1){
                 tvDescription.setText(photo.getSpecificRoom());
             }else{

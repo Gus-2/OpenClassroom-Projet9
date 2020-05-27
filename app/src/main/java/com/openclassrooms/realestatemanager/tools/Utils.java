@@ -79,12 +79,11 @@ public class Utils {
 
     public static String saveToInternalStorage(String childPath, Bitmap bitmapImage, Context context){
         ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File directory = cw.getDir("HOUSES_PICTURES", Context.MODE_PRIVATE);
         File mypath=new File(directory,childPath);
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(mypath);
-            // Use the compress method on the BitMap object to write image to the OutputStream
             bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
         } catch (Exception e) {
             e.printStackTrace();

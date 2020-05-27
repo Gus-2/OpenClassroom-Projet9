@@ -58,7 +58,7 @@ public class RealEstateViewModel extends ViewModel {
     }
 
     //Address
-    public LiveData<Address> getAddress(int address) {
+    public LiveData<Address> getAddress(long address) {
         return addressDataRepository.getAddress(address);
     }
 
@@ -68,6 +68,10 @@ public class RealEstateViewModel extends ViewModel {
 
     public long insertAddress(Address address){
         return  addressDataRepository.insertAddress(address);
+    }
+
+    public Address getAddressFromId(long idAddress){
+        return addressDataRepository.getAddressFromId(idAddress);
     }
 
     //House
@@ -89,6 +93,10 @@ public class RealEstateViewModel extends ViewModel {
         return houseDataRepository.getHouseState(idHouse);
     }
 
+    public LiveData<House> getHouseFromId(long idHouse){
+        return houseDataRepository.getHouseFromId(idHouse);
+    }
+
     // House's point of interest
     public LiveData<List<HousePointOfInterest>> getHousePointOfInterest() {
         return housePointOfInterestDataRepository.getHousePointOfInterest();
@@ -104,6 +112,10 @@ public class RealEstateViewModel extends ViewModel {
         return housePointOfInterestDataRepository.getHousePointOfInterestFromHouseId(idHouse);
     }
 
+    public LiveData<List<HousePointOfInterest>> getLiveDataHousePointOfInterestFromHouseId(long idHouse){
+        return housePointOfInterestDataRepository.getLiveDataHousePointOfInterestFromHouseId(idHouse);
+    }
+
     // House's type
     public List<HouseType> getHouseType() {
         return houseTypeDataRepository.getHouseType();
@@ -115,6 +127,10 @@ public class RealEstateViewModel extends ViewModel {
         });
     }
 
+    public HouseType getHouseTypeFromId(long idHouseType){
+        return houseTypeDataRepository.getHouseTypeFromId(idHouseType);
+    }
+
     // Photo
     public List<Photo> getPhoto() {
         return photoDataRepository.getPhotos();
@@ -124,6 +140,14 @@ public class RealEstateViewModel extends ViewModel {
         executor.execute(() -> {
             photoDataRepository.insertPhoto(photo);
         });
+    }
+
+    public List<Photo> getPhotoFromIdHouse(long idHouse){
+        return photoDataRepository.getPhotoFromIdHouse(idHouse);
+    }
+
+    public LiveData<List<Photo>> getLiveDataPhotoFromIdHouse(long idHouse){
+        return photoDataRepository.getLiveDataPhotoFromIdHouse(idHouse);
     }
 
     // Point of interest
@@ -174,6 +198,10 @@ public class RealEstateViewModel extends ViewModel {
 
     public List<RoomNumber> getRoomNumberForHouse(long idHouse){
         return roomNumberDataRepository.getRoomForHouse(idHouse);
+    }
+
+    public LiveData<List<RoomNumber>> getLiveDataRoomNumberForHouse(long idHouse){
+        return roomNumberDataRepository.getLiveDataRoomNumberForHouse(idHouse);
     }
 
     // Type Point Of Interest

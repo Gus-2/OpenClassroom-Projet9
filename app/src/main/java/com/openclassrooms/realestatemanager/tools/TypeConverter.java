@@ -9,8 +9,10 @@ import com.openclassrooms.realestatemanager.models.pojo.Room;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -51,16 +53,21 @@ public class TypeConverter {
         return hashMapAddress;
     }
 
-    public static HashMap<Long, List<Photo>> convertPhotoListToHashMap(List<Photo> listPhoto){
-        HashMap<Long, List<Photo>> hashMapPhoto = new HashMap<>();
-        if(listPhoto!= null){
+    public static HashMap<Long, ArrayList<Photo>> getPhotoListToHashMap(List<Photo> listPhoto){
+
+        HashMap<Long, ArrayList<Photo>> hashMapPhoto = new HashMap<>();
+        if(listPhoto != null){
             for(Photo photo : listPhoto){
                 if(hashMapPhoto.get(photo.getIdHouse()) == null){
-                    List<Photo> photos = new ArrayList<>();
+                    ArrayList<Photo> photos = new ArrayList<>();
                     photos.add(photo);
                     hashMapPhoto.put(photo.getIdHouse(), photos);
                 }else{
-                    hashMapPhoto.get(photo.getIdHouse()).add(photo);
+                    if(photo.isMainPicture()){
+                        hashMapPhoto.get(photo.getIdHouse()).add(0, photo);
+                    }else{
+                        hashMapPhoto.get(photo.getIdHouse()).add(photo);
+                    }
                 }
             }
         }

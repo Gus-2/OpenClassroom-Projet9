@@ -30,4 +30,8 @@ public class HouseDataRepository {
     public LiveData<HouseDateState> getHouseState(long idHouse){
         return houseDao.getHouseSate(idHouse);
     }
+
+    public LiveData<House> getHouseFromId(long idHouse){
+        return houseDao.getHouseFromId(idHouse);
+    }
 }

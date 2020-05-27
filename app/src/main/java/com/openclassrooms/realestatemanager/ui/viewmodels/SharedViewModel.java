@@ -17,5 +17,4 @@ public class SharedViewModel extends ViewModel {
     public LiveData<HashMap<String, Object>> getListData() {
         return listData;
     }
-
 }

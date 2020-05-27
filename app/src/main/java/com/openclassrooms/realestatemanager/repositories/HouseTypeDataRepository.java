@@ -20,4 +20,8 @@ public class HouseTypeDataRepository {
     public long insertHouseType(HouseType houseType){
         return houseTypeDao.insertHouseType(houseType);
     }
+
+    public HouseType getHouseTypeFromId(long idHouseType){
+        return houseTypeDao.getHouseTypeFromId(idHouseType);
+    }
 }
