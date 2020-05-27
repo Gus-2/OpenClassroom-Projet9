@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.ui.realestateform;
 import android.app.Notification;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -39,12 +40,13 @@ import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
 import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
-import com.openclassrooms.realestatemanager.models.pojoapi.Coordinates;
 import com.openclassrooms.realestatemanager.tools.DataConverter;
+import com.openclassrooms.realestatemanager.tools.PictureDownloader;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
-import com.openclassrooms.realestatemanager.tools.Utils;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RetrofitViewModel;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.lang.ref.WeakReference;
 import java.text.DateFormat;
@@ -62,7 +64,9 @@ import java.util.concurrent.Future;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.observers.DisposableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.openclassrooms.realestatemanager.tools.App.CHANNEL_1_ID;
 
@@ -131,8 +135,11 @@ public class FormActivity extends AppCompatActivity {
     @BindView(R.id.rv_house_picture)
     RecyclerView recyclerHousePicture;
 
+    public static final String URL = "https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=350x300&maptype=roadmap&markers=color:red|%4.6f,%4.6f&key=AIzaSyBk5oJO4prnmEvqvzwO6koHtHDLXBlfByA";
     private ExecutorService executorService;
-    private DisposableObserver disposableObserver;
+    private Disposable coordinatesObserver;
+    private Disposable mapsImageObserver;
+    private Bitmap photoMap = null;
     private AdapterPointOfInterest adapterPointOfInterest;
     private AdapterPicturesHouse adapterHousePicture;
     private RealEstateViewModel realEstateViewModel;
@@ -419,8 +426,10 @@ public class FormActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         executorService.shutdownNow();
-        if(disposableObserver!= null)
-        disposableObserver.dispose();
+        if(coordinatesObserver!= null && !coordinatesObserver.isDisposed())
+            coordinatesObserver.dispose();
+        if(mapsImageObserver!= null && !mapsImageObserver.isDisposed())
+            mapsImageObserver.dispose();
     }
 
     public void showNotification(){
@@ -442,25 +451,37 @@ public class FormActivity extends AppCompatActivity {
         insertIntoDatabase.execute();
     }
 
-    private void getLongitudeAndLatitudeForAddress(String address){
-        disposableObserver = retrofitViewModel.getCoordinates(address).subscribeWith(new DisposableObserver<Coordinates>() {
-            @Override
-            public void onNext(Coordinates coordinates) {
-                if(coordinates.getResults().size() != 0){
-                        newAddressToInsert.setLatitude(coordinates.getResults().get(0).getGeometry().getLocation().getLat());
-                        newAddressToInsert.setLongitude(coordinates.getResults().get(0).getGeometry().getLocation().getLng());
-                }
-                insertIntoDatabase();
-            }
+    private void getLongitudeAndLatitudeForAddress(String address) {
+        coordinatesObserver = retrofitViewModel.getCoordinates(address)
+                .subscribe(coordinates -> {
+                    if(coordinates.getResults().size() != 0){
+                        Double lat = coordinates.getResults().get(0).getGeometry().getLocation().getLat();
+                        Double lon = coordinates.getResults().get(0).getGeometry().getLocation().getLng();
+                        newAddressToInsert.setLatitude(lat);
+                        newAddressToInsert.setLongitude(lon);
+                        getMapPicture(lat, lon);
+                    }else{
+                        insertIntoDatabase();
+                    }
+                });
+    }
 
-            @Override
-            public void onError(Throwable e) {
-                Toast.makeText(getApplicationContext(), R.string.couldnt_get_place_location, Toast.LENGTH_SHORT).show();
-            }
+    private void getMapPicture(Double lat, Double lon){
+        Picasso.with(getApplicationContext())
+                .load(String.format(URL, lat, lon))
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        photoMap = bitmap;
+                        insertIntoDatabase();
+                    }
 
-            @Override
-            public void onComplete() {  }
-        });
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) { }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) { }
+                });
     }
 
     private static class InsertIntoDatabase extends AsyncTask<Void, Void, Void>{
@@ -473,14 +494,24 @@ public class FormActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... strings) {
             FormActivity formActivity = weakReference.get();
+
             long idAddress = formActivity.realEstateViewModel.insertAddress(formActivity.newAddressToInsert);
             formActivity.houseToInsert.setIdAddress(idAddress);
+
+            if(formActivity.photoMap != null){
+                String childPath = idAddress + "_map_image.jpg";
+                String parentPathPlacePreview = PictureDownloader.saveToInternalStorage(childPath, formActivity.photoMap, formActivity.getApplicationContext(), PictureDownloader.MAP_IMAGE);
+                formActivity.houseToInsert.setChildPathPlacePreview(childPath);
+                formActivity.houseToInsert.setParentPathPlacePreview(parentPathPlacePreview);
+            }
+
             long houseId = formActivity.realEstateViewModel.insertHouse(formActivity.houseToInsert);
 
             for(PointOfInterest pointOfInterest: formActivity.listPointOfInterests){
                 long pointOfInterestId = formActivity.realEstateViewModel.insertPointOfInterest(pointOfInterest);
                 formActivity.realEstateViewModel.insertHousePointOfInterest(new HousePointOfInterest(houseId, pointOfInterestId));
             }
+
             for(RoomNumber roomNumber : formActivity.roomNumbersList){
                 roomNumber.setIdHouse(houseId);
                 formActivity.realEstateViewModel.insertRoomNumber(roomNumber);
@@ -489,7 +520,7 @@ public class FormActivity extends AppCompatActivity {
             for(Uri uri : formActivity.listUri){
                 formActivity.hashMapUriPhoto.get(uri).setIdHouse(houseId);
                 String childPath = houseId + "" + i + ".jpg";
-                String path = Utils.saveToInternalStorage(childPath, formActivity.hashMapUriBitmap.get(uri), formActivity.getApplicationContext());
+                String path = PictureDownloader.saveToInternalStorage(childPath, formActivity.hashMapUriBitmap.get(uri), formActivity.getApplicationContext(), PictureDownloader.HOUSE_PICTURES);
                 formActivity.hashMapUriPhoto.get(uri).setPath(path);
                 formActivity.hashMapUriPhoto.get(uri).setChildPath(childPath);
                 formActivity.realEstateViewModel.insertPhoto(formActivity.hashMapUriPhoto.get(uri));
@@ -530,4 +561,6 @@ public class FormActivity extends AppCompatActivity {
             formActivity.initializeDropDownRealEstateAgent();
         }
     }
+
+
 }

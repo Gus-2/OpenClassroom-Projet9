@@ -28,7 +28,6 @@ public class RetrofitService {
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build();
 
-
             jsonPlaceHolderApi = retrofitDetailsPlaces.create(JsonPlaceHolderApi.class);
         }
 

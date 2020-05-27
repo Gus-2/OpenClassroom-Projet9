@@ -14,6 +14,7 @@ import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.tools.DataConverter;
+import com.openclassrooms.realestatemanager.tools.PictureDownloader;
 import com.openclassrooms.realestatemanager.tools.Utils;
 
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class PicturePagerAdapter extends PagerAdapter {
         tvDescription = itemView.findViewById(R.id.tv_description_picture);
 
         Photo photo = listPhoto.get(position);
-        imageView.setImageBitmap(Utils.loadImageFromStorage(photo.getPath(), photo.getChildPath()));
+        imageView.setImageBitmap(PictureDownloader.loadImageFromStorage(photo.getPath(), photo.getChildPath()));
         if(hashMapRoom != null){
             if(photo.getIdRoom() == -1){
                 tvDescription.setText(photo.getSpecificRoom());

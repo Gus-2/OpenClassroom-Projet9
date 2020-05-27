@@ -77,36 +77,7 @@ public class Utils {
         return connectionManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
     }
 
-    public static String saveToInternalStorage(String childPath, Bitmap bitmapImage, Context context){
-        ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
-        File directory = cw.getDir("HOUSES_PICTURES", Context.MODE_PRIVATE);
-        File mypath=new File(directory,childPath);
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(mypath);
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return directory.getAbsolutePath();
-    }
 
-    public static Bitmap loadImageFromStorage(String path, String childPath) {
-        try {
-            File f=new File(path, childPath);
-            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
-            return b;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     public static int getNumOrderRoom(HashMap<Uri, Photo> hashMapRoom, long roomId){
         int i = 0;

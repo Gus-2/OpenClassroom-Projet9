@@ -51,8 +51,6 @@ public class Address implements Parcelable {
         this.country = country;
         this.postCode = postCode;
         this.additionalInformation = additionalInformation;
-        this.latitude = null;
-        this.longitude = null;
     }
 
     protected Address(Parcel in) {

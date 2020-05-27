@@ -39,6 +39,7 @@ import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojoapi.Coordinates;
 import com.openclassrooms.realestatemanager.tools.DataConverter;
 import com.openclassrooms.realestatemanager.tools.DateConverter;
+import com.openclassrooms.realestatemanager.tools.PictureDownloader;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.tools.Utils;
 import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
@@ -186,7 +187,7 @@ public class EditRealEstateActivity extends AppCompatActivity {
             Uri uri = Uri.parse(photo.getPath() + "" + photo.getChildPath());
             listUri.add(uri);
             hashMapUriPhoto.put(uri, photo);
-            hashMapUriBitmap.put(uri, Utils.loadImageFromStorage(photo.getPath(), photo.getChildPath()));
+            hashMapUriBitmap.put(uri, PictureDownloader.loadImageFromStorage(photo.getPath(), photo.getChildPath()));
         }
 
         AsyncTask.execute(new Runnable() {
@@ -471,8 +472,8 @@ public class EditRealEstateActivity extends AppCompatActivity {
                 if(weakReference.get().listUriToUpdate.contains(uri)){
                     weakReference.get().hashMapUriPhoto.get(uri).setIdHouse(weakReference.get().house.getIdHouse());
                     String childPath = weakReference.get().house.getIdHouse() + "" + i + ".jpg";
-                    String path = Utils.saveToInternalStorage(childPath, weakReference.get().hashMapUriBitmap.get(uri), weakReference.get().getApplicationContext());
-                    weakReference.get().hashMapUriPhoto.get(uri).setPath(path);
+                    //String path = PictureDownloader.saveToInternalStorage(childPath, weakReference.get().hashMapUriBitmap.get(uri), weakReference.get().getApplicationContext());
+                    //weakReference.get().hashMapUriPhoto.get(uri).setPath(path);
                     weakReference.get().hashMapUriPhoto.get(uri).setChildPath(childPath);
                     weakReference.get().realEstateViewModel.insertPhoto(weakReference.get().hashMapUriPhoto.get(uri));
                     i++;

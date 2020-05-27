@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
 import com.openclassrooms.realestatemanager.R;
@@ -33,6 +35,7 @@ import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
 import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 import com.openclassrooms.realestatemanager.tools.DateConverter;
+import com.openclassrooms.realestatemanager.tools.PictureDownloader;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
 import com.openclassrooms.realestatemanager.ui.realestate.PicturePagerAdapter;
@@ -105,6 +108,9 @@ public class RealEstateDetailActivity extends AppCompatActivity {
 
     @BindView(R.id.vp_real_estate_detail)
     ViewPager vpHousePictureDetail;
+
+    @BindView(R.id.cv_map_detail)
+    MaterialCardView cvMapDetail;
 
     private long idHouse;
     private House house;
@@ -272,7 +278,6 @@ public class RealEstateDetailActivity extends AppCompatActivity {
             else
                 tvAdditionnalInformationDetail.setText(R.string.no_add_information);
         });
-
     }
 
     private void initializeDescription() {
@@ -304,6 +309,12 @@ public class RealEstateDetailActivity extends AppCompatActivity {
 
         });
         tvRealEstateAgentDetail.setText(String.format(getString(R.string.real_estate_agent_name), realEstateAgents.get((int) house.getIdRealEstateAgent()-1).getName(),  realEstateAgents.get((int) house.getIdRealEstateAgent()-1).getFirstname()));
+
+        if(house.getChildPathPlacePreview() != null){
+            ivMapDetail.setImageBitmap(PictureDownloader.loadImageFromStorage(house.getParentPathPlacePreview(), house.getChildPathPlacePreview()));
+        }else{
+            cvMapDetail.setVisibility(View.GONE);
+        }
     }
 
     private void getPhotoFromDatabase(){

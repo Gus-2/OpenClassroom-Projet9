@@ -6,6 +6,8 @@ import com.openclassrooms.realestatemanager.models.pojoapi.Coordinates;
 import com.openclassrooms.realestatemanager.repositories.CoordinatesRepository;
 
 import io.reactivex.Observable;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
 
 public class RetrofitViewModel extends ViewModel {
 

@@ -33,6 +33,8 @@ public class House implements Parcelable {
     public static final String STATE = "state";
     public static final String AVAILABLE_DATE = "available_date";
     public static final String SOLD_DATE = "sold_date";
+    public static final String PARENT_PATH_PLACE_PREVIEW = "parent_path_place_preview";
+    public static final String CHILD_PATH_PLACE_PREVIEW = "child_path_place_preview";
 
     @ColumnInfo(name = "id_house")
     @PrimaryKey(autoGenerate = true)
@@ -69,6 +71,10 @@ public class House implements Parcelable {
     @ColumnInfo(name = "sold_date")
     private long soldDate;
 
+    private String parentPathPlacePreview;
+
+    private String childPathPlacePreview;
+
     public House(@NonNull long idHouseType, long idRealEstateAgent, double price, double surface, @NonNull String description, @NonNull String state, long availableDate) {
         this.idHouseType = idHouseType;
         this.idRealEstateAgent = idRealEstateAgent;
@@ -93,6 +99,8 @@ public class House implements Parcelable {
         state = in.readString();
         availableDate = in.readLong();
         soldDate = in.readLong();
+        parentPathPlacePreview = in.readString();
+        childPathPlacePreview = in.readString();
     }
 
     @Override
@@ -107,6 +115,8 @@ public class House implements Parcelable {
         dest.writeString(state);
         dest.writeLong(availableDate);
         dest.writeLong(soldDate);
+        dest.writeString(parentPathPlacePreview);
+        dest.writeString(childPathPlacePreview);
     }
 
     @Override
@@ -206,6 +216,22 @@ public class House implements Parcelable {
 
     public void setSoldDate(long soldDate) {
         this.soldDate = soldDate;
+    }
+
+    public String getParentPathPlacePreview() {
+        return parentPathPlacePreview;
+    }
+
+    public void setParentPathPlacePreview(String parentPathPlacePreview) {
+        this.parentPathPlacePreview = parentPathPlacePreview;
+    }
+
+    public String getChildPathPlacePreview() {
+        return childPathPlacePreview;
+    }
+
+    public void setChildPathPlacePreview(String childPathPlacePreview) {
+        this.childPathPlacePreview = childPathPlacePreview;
     }
 
     public static House fromContentValues(ContentValues values){
