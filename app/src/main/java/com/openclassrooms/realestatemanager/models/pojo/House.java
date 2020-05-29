@@ -75,6 +75,8 @@ public class House implements Parcelable {
 
     private String childPathPlacePreview;
 
+    private String videoPath;
+
     public House(@NonNull long idHouseType, long idRealEstateAgent, double price, double surface, @NonNull String description, @NonNull String state, long availableDate) {
         this.idHouseType = idHouseType;
         this.idRealEstateAgent = idRealEstateAgent;
@@ -101,6 +103,7 @@ public class House implements Parcelable {
         soldDate = in.readLong();
         parentPathPlacePreview = in.readString();
         childPathPlacePreview = in.readString();
+        videoPath = in.readString();
     }
 
     @Override
@@ -117,6 +120,7 @@ public class House implements Parcelable {
         dest.writeLong(soldDate);
         dest.writeString(parentPathPlacePreview);
         dest.writeString(childPathPlacePreview);
+        dest.writeString(videoPath);
     }
 
     @Override
@@ -232,6 +236,14 @@ public class House implements Parcelable {
 
     public void setChildPathPlacePreview(String childPathPlacePreview) {
         this.childPathPlacePreview = childPathPlacePreview;
+    }
+
+    public String getVideoPath() {
+        return videoPath;
+    }
+
+    public void setVideoPath(String videoPath) {
+        this.videoPath = videoPath;
     }
 
     public static House fromContentValues(ContentValues values){

@@ -76,7 +76,6 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.realestatelist_fragment, container, false);
-
         setHasOptionsMenu(true);
         recyclerView = result.findViewById(R.id.rc_fr_real_estate);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -229,32 +228,38 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
 
         if(houseType != -1){
             for(House house : listHouses)
-                if(house.getIdHouseType() == houseType) listHousesDisplayed.add(house);
+                if(house.getIdHouseType() == houseType)
+                    listHousesDisplayed.add(house);
         }
 
         if(maxSurface != -1){
             for(House house : listHouses)
-                if(house.getSurface() <= maxSurface && house.getSurface() >= minSurface && !listHousesDisplayed.contains(house)) listHousesDisplayed.add(house);
+                if(house.getSurface() <= maxSurface && house.getSurface() >= minSurface && !listHousesDisplayed.contains(house))
+                    listHousesDisplayed.add(house);
         }
 
         if(maxPrice != -1){
             for(House house : listHouses)
-                if(house.getPrice() <= maxPrice && house.getPrice() >= minPrice && !listHousesDisplayed.contains(house)) listHousesDisplayed.add(house);
+                if(house.getPrice() <= maxPrice && house.getPrice() >= minPrice && !listHousesDisplayed.contains(house))
+                    listHousesDisplayed.add(house);
         }
 
         if(availabilityDate != 0){
             for(House house : listHouses)
-                if(house.getAvailableDate() > availabilityDate && !listHousesDisplayed.contains(house)) listHousesDisplayed.add(house);
+                if(house.getAvailableDate() >= availabilityDate && !listHousesDisplayed.contains(house))
+                    listHousesDisplayed.add(house);
         }
 
         if(!district.equals("")){
             for(House house : listHouses)
-                if(hashMapAddress.get(house.getIdAddress()).getDistrict().equals(district) && !listHousesDisplayed.contains(house)) listHousesDisplayed.add(house);
+                if(hashMapAddress.get(house.getIdAddress()).getDistrict().equals(district) && !listHousesDisplayed.contains(house))
+                    listHousesDisplayed.add(house);
         }
 
         if(numberPhoto > 0){
             for(House house : listHouses)
-                if(hashMapPhoto.get(house.getIdHouse()) != null && hashMapPhoto.get(house.getIdHouse()).size() >= numberPhoto && !listHousesDisplayed.contains(house)) listHousesDisplayed.add(house);
+                if(hashMapPhoto.get(house.getIdHouse()) != null && hashMapPhoto.get(house.getIdHouse()).size() >= numberPhoto && !listHousesDisplayed.contains(house))
+                    listHousesDisplayed.add(house);
         }
 
         realEstateListAdapter.notifyDataSetChanged();

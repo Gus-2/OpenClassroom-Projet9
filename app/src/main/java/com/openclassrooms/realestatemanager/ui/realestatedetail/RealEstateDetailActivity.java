@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.ui.realestatedetail;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,6 +20,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
@@ -35,7 +43,7 @@ import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
 import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 import com.openclassrooms.realestatemanager.tools.DateConverter;
-import com.openclassrooms.realestatemanager.tools.PictureDownloader;
+import com.openclassrooms.realestatemanager.tools.ImageUtils;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
 import com.openclassrooms.realestatemanager.ui.realestate.PicturePagerAdapter;
@@ -44,6 +52,7 @@ import com.openclassrooms.realestatemanager.ui.realestateedit.EditRealEstateActi
 import com.openclassrooms.realestatemanager.ui.realestateform.FormActivity;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -111,6 +120,11 @@ public class RealEstateDetailActivity extends AppCompatActivity {
 
     @BindView(R.id.cv_map_detail)
     MaterialCardView cvMapDetail;
+    @BindView(R.id.cv_video_detail)
+    MaterialCardView cvVideoDetail;
+
+    @BindView(R.id.exo_player_video_detail)
+    PlayerView exoPlayer;
 
     private long idHouse;
     private House house;
@@ -125,7 +139,7 @@ public class RealEstateDetailActivity extends AppCompatActivity {
     private List<HousePointOfInterest> listHousePointOfInterest = new ArrayList<>();
     private AdapterPointOfInterestDetail adapterPointOfInterest;
     private RealEstateViewModel realEstateViewModel;
-
+    SimpleExoPlayer player;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,6 +156,7 @@ public class RealEstateDetailActivity extends AppCompatActivity {
         this.initializeRecyclerViewPointOfInterest();
         this.configureSoldHomeButton();
         this.configureViewModels();
+        player = new SimpleExoPlayer.Builder(this).build();
     }
 
     private void configureViewPager(){
@@ -311,10 +326,28 @@ public class RealEstateDetailActivity extends AppCompatActivity {
         tvRealEstateAgentDetail.setText(String.format(getString(R.string.real_estate_agent_name), realEstateAgents.get((int) house.getIdRealEstateAgent()-1).getName(),  realEstateAgents.get((int) house.getIdRealEstateAgent()-1).getFirstname()));
 
         if(house.getChildPathPlacePreview() != null){
-            ivMapDetail.setImageBitmap(PictureDownloader.loadImageFromStorage(house.getParentPathPlacePreview(), house.getChildPathPlacePreview()));
+            ivMapDetail.setImageBitmap(ImageUtils.loadImageFromStorage(house.getParentPathPlacePreview(), house.getChildPathPlacePreview()));
         }else{
             cvMapDetail.setVisibility(View.GONE);
         }
+
+        if(house.getVideoPath() != null){
+            File file=new File(house.getVideoPath());
+            Uri localUri=Uri.fromFile(file);
+            initializePlayer(localUri);
+        }else{
+            cvVideoDetail.setVisibility(View.GONE);
+        }
+    }
+
+    public void initializePlayer(Uri uri){
+        exoPlayer.setPlayer(player);
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this,
+                Util.getUserAgent(this, "RealEstateManager"));
+        MediaSource videoSource =
+                new ProgressiveMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(uri);
+        player.prepare(videoSource);
     }
 
     private void getPhotoFromDatabase(){
@@ -323,4 +356,5 @@ public class RealEstateDetailActivity extends AppCompatActivity {
             configureViewPager();
         });
     }
+
 }

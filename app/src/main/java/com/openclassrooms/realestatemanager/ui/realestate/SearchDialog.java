@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -19,6 +21,8 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
+import com.jaygoo.widget.OnRangeChangedListener;
+import com.jaygoo.widget.RangeSeekBar;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
@@ -32,7 +36,6 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import me.bendik.simplerangeview.SimpleRangeView;
 
 import static com.openclassrooms.realestatemanager.ui.realestate.RealEstateListFragment.DISTRICT;
 import static com.openclassrooms.realestatemanager.ui.realestate.RealEstateListFragment.MAX_PRICE;
@@ -50,9 +53,9 @@ public class SearchDialog extends AppCompatDialogFragment {
     AutoCompleteTextView dropDownNumberPhoto;
 
     @BindView(R.id.sb_surface)
-    SimpleRangeView sbSurface;
+    RangeSeekBar sbSurface;
     @BindView(R.id.sb_price)
-    SimpleRangeView sbPrice;
+    RangeSeekBar sbPrice;
 
     @BindView(R.id.tiet_availibility_date_dialog)
     TextInputEditText tietAvailabilityDate;
@@ -124,53 +127,76 @@ public class SearchDialog extends AppCompatDialogFragment {
     }
 
     private void configureSeekBarPrice() {
-        if(minPrice != -1){
-            if((maxPrice/1000) > 100){
-                sbPrice.setOnChangeRangeListener((simpleRangeView, i, i1) -> {
-                    minPriceSelected = (i/1000);
-                    maxPriceSelected = (i1/1000);
-                });
+        if(maxPrice > 0){
+            sbPrice.setRange(0, (float) maxPrice);
+            sbPrice.setProgress(0, (float) maxPrice);
+            int rest = (int) maxPrice%1000000;
+            int steps = (int) (((maxPrice-rest) + 1000000)/1000000);
+            sbPrice.setRange(0, 1000000*steps);
+            sbPrice.setProgress(0, 1000000*steps);
+            sbPrice.setSteps(steps);
+            sbPrice.setStepsWidth(10f);
+            sbPrice.setStepsAutoBonding(true);
+            sbPrice.setStepsColor(getResources().getColor(R.color.colorPrimary));
+            sbPrice.setStepsRadius(10f);
+            sbPrice.setStepsHeight(10f);
+            sbPrice.setIndicatorTextDecimalFormat("0");
+            sbPrice.setOnRangeChangedListener(new OnRangeChangedListener() {
+                @Override
+                public void onRangeChanged(RangeSeekBar view, float leftValue, float rightValue, boolean isFromUser) {
+                    maxPriceSelected = (long) rightValue;
+                    minPriceSelected = (long) leftValue;
+                }
 
-                minPrice = (maxPrice - minPrice) / 10;
-                int rangePrice = ((int) ((maxPrice - minPrice)/1000) / 10);
-                sbPrice.setOnRangeLabelsListener((simpleRangeView, i, state) -> String.valueOf(rangePrice * i));
-                tvPrice.setText("Price (/1000)");
-            }else{
-                sbPrice.setOnChangeRangeListener((simpleRangeView, i, i1) -> {
-                    minPriceSelected = i;
-                    maxPriceSelected = i1;
-                });
+                @Override
+                public void onStartTrackingTouch(RangeSeekBar view, boolean isLeft) {
 
-                int rangePrice = ((int) (maxPrice - minPrice) / 10);
-                sbPrice.setOnRangeLabelsListener((simpleRangeView, i, state) -> String.valueOf(rangePrice * i));
-            }
+                }
 
-        }else{
-            sbPrice.setOnRangeLabelsListener((simpleRangeView, i, state) -> {
-                if(i == 2)
-                    return getString(R.string.no_price_available);
-                else
-                    return "";
+                @Override
+                public void onStopTrackingTouch(RangeSeekBar view, boolean isLeft) {
+
+                }
             });
+        }else{
+            sbPrice.setEnabled(false);
         }
     }
 
     private void configureSeekBarSurface() {
-        if(minSurface != -1){
-            sbSurface.setOnChangeRangeListener((simpleRangeView, i, i1) -> {
-                minSurfaceSelected = i;
-                maxSurfaceSelected = i1;
-            });
 
-            int rangeSurface = (int) (maxSurface - minSurface) / 10;
-            sbSurface.setOnRangeLabelsListener((simpleRangeView, i, state) -> String.valueOf(rangeSurface * i));
-        }else{
-            sbSurface.setOnRangeLabelsListener((simpleRangeView, i, state) -> {
-                if(i == 2)
-                    return getString(R.string.no_surface_available);
-                else
-                    return "";
+        if(maxSurface > 0){
+            double rest = maxSurface%100;
+            int steps = (int) (((maxSurface-rest) + 100)/100);
+            sbSurface.setRange(0, 100*steps);
+            sbSurface.setProgress(0, 100*steps);
+            sbSurface.setSteps(steps);
+            sbSurface.setStepsWidth(10f);
+            sbSurface.setStepsAutoBonding(true);
+            sbSurface.setStepsColor(getResources().getColor(R.color.colorPrimary));
+            sbSurface.setStepsRadius(10f);
+            sbSurface.setStepsHeight(10f);
+            sbSurface.setIndicatorTextDecimalFormat("0");
+            sbSurface.setOnRangeChangedListener(new OnRangeChangedListener() {
+                @Override
+                public void onRangeChanged(RangeSeekBar view, float leftValue, float rightValue, boolean isFromUser) {
+                    maxSurfaceSelected = (long) rightValue;
+                    minSurfaceSelected = (long) leftValue;
+                }
+
+                @Override
+                public void onStartTrackingTouch(RangeSeekBar view, boolean isLeft) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(RangeSeekBar view, boolean isLeft) {
+
+                }
             });
+        }else{
+            sbSurface.setRange(0, 1);
+            sbSurface.setEnabled(false);
         }
     }
 
@@ -186,11 +212,13 @@ public class SearchDialog extends AppCompatDialogFragment {
     private void configureDistricts() {
         String[] districtArray = listDistrict.toArray(new String[listDistrict.size()]);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, R.layout.dropdown_menu_popup_item, districtArray);
+
         if(listDistrict.size() == 1 && listDistrict.get(0).equals(""))
             dropDownDistrict.setText(R.string.no_district_defined);
-        else
-            dropDownDistrict.setText(districtArray[0]);
-        dropDownDistrict.setAdapter(adapter);
+        else{
+            dropDownDistrict.setText("");
+            dropDownDistrict.setAdapter(adapter);
+        }
     }
 
     private void configureHouseTypes() {

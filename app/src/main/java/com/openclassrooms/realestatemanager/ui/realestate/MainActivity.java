@@ -159,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
         GetDataFromDatabaseAsyncTask(MainActivity mainActivity) {
             this.weakReference = new WeakReference<>(mainActivity);
         }
+
         @Override
         protected String doInBackground(String... strings) {
             weakReference.get().databaseValues.put(HOUSES_TYPES, weakReference.get().realEstateViewModel.getHouseType());

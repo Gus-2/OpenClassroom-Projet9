@@ -119,9 +119,6 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
         ArrayAdapter<String> adapter = new ArrayAdapter<>( context.getApplicationContext(), R.layout.dropdown_menu_popup_item, tabStringRoom);
         holder.edPhotoDescription.setAdapter(adapter);
 
-
-
-
         holder.edPhotoDescription.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -135,16 +132,7 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
 
             @Override
             public void afterTextChanged(Editable s) {
-                for(Room room : listRoom){
-                    if(room.getRoomType().equals(s.toString())){
-                        int numOrderRoom = Utils.getNumOrderRoom(uriPhotoHashMap, room.getIdRoom());
-                        uriPhotoHashMap.get(uri).setNumOrderRoom(numOrderRoom+1);
-                        uriPhotoHashMap.get(uri).setIdRoom(room.getIdRoom());
-                    }
-                }
-                if(uriPhotoHashMap.get(listUri.get(position)).getIdRoom() == -1){
-                    uriPhotoHashMap.get(listUri.get(position)).setSpecificRoom(s.toString());
-                }
+                uriPhotoHashMap.get(listUri.get(position)).setSpecificRoom(s.toString());
             }
         });
     }

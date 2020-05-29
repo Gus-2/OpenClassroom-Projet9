@@ -39,9 +39,8 @@ import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojoapi.Coordinates;
 import com.openclassrooms.realestatemanager.tools.DataConverter;
 import com.openclassrooms.realestatemanager.tools.DateConverter;
-import com.openclassrooms.realestatemanager.tools.PictureDownloader;
+import com.openclassrooms.realestatemanager.tools.ImageUtils;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
-import com.openclassrooms.realestatemanager.tools.Utils;
 import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
 import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailActivity;
 import com.openclassrooms.realestatemanager.ui.realestateform.AdapterPicturesHouse;
@@ -187,7 +186,7 @@ public class EditRealEstateActivity extends AppCompatActivity {
             Uri uri = Uri.parse(photo.getPath() + "" + photo.getChildPath());
             listUri.add(uri);
             hashMapUriPhoto.put(uri, photo);
-            hashMapUriBitmap.put(uri, PictureDownloader.loadImageFromStorage(photo.getPath(), photo.getChildPath()));
+            hashMapUriBitmap.put(uri, ImageUtils.loadImageFromStorage(photo.getPath(), photo.getChildPath()));
         }
 
         AsyncTask.execute(new Runnable() {

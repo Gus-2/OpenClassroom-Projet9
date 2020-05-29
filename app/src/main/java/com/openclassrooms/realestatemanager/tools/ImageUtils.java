@@ -5,6 +5,7 @@ import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -15,8 +16,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-public class PictureDownloader {
+public class ImageUtils {
 
     public static final String HOUSE_PICTURES = "house_pictures";
     public static final String MAP_IMAGE = "map_image";
@@ -53,5 +56,32 @@ public class PictureDownloader {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static String saveVideoToInternalStorage (Uri filePath, Context context) {
+        File newfile;
+        try {
+
+            File currentFile = new File(filePath.getPath());
+            String fileName = currentFile.getName() + ".mp4";
+            ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
+            File directory = cw.getDir("videoDir", Context.MODE_PRIVATE);
+            newfile = new File(directory, fileName);
+            InputStream in = context.getContentResolver().openInputStream(filePath);
+            OutputStream out = new FileOutputStream(newfile);
+            // Copy the bits from instream to outstream
+            byte[] buf = new byte[1024];
+            int len;
+
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+            return newfile.getAbsolutePath();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

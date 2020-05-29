@@ -151,22 +151,22 @@
 
 
         <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_kitchen"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:hint="@string/kitchen"
-        app:layout_constraintEnd_toStartOf="@+id/til_number_kitchen"
-        app:layout_constraintHorizontal_bias="0.7"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_room">
+            android:id="@+id/til_kitchen"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/kitchen"
+            app:layout_constraintEnd_toStartOf="@+id/til_number_kitchen"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_room">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tiet_kitchen"
-            android:focusable="false"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_kitchen"
+                android:focusable="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -769,7 +769,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
-                 />
+                />
         </FrameLayout>
 
         <Button
@@ -907,6 +907,70 @@
             app:layout_constraintTop_toBottomOf="@+id/layout_rv_house_picture" />
 
         <View
+            android:id="@+id/v_video_view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="2dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toStartOf="@+id/tv_video"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_pictures" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="8dp"
+            android:text="Video"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/v_video__view_2"
+            app:layout_constraintStart_toEndOf="@+id/v_video_view"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_pictures"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            android:id="@+id/v_video__view_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_video"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_pictures" />
+
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_add_video"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="10dp"
+            android:text="No video added"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_video"
+            tools:ignore="MissingConstraints" />
+
+        <Button
+            android:id="@+id/bt_add_video"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Add a video"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_add_video" />
+
+        <View
             android:id="@+id/v_end_view"
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -915,18 +979,19 @@
             android:background="@android:color/darker_gray"
             app:layout_constraintEnd_toStartOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bt_add_pictures" />
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_video" />
 
         <Button
             android:id="@+id/bt_add_property"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
             android:padding="10dp"
             android:text="@string/add_the_property"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/v_end_view" />
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_video" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

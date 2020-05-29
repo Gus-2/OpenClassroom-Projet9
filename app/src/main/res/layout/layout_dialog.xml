@@ -64,11 +64,22 @@
         app:layout_constraintStart_toEndOf="@+id/tv_surface"
         app:layout_constraintTop_toBottomOf="@+id/til_house_type_layout" />
 
-    <me.bendik.simplerangeview.SimpleRangeView
+    <com.jaygoo.widget.RangeSeekBar
         android:id="@+id/sb_surface"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="13dp"
+        android:padding="15dp"
+        app:rsb_mode="range"
+        app:rsb_steps="5"
+        app:rsb_progress_color="@color/colorAccent"
+        app:rsb_thumb_width="23dp"
+        app:rsb_thumb_height="23dp"
+        app:rsb_thumb_scale_ratio="0.8"
+        app:rsb_indicator_show_mode="alwaysShow"
+        app:rsb_indicator_width="30dp"
+        app:rsb_indicator_height="30dp"
+        app:rsb_indicator_margin="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_surface" />
@@ -109,11 +120,23 @@
         app:layout_constraintStart_toEndOf="@+id/tv_price"
         app:layout_constraintTop_toBottomOf="@+id/sb_surface" />
 
-    <me.bendik.simplerangeview.SimpleRangeView
+    <com.jaygoo.widget.RangeSeekBar
         android:id="@+id/sb_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="13dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        app:rsb_mode="range"
+        app:rsb_steps="5"
+        app:rsb_progress_color="@color/colorAccent"
+        app:rsb_thumb_width="23dp"
+        app:rsb_thumb_height="23dp"
+        app:rsb_thumb_scale_ratio="0.8"
+        app:rsb_indicator_show_mode="alwaysShow"
+        app:rsb_indicator_width="35dp"
+        app:rsb_indicator_height="35dp"
+        app:rsb_indicator_margin="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_price" />
@@ -124,6 +147,7 @@
         android:layout_height="1dp"
         android:layout_marginStart="2dp"
         android:layout_marginTop="15dp"
+        android:paddingTop="15dp"
         android:background="@android:color/darker_gray"
         app:layout_constraintEnd_toStartOf="@+id/tv_availability_date"
         app:layout_constraintStart_toStartOf="parent"

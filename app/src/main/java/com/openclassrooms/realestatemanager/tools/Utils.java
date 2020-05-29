@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -77,8 +78,6 @@ public class Utils {
         return connectionManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
     }
 
-
-
     public static int getNumOrderRoom(HashMap<Uri, Photo> hashMapRoom, long roomId){
         int i = 0;
         for(Uri uri : hashMapRoom.keySet()){
@@ -87,5 +86,28 @@ public class Utils {
             }
         }
         return i;
+    }
+
+    public static void setNumberRoomForEachPhoto(List<Room> listRoom, HashMap<Uri, Photo> uriPhotoHashMap){
+        HashMap<String, Integer> numberRoomHashMap = new HashMap<>();
+        for(Room room : listRoom)
+            numberRoomHashMap.put(room.getRoomType(), 1);
+
+        for(Uri uri : uriPhotoHashMap.keySet()){
+            String roomTypeName = uriPhotoHashMap.get(uri).getSpecificRoom();
+            if(numberRoomHashMap.containsKey(roomTypeName)){
+                uriPhotoHashMap.get(uri).setNumOrderRoom(numberRoomHashMap.get(roomTypeName));
+                int i = numberRoomHashMap.get(roomTypeName).intValue();
+                i++;
+                numberRoomHashMap.put(roomTypeName, i);
+                for(Room room : listRoom){
+                    if(room.getRoomType().equals(roomTypeName)){
+                        uriPhotoHashMap.get(uri).setIdRoom(room.getIdRoom());
+                        uriPhotoHashMap.get(uri).setSpecificRoom(null);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

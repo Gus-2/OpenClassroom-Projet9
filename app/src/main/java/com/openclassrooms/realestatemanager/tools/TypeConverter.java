@@ -9,10 +9,9 @@ import com.openclassrooms.realestatemanager.models.pojo.Room;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -70,6 +69,13 @@ public class TypeConverter {
                     }
                 }
             }
+        }
+
+        for(Long key : hashMapPhoto.keySet()){
+            Collections.sort(hashMapPhoto.get(key), new PictureChainedComparator(
+                    new IdRoomComparator(),
+                    new NumberPlaceIdRoomComparator())
+            );
         }
         return hashMapPhoto;
     }

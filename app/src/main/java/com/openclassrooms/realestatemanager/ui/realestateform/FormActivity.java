@@ -1,15 +1,22 @@
 package com.openclassrooms.realestatemanager.ui.realestateform;
 
 import android.app.Notification;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,14 +48,25 @@ import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 import com.openclassrooms.realestatemanager.tools.DataConverter;
-import com.openclassrooms.realestatemanager.tools.PictureDownloader;
+import com.openclassrooms.realestatemanager.tools.ImageUtils;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
+import com.openclassrooms.realestatemanager.tools.Utils;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RetrofitViewModel;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
+import java.net.URI;
+import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,9 +82,7 @@ import java.util.concurrent.Future;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 import static com.openclassrooms.realestatemanager.tools.App.CHANNEL_1_ID;
 
@@ -76,6 +92,7 @@ public class FormActivity extends AppCompatActivity {
     private final static int PLACE_RETRIEVED = -1;
     private final static int AUTOCOMPLETE_REQUEST_CODE = 1;
     private final static int RESULT_LOAD_IMG = 2;
+    private final static int RESULT_LOAD_VIDEO = 3;
     public final static String STATE_AVAILABLE = "Available";
 
     public final static String COUNTRY = "United States";
@@ -134,6 +151,10 @@ public class FormActivity extends AppCompatActivity {
     RecyclerView recyclerViewPointOfInterest;
     @BindView(R.id.rv_house_picture)
     RecyclerView recyclerHousePicture;
+    @BindView(R.id.tv_add_video)
+    TextView tvAddVideo;
+    @BindView(R.id.bt_add_video)
+    Button buttonAddVideo;
 
     public static final String URL = "https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=350x300&maptype=roadmap&markers=color:red|%4.6f,%4.6f&key=AIzaSyBk5oJO4prnmEvqvzwO6koHtHDLXBlfByA";
     private ExecutorService executorService;
@@ -158,6 +179,7 @@ public class FormActivity extends AppCompatActivity {
     private House houseToInsert;
     private long availabilityDate = 0;
     private NotificationManagerCompat notificationManager;
+    private Uri videoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,10 +200,21 @@ public class FormActivity extends AppCompatActivity {
         this.configureRecycleViewPointOfInterest();
         this.configureButtonAddHouse();
         this.configureButtonAddPictures();
+        this.configureButtonAddVideo();
 
         GetDataFromDatabase getDataFromDatabase = new GetDataFromDatabase(this);
         getDataFromDatabase.execute();
         setResult(ERROR_RESULT);
+    }
+
+    private void configureButtonAddVideo() {
+        buttonAddVideo.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setType("video/*");
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent,"Select Video"), RESULT_LOAD_VIDEO);
+        });
     }
 
     private void configureButtonAddHouse() {
@@ -322,8 +355,14 @@ public class FormActivity extends AppCompatActivity {
                 hashMapUriPhoto.put(uri, new Photo());
             }
             adapterHousePicture.notifyDataSetChanged();
+        } else if(requestCode == RESULT_LOAD_VIDEO && data != null){
+            videoPath = data.getData();
+            tvAddVideo.setText(videoPath.getPath());
+            ImageUtils.saveVideoToInternalStorage(videoPath, this);
         }
     }
+
+
 
     /**
      * Insert into the database a new point of interest
@@ -440,7 +479,6 @@ public class FormActivity extends AppCompatActivity {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .build();
-        // Id is in case the notification is shown again, it will erase the old one
         notificationManager.notify(1, notification);
 
         finish();
@@ -500,9 +538,13 @@ public class FormActivity extends AppCompatActivity {
 
             if(formActivity.photoMap != null){
                 String childPath = idAddress + "_map_image.jpg";
-                String parentPathPlacePreview = PictureDownloader.saveToInternalStorage(childPath, formActivity.photoMap, formActivity.getApplicationContext(), PictureDownloader.MAP_IMAGE);
+                String parentPathPlacePreview = ImageUtils.saveToInternalStorage(childPath, formActivity.photoMap, formActivity.getApplicationContext(), ImageUtils.MAP_IMAGE);
                 formActivity.houseToInsert.setChildPathPlacePreview(childPath);
                 formActivity.houseToInsert.setParentPathPlacePreview(parentPathPlacePreview);
+            }
+            if(formActivity.videoPath != null){
+                formActivity.houseToInsert.setVideoPath(ImageUtils.saveVideoToInternalStorage(formActivity.videoPath, formActivity));
+                Log.d("VIDEO_PATH", formActivity.houseToInsert.getVideoPath());
             }
 
             long houseId = formActivity.realEstateViewModel.insertHouse(formActivity.houseToInsert);
@@ -516,11 +558,12 @@ public class FormActivity extends AppCompatActivity {
                 roomNumber.setIdHouse(houseId);
                 formActivity.realEstateViewModel.insertRoomNumber(roomNumber);
             }
+            Utils.setNumberRoomForEachPhoto(formActivity.roomList, formActivity.hashMapUriPhoto);
             int i = 0;
             for(Uri uri : formActivity.listUri){
                 formActivity.hashMapUriPhoto.get(uri).setIdHouse(houseId);
                 String childPath = houseId + "" + i + ".jpg";
-                String path = PictureDownloader.saveToInternalStorage(childPath, formActivity.hashMapUriBitmap.get(uri), formActivity.getApplicationContext(), PictureDownloader.HOUSE_PICTURES);
+                String path = ImageUtils.saveToInternalStorage(childPath, formActivity.hashMapUriBitmap.get(uri), formActivity.getApplicationContext(), ImageUtils.HOUSE_PICTURES);
                 formActivity.hashMapUriPhoto.get(uri).setPath(path);
                 formActivity.hashMapUriPhoto.get(uri).setChildPath(childPath);
                 formActivity.realEstateViewModel.insertPhoto(formActivity.hashMapUriPhoto.get(uri));
@@ -561,6 +604,4 @@ public class FormActivity extends AppCompatActivity {
             formActivity.initializeDropDownRealEstateAgent();
         }
     }
-
-
 }

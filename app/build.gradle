@@ -75,9 +75,11 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
 
     // Range Seekbar
-    implementation 'me.bendik.simplerangeview:simplerangeview:0.2.0'
-    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.github.Jay-Goo:RangeSeekBar:v3.0.0'
 
     // Picasso
     implementation 'com.squareup.picasso:picasso:2.5.2'
+
+    // ExoPlayer
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.4'
 }
