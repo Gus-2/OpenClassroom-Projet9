@@ -7,6 +7,8 @@ import com.openclassrooms.realestatemanager.models.pojo.Photo;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+
 public class PhotoDataRepository {
 
     private final PhotoDao photoDao;
@@ -29,5 +31,9 @@ public class PhotoDataRepository {
 
     public LiveData<List<Photo>> getLiveDataPhotoFromIdHouse(long idHouse){
         return photoDao.getLiveDataPhotoFromIdHouse(idHouse);
+    }
+
+    public Flowable<List<Photo>> getFlowablePhotoFromIdHouse(long idHouse){
+        return photoDao.getFlowablePhotoFromIdHouse(idHouse);
     }
 }

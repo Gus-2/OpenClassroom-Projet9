@@ -34,7 +34,7 @@ import java.util.List;
 
 public class RealEstateListFragment extends Fragment implements RealEstateListAdapter.OnItemClickListener, SearchDialog.SearchDialogListener {
 
-    public final static String MAX_PRICE = "MAX_PRICE";
+    final static String MAX_PRICE = "MAX_PRICE";
     public final static String MIN_PRICE = "MIN_PRICE";
     public final static String MIN_SURFACE = "MIN_SURFACE";
     public final static String MAX_SURFACE = "MAX_SURFACE";
@@ -44,7 +44,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
 
     private BottomAppBar bottomAppBar;
     private RecyclerView recyclerView;
-    RealEstateListAdapter realEstateListAdapter;
+    private RealEstateListAdapter realEstateListAdapter;
     private SharedViewModel sharedViewModel;
     private List<House> listHouses;
     private List<House> listHousesDisplayed;
@@ -63,7 +63,6 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         listHouses = new ArrayList<>();
         listHousesDisplayed = new ArrayList<>();
         hashMapPhoto = new HashMap<>();
@@ -176,18 +175,6 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
         super.onActivityCreated(savedInstanceState);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        bottomAppBar.setNavigationIcon(R.drawable.ic_map_white_32dp);
-        if(getActivity()!= null){
-            bottomAppBar.setNavigationOnClickListener(v -> getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container_view, new MapsFragment())
-                    .addToBackStack(null)
-                    .commit());
-        }
-    }
-
     public void configureViewModel(){
         if(getActivity() != null){
             sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
@@ -263,5 +250,17 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
         }
 
         realEstateListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        bottomAppBar.setNavigationIcon(R.drawable.ic_map_white_32dp);
+        if(getActivity()!= null){
+            bottomAppBar.setNavigationOnClickListener(v -> getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container_view, new MapsFragment())
+                    .addToBackStack(null)
+                    .commit());
+        }
     }
 }

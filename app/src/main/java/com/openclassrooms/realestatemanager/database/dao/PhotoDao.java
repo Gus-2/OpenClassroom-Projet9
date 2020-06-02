@@ -11,6 +11,8 @@ import com.openclassrooms.realestatemanager.models.pojo.Photo;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+
 @Dao
 public interface PhotoDao {
 
@@ -25,4 +27,8 @@ public interface PhotoDao {
 
     @Query("SELECT * FROM photos WHERE id_house = :idHouse")
     LiveData<List<Photo>> getLiveDataPhotoFromIdHouse(long idHouse);
+
+    @Query("SELECT * FROM photos WHERE id_house = :idHouse")
+    Flowable<List<Photo>> getFlowablePhotoFromIdHouse(long idHouse);
+
 }

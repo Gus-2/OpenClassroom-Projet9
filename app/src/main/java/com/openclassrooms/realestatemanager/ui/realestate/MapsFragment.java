@@ -58,7 +58,7 @@ import static com.openclassrooms.realestatemanager.ui.realestate.RealEstateListF
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, GoogleMap.OnMarkerClickListener, SearchDialog.SearchDialogListener {
 
-    private static final int DEFAULT_ZOOM = 15;
+    private static final int DEFAULT_ZOOM = 10;
 
     private BottomAppBar bottomAppBar;
     private MapView mapView;
@@ -179,7 +179,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         sharedViewModel.getListData().observe(getViewLifecycleOwner(), databaseValue -> {
             listHouses = (List<House>) databaseValue.get(MainActivity.HOUSES);
             listHousesDisplayed = new ArrayList<>(listHouses);
-            //hashMapPhoto = TypeConverter.convertPhotoListToHashMap((List<Photo>) databaseValue.get(MainActivity.PHOTOS));
+            hashMapPhoto = new HashMap<>(TypeConverter.getPhotoListToHashMap((List<Photo>) databaseValue.get(MainActivity.PHOTOS)));
             listHousesTypes = (ArrayList<HouseType>) databaseValue.get(MainActivity.HOUSES_TYPES);
             hashMapHouseType = TypeConverter.convertHouseTypeListToHashMap(listHousesTypes);
             hashMapAddress = TypeConverter.convertAddressListToHashMap((List<Address>) databaseValue.get(MainActivity.ADDRESS));
@@ -295,10 +295,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public boolean onMarkerClick(Marker marker) {
         Intent intent = new Intent(getActivity(), RealEstateDetailActivity.class);
         House houseToSet = null;
-        for(House house : listHouses)
-            if(house.getIdHouse() == hashMapIdMarkerIdHouse.get(marker.getId())) houseToSet = house;
+        for(House house : listHouses){
+            if(house.getIdHouse() == hashMapIdMarkerIdHouse.get(marker.getId())) {
+                houseToSet = house;
+                break;
+            }
+        }
         intent.putExtra(MainActivity.HOUSES, houseToSet);
-        intent.putExtra(MainActivity.HOUSES_TYPES, hashMapHouseType.get(houseToSet.getIdHouseType()));
+        intent.putExtra(MainActivity.HOUSES_TYPES, hashMapHouseType);
         intent.putParcelableArrayListExtra(MainActivity.PHOTOS, ((ArrayList<Photo>) hashMapPhoto.get(houseToSet.getIdHouse())));
         intent.putParcelableArrayListExtra(MainActivity.REAL_ESTATE_AGENT, ((ArrayList<RealEstateAgent>) listRealEstateAgent));
         intent.putExtra(MainActivity.ADDRESS, hashMapAddress.get(houseToSet.getIdAddress()));
@@ -318,37 +322,39 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         if(houseType != -1){
             for(House house : listHouses)
-                if(house.getIdHouseType() == houseType) listHousesDisplayed.add(house);
+                if(house.getIdHouseType() == houseType)
+                    listHousesDisplayed.add(house);
         }
 
         if(maxSurface != -1){
             for(House house : listHouses)
-                if(house.getSurface() <= maxSurface && house.getSurface() >= minSurface && !listHousesDisplayed.contains(house)) listHousesDisplayed.add(house);
+                if(house.getSurface() <= maxSurface && house.getSurface() >= minSurface && !listHousesDisplayed.contains(house))
+                    listHousesDisplayed.add(house);
         }
 
         if(maxPrice != -1){
             for(House house : listHouses)
-                if(house.getPrice() <= maxPrice && house.getPrice() >= minPrice && !listHousesDisplayed.contains(house)) listHousesDisplayed.add(house);
+                if(house.getPrice() <= maxPrice && house.getPrice() >= minPrice && !listHousesDisplayed.contains(house))
+                    listHousesDisplayed.add(house);
         }
 
         if(availabilityDate != 0){
             for(House house : listHouses)
-                if(house.getAvailableDate() > availabilityDate && !listHousesDisplayed.contains(house)) listHousesDisplayed.add(house);
+                if(house.getAvailableDate() >= availabilityDate && !listHousesDisplayed.contains(house))
+                    listHousesDisplayed.add(house);
         }
 
         if(!district.equals("")){
             for(House house : listHouses)
-                if(hashMapAddress.get(house.getIdAddress()).getDistrict().equals(district) && !listHousesDisplayed.contains(house)) listHousesDisplayed.add(house);
+                if(hashMapAddress.get(house.getIdAddress()).getDistrict().equals(district) && !listHousesDisplayed.contains(house))
+                    listHousesDisplayed.add(house);
         }
 
         if(numberPhoto > 0){
             for(House house : listHouses)
-                if(hashMapPhoto.get(house.getIdHouse()).size() >= numberPhoto && !listHousesDisplayed.contains(house)) listHousesDisplayed.add(house);
+                if(hashMapPhoto.get(house.getIdHouse()) != null && hashMapPhoto.get(house.getIdHouse()).size() >= numberPhoto && !listHousesDisplayed.contains(house))
+                    listHousesDisplayed.add(house);
         }
-
-        hashMapAddressDisplayed.clear();
-        for(House house : listHousesDisplayed)
-            hashMapAddressDisplayed.put(house.getIdAddress(), hashMapAddress.get(house.getIdAddress()));
         hashMapIdMarkerIdHouse.clear();
         displayHousesOnTheMap();
     }

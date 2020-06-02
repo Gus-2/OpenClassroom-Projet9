@@ -29,6 +29,8 @@ import com.openclassrooms.realestatemanager.repositories.TypePointOfInterestData
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import io.reactivex.Flowable;
+
 public class RealEstateViewModel extends ViewModel {
 
     private final AddressDataRepository addressDataRepository;
@@ -116,6 +118,10 @@ public class RealEstateViewModel extends ViewModel {
         return housePointOfInterestDataRepository.getLiveDataHousePointOfInterestFromHouseId(idHouse);
     }
 
+    public Flowable<List<HousePointOfInterest>> getFlowableHousePointOfInterestFromHouseId(long idHouse){
+        return housePointOfInterestDataRepository.getFlowableHousePointOfInterestFromHouseId(idHouse);
+    }
+
     // House's type
     public List<HouseType> getHouseType() {
         return houseTypeDataRepository.getHouseType();
@@ -148,6 +154,10 @@ public class RealEstateViewModel extends ViewModel {
 
     public LiveData<List<Photo>> getLiveDataPhotoFromIdHouse(long idHouse){
         return photoDataRepository.getLiveDataPhotoFromIdHouse(idHouse);
+    }
+
+    public Flowable<List<Photo>> getListPhotoFlowableFromIdHouse(long idHouse){
+        return photoDataRepository.getFlowablePhotoFromIdHouse(idHouse);
     }
 
     // Point of interest

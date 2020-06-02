@@ -42,7 +42,7 @@ import com.openclassrooms.realestatemanager.tools.DateConverter;
 import com.openclassrooms.realestatemanager.tools.ImageUtils;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
-import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailActivity;
+import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailFragment;
 import com.openclassrooms.realestatemanager.ui.realestateform.AdapterPicturesHouse;
 import com.openclassrooms.realestatemanager.ui.realestateform.AdapterPointOfInterest;
 import com.openclassrooms.realestatemanager.ui.realestateform.DataInsertConverter;
@@ -247,14 +247,14 @@ public class EditRealEstateActivity extends AppCompatActivity {
     }
 
     private void fillAvailibilityDateField() {
-        if(house.getState().equals(RealEstateDetailActivity.STATE_SOLD))
+        if(house.getState().equals(RealEstateDetailFragment.STATE_SOLD))
             editTextAvailibilityDate.setText("House is sold since the " + df.format(house.getSoldDate()));
         else
             editTextAvailibilityDate.setText(df.format(house.getAvailableDate()));
     }
 
     private void configureButtonAvailibilityDate() {
-        if(!house.getState().equals(RealEstateDetailActivity.STATE_SOLD))
+        if(!house.getState().equals(RealEstateDetailFragment.STATE_SOLD))
             buttonAddAvailibilityDate.setOnClickListener(v -> showDatePickerDialog());
     }
 
@@ -503,8 +503,12 @@ public class EditRealEstateActivity extends AppCompatActivity {
             house.setIdRealEstateAgent(TypeConverter.getRealEstateAgentId(realEstateAgentArrayList, dropDownMenuRealEstateAgent.getText().toString()));
 
             String priceString = editTextPrice.getText().toString();
-            if(!priceString.equals(""))
-                house.setPrice(Double.parseDouble(DataInsertConverter.getHousePrice(editTextPrice.getText().toString())));
+            if(!priceString.equals("")){
+                String price = DataInsertConverter.getHousePrice(editTextPrice.getText().toString().replace("\\s", "")).replace(",", ".");
+                price.trim();
+                house.setPrice(Double.parseDouble(price));
+            }
+
 
             String surfaceString = editTextSurface.getText().toString();
 

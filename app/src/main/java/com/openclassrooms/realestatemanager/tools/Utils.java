@@ -88,6 +88,10 @@ public class Utils {
         return i;
     }
 
+    public static String formatDisplayedPrice(double price){
+        return String.format("%1$,.2f", price);
+    }
+
     public static void setNumberRoomForEachPhoto(List<Room> listRoom, HashMap<Uri, Photo> uriPhotoHashMap){
         HashMap<String, Integer> numberRoomHashMap = new HashMap<>();
         for(Room room : listRoom)

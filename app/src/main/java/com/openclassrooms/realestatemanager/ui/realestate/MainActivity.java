@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String ROOM_NUMBER = "ROOM_NUMBER";
     public static final String POINT_OF_INTEREST = "POINT_OF_INTEREST";
     public static final String ROOM = "ROOM";
+    public static final String HOUSE_POINT_OF_INTEREST = "HOUSE_POINT_OF_INTEREST";
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 20;
     private final int ERROR_DIALOG_REQUEST = 9001;

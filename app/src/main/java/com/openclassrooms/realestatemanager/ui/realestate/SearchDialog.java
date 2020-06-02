@@ -258,4 +258,6 @@ public class SearchDialog extends AppCompatDialogFragment {
         void search(long houseType, long minSurface, long maxSurface, long minPrice, long maxPrice,
             long availabilityDate, String district, long numberPhoto);
     }
+
+    
 }

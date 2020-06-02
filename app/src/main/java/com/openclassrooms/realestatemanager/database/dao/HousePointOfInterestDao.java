@@ -13,6 +13,8 @@ import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+
 @Dao
 public interface HousePointOfInterestDao {
 
@@ -33,6 +35,9 @@ public interface HousePointOfInterestDao {
 
     @Query("SELECT * FROM house_point_of_interest WHERE id_house = :idHouse")
     LiveData<List<HousePointOfInterest>> getLiveDataHousePointOfInterestFromHouseId(long idHouse);
+
+    @Query("SELECT * FROM house_point_of_interest WHERE id_house = :idHouse")
+    Flowable<List<HousePointOfInterest>> getFlowableHousePointOfInterestFromHouseId(long idHouse);
 
 
 }
