@@ -75,4 +75,7 @@
     <string name="house_has_been_sold">The house has been sold !</string>
     <string name="house_is_already_sold">The house is already sold !</string>
     <string name="update_the_property">Update the property</string>
+    <string name="unchange_house_sold">Unchangeable : The house has been sold !</string>
+    <string name="point_of_interest_succesfully_removed">The point of interest has been successfully removed !</string>
+    <string name="photo_successfully_removed">The photo has been successfully removed !</string>
 </resources>

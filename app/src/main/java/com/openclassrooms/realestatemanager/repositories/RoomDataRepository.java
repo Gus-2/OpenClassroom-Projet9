@@ -7,6 +7,8 @@ import com.openclassrooms.realestatemanager.models.pojo.Room;
 
 import java.util.List;
 
+import io.reactivex.Single;
+
 public class RoomDataRepository {
 
     private final RoomDao roomDao;
@@ -17,6 +19,10 @@ public class RoomDataRepository {
 
     public List<Room> getRooms(){
         return roomDao.getRooms();
+    }
+
+    public Single<List<Room>> getRoomsSingle(){
+        return roomDao.getRoomsSingle();
     }
 
     public long insertRoom(Room room){

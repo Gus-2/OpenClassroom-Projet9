@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 public class RealEstateViewModel extends ViewModel {
 
@@ -187,6 +188,10 @@ public class RealEstateViewModel extends ViewModel {
     // Room
     public List<Room> getRoom() {
         return roomDataRepository.getRooms();
+    }
+
+    public Single<List<Room>> getRoomSingle() {
+        return roomDataRepository.getRoomsSingle();
     }
 
     public void insertRoom(Room room) {

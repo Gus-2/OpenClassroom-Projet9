@@ -295,7 +295,7 @@ public class FormActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(this);
         recyclerViewPointOfInterest.setLayoutManager(layoutManager1);
         listPointOfInterests = new ArrayList<>();
-        adapterPointOfInterest = new AdapterPointOfInterest(listPointOfInterests);
+        //adapterPointOfInterest = new AdapterPointOfInterest(listPointOfInterests);
         recyclerViewPointOfInterest.setAdapter(adapterPointOfInterest);
     }
 

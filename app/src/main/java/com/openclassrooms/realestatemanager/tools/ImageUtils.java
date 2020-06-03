@@ -61,7 +61,6 @@ public class ImageUtils {
     public static String saveVideoToInternalStorage (Uri filePath, Context context) {
         File newfile;
         try {
-
             File currentFile = new File(filePath.getPath());
             String fileName = currentFile.getName() + ".mp4";
             ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
@@ -69,13 +68,14 @@ public class ImageUtils {
             newfile = new File(directory, fileName);
             InputStream in = context.getContentResolver().openInputStream(filePath);
             OutputStream out = new FileOutputStream(newfile);
-            // Copy the bits from instream to outstream
+
             byte[] buf = new byte[1024];
             int len;
 
             while ((len = in.read(buf)) > 0) {
                 out.write(buf, 0, len);
             }
+
             in.close();
             out.close();
             return newfile.getAbsolutePath();

@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.ui.realestateform;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,7 @@ import butterknife.ButterKnife;
 
 public class AdapterPointOfInterest extends RecyclerView.Adapter<AdapterPointOfInterest.MyViewHolder> {
     private List<PointOfInterest> listPointOfInterest;
+    private OnPointOfInterestClickListener onPointOfInterestClickListener;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tv_name_point_of_interest)
@@ -25,14 +27,22 @@ public class AdapterPointOfInterest extends RecyclerView.Adapter<AdapterPointOfI
         @BindView(R.id.tv_address_point_of_interest)
         TextView tvAddressPointOfInterest;
 
-        public MyViewHolder(View itemView) {
+        @BindView(R.id.iv_delete_point_of_interest)
+        ImageView ivDeletePointOfInterest;
+
+        OnPointOfInterestClickListener onPointOfInterestClickListener;
+
+        public MyViewHolder(View itemView, OnPointOfInterestClickListener onPointOfInterestClickListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            this.onPointOfInterestClickListener = onPointOfInterestClickListener;
+            ivDeletePointOfInterest.setOnClickListener(v -> onPointOfInterestClickListener.onPointOfInterestClickListener(getAdapterPosition()));
         }
     }
 
-    public AdapterPointOfInterest(List<PointOfInterest> listPointOfInterest) {
+    public AdapterPointOfInterest(List<PointOfInterest> listPointOfInterest, OnPointOfInterestClickListener onPointOfInterestClickListener) {
         this.listPointOfInterest = listPointOfInterest;
+        this.onPointOfInterestClickListener = onPointOfInterestClickListener;
     }
 
     @Override
@@ -40,7 +50,7 @@ public class AdapterPointOfInterest extends RecyclerView.Adapter<AdapterPointOfI
                                                                   int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.i_point_of_interest, parent, false);
-        return new MyViewHolder(v);
+        return new MyViewHolder(v, onPointOfInterestClickListener);
     }
 
     @Override
@@ -52,5 +62,9 @@ public class AdapterPointOfInterest extends RecyclerView.Adapter<AdapterPointOfI
     @Override
     public int getItemCount() {
         return listPointOfInterest.size();
+    }
+
+    public interface OnPointOfInterestClickListener{
+        void onPointOfInterestClickListener(int position);
     }
 }

@@ -120,19 +120,24 @@ public class RealEstateDetailFragment extends Fragment {
         binding.toolbarDetailActivity.inflateMenu(R.menu.menu_item_edit);
         binding.toolbarDetailActivity.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.edit) {
-                Intent intent = new Intent(getActivity(), EditRealEstateActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(MainActivity.HOUSES, house);
-                bundle.putParcelable(MainActivity.ADDRESS, address);
-                bundle.putParcelableArrayList(MainActivity.REAL_ESTATE_AGENT, realEstateAgents);
-                bundle.putParcelableArrayList(MainActivity.ROOM_NUMBER, new ArrayList<>(listRoomNumber));
-                bundle.putParcelableArrayList(MainActivity.POINT_OF_INTEREST, new ArrayList<>(listPointOfInterest));
-                bundle.putParcelableArrayList(MainActivity.HOUSE_POINT_OF_INTEREST, (ArrayList<HousePointOfInterest>) listHousePointOfInterest);
-                bundle.putParcelableArrayList(MainActivity.PHOTOS, photoList);
-                bundle.putSerializable(MainActivity.HOUSES_TYPES, listHouseTypes);
-                intent.putExtras(bundle);
-                startActivityForResult(intent, REQUEST_CODE);
-                return true;
+                if(house.getState().equals(STATE_SOLD)){
+                    Toast.makeText(context, R.string.unchange_house_sold, Toast.LENGTH_SHORT).show();
+                    return true;
+                }else{
+                    Intent intent = new Intent(getActivity(), EditRealEstateActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(MainActivity.HOUSES, house);
+                    bundle.putParcelable(MainActivity.ADDRESS, address);
+                    bundle.putParcelableArrayList(MainActivity.REAL_ESTATE_AGENT, realEstateAgents);
+                    bundle.putParcelableArrayList(MainActivity.ROOM_NUMBER, new ArrayList<>(listRoomNumber));
+                    bundle.putParcelableArrayList(MainActivity.POINT_OF_INTEREST, new ArrayList<>(listPointOfInterest));
+                    bundle.putParcelableArrayList(MainActivity.HOUSE_POINT_OF_INTEREST, (ArrayList<HousePointOfInterest>) listHousePointOfInterest);
+                    bundle.putParcelableArrayList(MainActivity.PHOTOS, photoList);
+                    bundle.putSerializable(MainActivity.HOUSES_TYPES, listHouseTypes);
+                    intent.putExtras(bundle);
+                    startActivityForResult(intent, REQUEST_CODE);
+                    return true;
+                }
             }
             return false;
         });

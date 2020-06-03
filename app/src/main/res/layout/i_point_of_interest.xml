@@ -10,31 +10,38 @@
         android:id="@+id/tv_name_point_of_interest"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp"
         android:paddingLeft="8dp"
+        android:paddingTop="5dp"
         android:paddingRight="8dp"
         android:paddingBottom="3dp"
-        android:textStyle="bold"
         android:textSize="18sp"
-        tools:text="Name Point Of Interest"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/iv_delete_point_of_interest"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Name Point Of Interest" />
 
     <TextView
         android:id="@+id/tv_address_point_of_interest"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp"
         android:paddingLeft="8dp"
+        android:paddingTop="5dp"
         android:paddingRight="8dp"
         android:paddingBottom="8dp"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/iv_delete_point_of_interest"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_name_point_of_interest"
         tools:text="Address Point Of Interest" />
+
+    <ImageView
+        android:id="@+id/iv_delete_point_of_interest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_delete_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:layout_width="match_parent"

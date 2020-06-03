@@ -13,6 +13,8 @@ import com.openclassrooms.realestatemanager.models.pojo.Room;
 
 import java.util.List;
 
+import io.reactivex.Single;
+
 @Dao
 public interface RoomDao {
 
@@ -27,4 +29,7 @@ public interface RoomDao {
 
     @Query("SELECT * FROM rooms WHERE id_room = :idRoom")
     Cursor getRoomFromIdWithCursor(long idRoom);
+
+    @Query("SELECT * FROM rooms")
+    Single<List<Room>> getRoomsSingle();
 }

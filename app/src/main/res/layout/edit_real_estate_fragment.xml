@@ -1,0 +1,998 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context="com.openclassrooms.realestatemanager.ui.realestateform.FormActivity">
+
+        <View
+            android:id="@+id/v_general_view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toStartOf="@+id/tv_general"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_general"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:text="@string/general"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/v_general_view_2"
+            app:layout_constraintStart_toEndOf="@+id/v_general_view"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            android:id="@+id/v_general_view_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_general"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ddm_house_type_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/house_type"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_general">
+
+            <AutoCompleteTextView
+                android:id="@+id/tv_house_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:cursorVisible="false"
+                android:textSize="16sp"
+                android:editable="false"
+                android:focusableInTouchMode="true"
+                tools:ignore="LabelFor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tiet_house_price_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/price"
+            app:endIconDrawable="@drawable/ic_dollars_money_24dp"
+            app:endIconMode="custom"
+            app:layout_constraintEnd_toStartOf="@+id/tiet_house_surface_layout"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ddm_house_type_layout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tv_house_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tiet_house_surface_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/surface"
+            app:endIconDrawable="@drawable/square_meter_24dp"
+            app:endIconMode="custom"
+            app:layout_constraintBottom_toBottomOf="@+id/tiet_house_price_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/tiet_house_price_layout"
+            app:layout_constraintTop_toTopOf="@+id/tiet_house_price_layout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tv_house_surface"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <View
+            android:id="@+id/v_room_view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="2dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toStartOf="@+id/tv_general"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tiet_house_price_layout" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="8dp"
+            android:text="@string/rooms"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/v_room_view_2"
+            app:layout_constraintStart_toEndOf="@+id/v_room_view"
+            app:layout_constraintTop_toBottomOf="@+id/tiet_house_surface_layout"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            android:id="@+id/v_room_view_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_room"
+            app:layout_constraintTop_toBottomOf="@+id/tiet_house_surface_layout" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_kitchen"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/kitchen"
+            app:layout_constraintEnd_toStartOf="@+id/til_number_kitchen"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_room">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_kitchen"
+                android:focusable="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_number_kitchen"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_room">
+
+            <AutoCompleteTextView
+                android:id="@+id/actv_number_kitchen"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:cursorVisible="false"
+                android:editable="false"
+                android:textSize="20sp"
+                android:focusableInTouchMode="true"
+                tools:ignore="LabelFor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_bathroom"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/bathroom"
+            app:layout_constraintEnd_toStartOf="@+id/til_number_bathroom"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_kitchen">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_bathroom"
+                android:focusable="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_number_bathroom"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_kitchen">
+
+            <AutoCompleteTextView
+                android:id="@+id/actv_number_bathroom"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:cursorVisible="false"
+                android:textSize="20sp"
+                android:editable="false"
+                android:focusableInTouchMode="true"
+                tools:ignore="LabelFor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- BEDROOM -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_bedroom"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/bedroom"
+            app:layout_constraintEnd_toStartOf="@+id/til_number_kitchen"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_bathroom">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_bedroom"
+                android:focusable="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_number_bedroom"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_bathroom">
+
+            <AutoCompleteTextView
+                android:id="@+id/actv_number_bedroom"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:cursorVisible="false"
+                android:editable="false"
+                android:textSize="20sp"
+                android:focusableInTouchMode="true"
+                tools:ignore="LabelFor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <!-- LIVING ROOM -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_livingroom"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/living_room"
+            app:layout_constraintEnd_toStartOf="@+id/til_number_livingroom"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_bedroom">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_livingroom"
+                android:focusable="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_number_livingroom"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_bedroom">
+
+            <AutoCompleteTextView
+                android:id="@+id/actv_number_livingroom"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:cursorVisible="false"
+                android:textSize="20sp"
+                android:editable="false"
+                android:focusableInTouchMode="true"
+                tools:ignore="LabelFor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- TOILET -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_toilet"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/toilet"
+            app:layout_constraintEnd_toStartOf="@+id/til_number_toilet"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_livingroom">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_toilet"
+                android:focusable="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_number_toilet"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_livingroom">
+
+            <AutoCompleteTextView
+                android:id="@+id/actv_number_toilet"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:cursorVisible="false"
+                android:textSize="20sp"
+                android:editable="false"
+                android:focusableInTouchMode="true"
+                tools:ignore="LabelFor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- CELLAR -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_cellar"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/cellar"
+            app:layout_constraintEnd_toStartOf="@+id/til_number_cellar"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_toilet">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_cellar"
+                android:focusable="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_number_cellar"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_toilet">
+
+            <AutoCompleteTextView
+                android:id="@+id/actv_number_cellar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:cursorVisible="false"
+                android:textSize="20sp"
+                android:editable="false"
+                android:focusableInTouchMode="true"
+                tools:ignore="LabelFor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- POOL -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_pool"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/pool"
+            app:layout_constraintEnd_toStartOf="@+id/til_number_pool"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_cellar">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_pool"
+                android:focusable="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_number_pool"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_cellar">
+
+            <AutoCompleteTextView
+                android:id="@+id/actv_number_pool"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:cursorVisible="false"
+                android:textSize="20sp"
+                android:editable="false"
+                android:focusableInTouchMode="true"
+                tools:ignore="LabelFor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:id="@+id/v_description_view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="2dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toStartOf="@+id/tv_description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_pool" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="8dp"
+            android:text="@string/description"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/v_description_view_2"
+            app:layout_constraintStart_toEndOf="@+id/v_description_view"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_pool"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            android:id="@+id/v_description_view_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_description"
+            app:layout_constraintTop_toBottomOf="@+id/til_number_pool" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_description"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/property_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_description">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/ed_description_house"
+                android:lines="3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:id="@+id/v_address_view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="2dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toStartOf="@+id/tv_address"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_description" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="8dp"
+            android:text="@string/address"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/v_address_view_2"
+            app:layout_constraintStart_toEndOf="@+id/v_address_view"
+            app:layout_constraintTop_toBottomOf="@+id/til_description"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            android:id="@+id/v_address_view_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_address"
+            app:layout_constraintTop_toBottomOf="@+id/til_description" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_street"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/street"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/v_address_view_2">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tv_street"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_number"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_street">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tv_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_district"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/district"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_number">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tv_district"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="New York"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_city"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/city"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_district">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tv_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="New York"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_postcode"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/postcode"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_city">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tv_postcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_additional_information"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/additional_information"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_postcode">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tv_additional_information"
+                android:lines="3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:id="@+id/v_date_view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="2dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toStartOf="@+id/tv_date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_additional_information" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="8dp"
+            android:text="@string/availibilty_date"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/v_date_view_2"
+            app:layout_constraintStart_toEndOf="@+id/v_date_view"
+            app:layout_constraintTop_toBottomOf="@+id/til_additional_information"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            android:id="@+id/v_date_view_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_date"
+            app:layout_constraintTop_toBottomOf="@+id/til_additional_information" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_availibility_date"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/availibility_date"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/v_date_view_2">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_availibility_date"
+                android:editable="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/bt_add_availibility_date"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/add_availibility_date"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/til_availibility_date" />
+
+        <View
+            android:id="@+id/v_point_of_interest_view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="2dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toStartOf="@+id/tv_point_of_interest"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_availibility_date" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_point_of_interest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="8dp"
+            android:text="@string/point_of_interests"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/v_point_of_interest_view_2"
+            app:layout_constraintStart_toEndOf="@+id/v_point_of_interest_view"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_availibility_date"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            android:id="@+id/v_point_of_interest_view_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_point_of_interest"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_availibility_date" />
+
+        <FrameLayout
+            android:id="@+id/layout_rv_point_of_interest"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:background="@drawable/border"
+            android:layout_margin="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_point_of_interest">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_point_of_interest"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                />
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/bt_add_point_of_interest"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/add_a_point_of_interest"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_rv_point_of_interest" />
+
+        <View
+            android:id="@+id/v_real_estate_agent_view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="2dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toStartOf="@+id/tv_real_estate_agent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_point_of_interest" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_real_estate_agent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="8dp"
+            android:text="@string/real_estate_agent"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/v_real_estate_agent_view_2"
+            app:layout_constraintStart_toEndOf="@+id/v_real_estate_agent_view"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_point_of_interest"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            android:id="@+id/v_real_estate_agent_view_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_real_estate_agent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_point_of_interest" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ddm_real_estate_agent_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/real_estate_agent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_real_estate_agent">
+
+            <AutoCompleteTextView
+                android:id="@+id/atv_real_estate_agent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:cursorVisible="false"
+                android:textSize="16sp"
+                android:editable="false"
+                android:focusableInTouchMode="true"
+                tools:ignore="LabelFor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:id="@+id/v_photo_view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="2dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toStartOf="@+id/tv_photo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ddm_real_estate_agent_layout" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="8dp"
+            android:text="@string/photos"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/v_photo__view_2"
+            app:layout_constraintStart_toEndOf="@+id/v_photo_view"
+            app:layout_constraintTop_toBottomOf="@+id/ddm_real_estate_agent_layout"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            android:id="@+id/v_photo__view_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_photo"
+            app:layout_constraintTop_toBottomOf="@+id/ddm_real_estate_agent_layout" />
+
+
+        <LinearLayout
+            android:id="@+id/layout_rv_house_picture"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:background="@drawable/border"
+            android:layout_margin="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_photo">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_house_picture"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/bt_add_pictures"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/add_pictures"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_rv_house_picture" />
+
+        <View
+            android:id="@+id/v_video_view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="2dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toStartOf="@+id/tv_video"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_pictures" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="8dp"
+            android:text="Video"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/v_video__view_2"
+            app:layout_constraintStart_toEndOf="@+id/v_video_view"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_pictures"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            android:id="@+id/v_video__view_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_video"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_pictures" />
+
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_add_video"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="10dp"
+            android:text="No video added"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_video"
+            tools:ignore="MissingConstraints" />
+
+        <Button
+            android:id="@+id/bt_add_video"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Add a video"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_add_video" />
+
+        <View
+            android:id="@+id/v_end_view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="2dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_video" />
+
+        <Button
+            android:id="@+id/bt_add_property"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:padding="10dp"
+            android:text="@string/add_the_property"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_add_video" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

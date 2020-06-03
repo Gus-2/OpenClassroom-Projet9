@@ -12,22 +12,40 @@
         android:layout_width="match_parent"
         app:cardCornerRadius="5dp"
         android:layout_height="150dp">
-        <ImageView
-            android:scaleType="centerCrop"
-            android:id="@+id/iv_picture_house"
+        <RelativeLayout
+            android:id="@+id/rl_cv"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        </ImageView>
 
-        <ImageView
-            android:paddingTop="5dp"
-            android:paddingRight="5dp"
-            android:scaleType="centerCrop"
-            android:id="@+id/iv_set_as_default_picture"
-            android:src="@drawable/ic_crop_original_white_24dp"
-            android:layout_width="34dp"
-            android:layout_height="24dp">
-        </ImageView>
+            <ImageView
+                android:scaleType="centerCrop"
+                android:id="@+id/iv_picture_house"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </ImageView>
+
+            <ImageView
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:scaleType="centerCrop"
+                android:id="@+id/iv_set_as_default_picture"
+                android:src="@drawable/ic_crop_original_white_24dp"
+                android:layout_width="34dp"
+                android:layout_height="24dp">
+            </ImageView>
+
+            <ImageView
+                android:id="@+id/iv_remove_picture"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="5dp"
+                android:paddingTop="5dp"
+                android:paddingRight="5dp"
+                android:scaleType="fitEnd"
+                android:src="@drawable/ic_delete_black_24dp" />
+
+        </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
     <com.google.android.material.textfield.TextInputLayout

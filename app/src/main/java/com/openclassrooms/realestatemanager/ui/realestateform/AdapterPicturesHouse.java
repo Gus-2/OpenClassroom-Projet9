@@ -2,13 +2,9 @@ package com.openclassrooms.realestatemanager.ui.realestateform;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.ImageDecoder;
 import android.net.Uri;
-import android.os.Build;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +13,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.textfield.TextInputEditText;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.models.pojo.Room;
-import com.openclassrooms.realestatemanager.tools.DateConverter;
-import com.openclassrooms.realestatemanager.tools.TypeConverter;
-import com.openclassrooms.realestatemanager.tools.Utils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -83,7 +75,7 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
     public AdapterPicturesHouse.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                                   int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.i_picture_property, parent, false);
+                .inflate(R.layout.item_house_picture, parent, false);
         return new MyViewHolder(v, mListener);
     }
 
