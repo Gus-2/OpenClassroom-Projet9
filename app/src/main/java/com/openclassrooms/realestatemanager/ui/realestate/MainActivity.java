@@ -22,12 +22,25 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
+import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
+import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
+import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
+import com.openclassrooms.realestatemanager.tools.SearchUtils;
+import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.ui.realestateform.FormActivity;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.ui.viewmodels.SharedViewModel;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Observable;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String POINT_OF_INTEREST = "POINT_OF_INTEREST";
     public static final String ROOM = "ROOM";
     public static final String HOUSE_POINT_OF_INTEREST = "HOUSE_POINT_OF_INTEREST";
+    public static final String TYPE_POINT_OF_INTEREST = "TYPE_POINT_OF_INTEREST";
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 20;
     private final int ERROR_DIALOG_REQUEST = 9001;
@@ -54,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean mLocationPermissionGranted = false;
     private SharedViewModel sharedViewModel;
     private HashMap<String, Object> databaseValues;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
         this.sharedViewModel = new ViewModelProvider(this, mViewModelFactory).get(SharedViewModel.class);
     }
 
+
+
     public void getDataFromDatabase(){
         realEstateViewModel.getHouseData().observe(this, houses -> {
             databaseValues.clear();
@@ -91,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
             dataFromDatabaseAsyncTask.execute();
         });
     }
+
 
     private void configureFabAddHouse() {
         addHouse.setOnClickListener(v -> {
@@ -168,6 +186,9 @@ public class MainActivity extends AppCompatActivity {
             weakReference.get().databaseValues.put(PHOTOS, weakReference.get().realEstateViewModel.getPhoto());
             weakReference.get().databaseValues.put(REAL_ESTATE_AGENT, weakReference.get().realEstateViewModel.getRealEstateAgent());
             weakReference.get().databaseValues.put(ROOM, weakReference.get().realEstateViewModel.getRoom());
+            weakReference.get().databaseValues.put(POINT_OF_INTEREST, TypeConverter.listPointOfInterestToHashMap(weakReference.get().realEstateViewModel.getListPointOfInterest()));
+            weakReference.get().databaseValues.put(HOUSE_POINT_OF_INTEREST, TypeConverter.listHousePointOfInterestToHashMap(weakReference.get().realEstateViewModel.getListHousePointOfInterest()));
+            weakReference.get().databaseValues.put(TYPE_POINT_OF_INTEREST, TypeConverter.listTypePointOfInterestToHashMap(weakReference.get().realEstateViewModel.getListTypePointOfInterest()));
             return null;
         }
 

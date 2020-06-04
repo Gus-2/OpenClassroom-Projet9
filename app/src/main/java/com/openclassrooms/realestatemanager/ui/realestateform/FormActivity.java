@@ -1,17 +1,12 @@
 package com.openclassrooms.realestatemanager.ui.realestateform;
 
 import android.app.Notification;
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -56,17 +51,7 @@ import com.openclassrooms.realestatemanager.ui.viewmodels.RetrofitViewModel;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.ref.WeakReference;
-import java.net.URI;
-import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -86,7 +71,7 @@ import io.reactivex.disposables.Disposable;
 
 import static com.openclassrooms.realestatemanager.tools.App.CHANNEL_1_ID;
 
-public class FormActivity extends AppCompatActivity {
+public class FormActivity extends AppCompatActivity implements AdapterPointOfInterest.OnPointOfInterestClickListener {
     private final static int RESULT_OK = 80;
     private final static int ERROR_RESULT = 1;
     private final static int PLACE_RETRIEVED = -1;
@@ -295,7 +280,7 @@ public class FormActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(this);
         recyclerViewPointOfInterest.setLayoutManager(layoutManager1);
         listPointOfInterests = new ArrayList<>();
-        //adapterPointOfInterest = new AdapterPointOfInterest(listPointOfInterests);
+        adapterPointOfInterest = new AdapterPointOfInterest(listPointOfInterests, this);
         recyclerViewPointOfInterest.setAdapter(adapterPointOfInterest);
     }
 
@@ -369,7 +354,7 @@ public class FormActivity extends AppCompatActivity {
      */
     private void insertNewTypePointOfInterest() {
         int id;
-        Callable<Long> insertCallable = () -> realEstateViewModel.insertTypePointOfInterest(new TypePointOfInterest(TypeConverter.convertPlaceTypeString(place.getTypes().get(0).toString())));
+        Callable<Long> insertCallable = () -> realEstateViewModel.insertTypePointOfInterest(new TypePointOfInterest(place.getTypes().get(0).toString()));
         Future<Long> future = executorService.submit(insertCallable);
         try {
             id = future.get().intValue();
@@ -520,6 +505,12 @@ public class FormActivity extends AppCompatActivity {
                     @Override
                     public void onPrepareLoad(Drawable placeHolderDrawable) { }
                 });
+    }
+
+    @Override
+    public void onPointOfInterestClickListener(int position) {
+        listPointOfInterests.remove(position);
+        adapterPointOfInterest.notifyItemRemoved(position);
     }
 
     private static class InsertIntoDatabase extends AsyncTask<Void, Void, Void>{

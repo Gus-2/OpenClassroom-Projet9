@@ -13,11 +13,16 @@ import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 
 import java.util.List;
 
+import io.reactivex.Single;
+
 @Dao
 public interface TypePointOfInterestDao {
 
     @Query("SELECT *  FROM type_point_of_interest")
     LiveData<List<TypePointOfInterest>> getTypePointOfInterest();
+
+    @Query("SELECT *  FROM type_point_of_interest")
+    List<TypePointOfInterest> getListTypePointOfInterest();
 
     @Query("SELECT *  FROM type_point_of_interest")
     Cursor getTypePointOfInterestWithCursor();
@@ -34,4 +39,6 @@ public interface TypePointOfInterestDao {
     @Query("SELECT * FROM type_point_of_interest WHERE id_type_point_of_interest = :idTypePointOfInterest")
     Cursor getTypePointOfInterestFromIdWithCursor(long idTypePointOfInterest);
 
+    @Query("SELECT * FROM type_point_of_interest")
+    Single<List<TypePointOfInterest>> getSingleTypePointOfInterestList();
 }

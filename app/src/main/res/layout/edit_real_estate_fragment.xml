@@ -714,7 +714,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="@string/add_availibility_date"
+            android:text="@string/update_availability_date"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/til_availibility_date" />
@@ -924,7 +924,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginTop="3dp"
             android:layout_marginRight="8dp"
-            android:text="Video"
+            android:text="@string/video"
             android:textSize="20sp"
             app:layout_constraintEnd_toStartOf="@+id/v_video__view_2"
             app:layout_constraintStart_toEndOf="@+id/v_video_view"
@@ -952,7 +952,6 @@
             android:layout_marginTop="3dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="10dp"
-            android:text="No video added"
             android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="parent"
             app:layout_constraintStart_toEndOf="parent"
@@ -965,7 +964,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="Add a video"
+            android:text="@string/update_video"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_add_video" />
@@ -988,7 +987,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="7dp"
             android:padding="10dp"
-            android:text="@string/add_the_property"
+            android:text="@string/update_the_property"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bt_add_video" />

@@ -1,11 +1,16 @@
 package com.openclassrooms.realestatemanager.tools;
 
 import com.openclassrooms.realestatemanager.models.pojo.Address;
+import com.openclassrooms.realestatemanager.models.pojo.House;
+import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
+import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
 import com.openclassrooms.realestatemanager.models.pojo.Room;
+import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 
+import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -130,16 +135,6 @@ public class TypeConverter {
         return -1;
     }
 
-    public static String convertPlaceTypeString(String placeType){
-        String[] transformStringTable = placeType.split("_");
-        String value = "";
-        for(int i = 0; i < transformStringTable.length; i++){
-            value += transformStringTable[i].substring(0, 1).toUpperCase() + transformStringTable[i].substring(1).toLowerCase();
-            value += " ";
-        }
-        return value;
-    }
-
     public static HashMap<Long, String> listRoomToHashMap(List<Room> listRoom){
         HashMap<Long, String> hashMapIdRoom = new HashMap<>();
         for(Room room : listRoom){
@@ -147,5 +142,36 @@ public class TypeConverter {
         }
         return hashMapIdRoom;
     }
+
+    public static HashMap<Long, List<HousePointOfInterest>> listHousePointOfInterestToHashMap(List<HousePointOfInterest> housePointOfInterests){
+        HashMap<Long, List<HousePointOfInterest>> hashMapIdHouseToHouse = new HashMap<>();
+        for(HousePointOfInterest housePointOfInterest : housePointOfInterests){
+            if(!hashMapIdHouseToHouse.containsKey(housePointOfInterest.getIdHouse())){
+                ArrayList<HousePointOfInterest> listHousePointOfInterest = new ArrayList<>();
+                listHousePointOfInterest.add(housePointOfInterest);
+                hashMapIdHouseToHouse.put(housePointOfInterest.getIdHouse(), listHousePointOfInterest);
+            }else{
+                hashMapIdHouseToHouse.get(housePointOfInterest.getIdHouse()).add(housePointOfInterest);
+            }
+        }
+        return hashMapIdHouseToHouse;
+    }
+
+    public static HashMap<Long, TypePointOfInterest> listTypePointOfInterestToHashMap(List<TypePointOfInterest> listTypePointOfInterest){
+        HashMap<Long, TypePointOfInterest> hashMapIdHouseToHouse = new HashMap<>();
+        for(TypePointOfInterest typePointOfInterest : listTypePointOfInterest){
+            hashMapIdHouseToHouse.put(typePointOfInterest.getIdTypePointOfInterest(), typePointOfInterest);
+        }
+        return hashMapIdHouseToHouse;
+    }
+
+    public static HashMap<Long, PointOfInterest> listPointOfInterestToHashMap(List<PointOfInterest> listPointOfInterest){
+        HashMap<Long, PointOfInterest> hashMapIdHouseToPointOfInterest = new HashMap<>();
+        for(PointOfInterest pointOfInterest : listPointOfInterest){
+           hashMapIdHouseToPointOfInterest.put(pointOfInterest.getIdPointOfInterest(), pointOfInterest);
+        }
+        return hashMapIdHouseToPointOfInterest;
+    }
+
 
 }

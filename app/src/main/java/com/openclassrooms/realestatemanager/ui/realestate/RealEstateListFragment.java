@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.realestate;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,10 +21,14 @@ import com.google.android.material.bottomappbar.BottomAppBar;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.Address;
 import com.openclassrooms.realestatemanager.models.pojo.House;
+import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
+import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
 import com.openclassrooms.realestatemanager.models.pojo.Room;
+import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
+import com.openclassrooms.realestatemanager.tools.SearchUtils;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailActivity;
 import com.openclassrooms.realestatemanager.ui.viewmodels.SharedViewModel;
@@ -55,6 +60,9 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     private List<Room> listRoom;
     private ArrayList<HouseType> listHousesTypes;
     private ArrayList<String> listDistrict = new ArrayList<>();
+    private HashMap<Long, List<HousePointOfInterest>> hashMapHouseTypePointOfInterest;
+    private HashMap<Long, PointOfInterest> hashMapPointOfInterest;
+    private HashMap<Long, TypePointOfInterest> hashMapTypePointOfInterest;
     private double minPrice = 0;
     private double maxPrice = 0;
     private double maxSurface;
@@ -95,6 +103,9 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
             hashMapAddress = TypeConverter.convertAddressListToHashMap((List<Address>) databaseValue.get(MainActivity.ADDRESS));
             listRealEstateAgent = (ArrayList<RealEstateAgent>) databaseValue.get(MainActivity.REAL_ESTATE_AGENT);
             listRoom = (List<Room>) databaseValue.get(MainActivity.ROOM);
+            hashMapPointOfInterest = (HashMap<Long, PointOfInterest>) databaseValue.get(MainActivity.POINT_OF_INTEREST);
+            hashMapHouseTypePointOfInterest = (HashMap<Long, List<HousePointOfInterest>>) databaseValue.get(MainActivity.HOUSE_POINT_OF_INTEREST);
+            hashMapTypePointOfInterest = (HashMap<Long, TypePointOfInterest>) databaseValue.get(MainActivity.TYPE_POINT_OF_INTEREST);
             realEstateListAdapter = null;
             initializeAdapter();
         });
@@ -116,6 +127,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     }
 
     private void openDialog() {
+        listHousesDisplayed.clear();
         getMaxPrice();
         getMinPrice();
         getMaxSurface();
@@ -197,58 +209,16 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     public void onItemClickt(int position) {
         Intent intent = new Intent(getActivity(), RealEstateDetailActivity.class);
         House house = listHousesDisplayed.get(position);
-        intent.putExtra("HOUSE_ID", house.getIdHouse());
+        intent.putExtra(RealEstateDetailActivity.ID_HOUSE, house.getIdHouse());
         intent.putExtra(MainActivity.HOUSES_TYPES, hashMapHouseType);
         intent.putParcelableArrayListExtra(MainActivity.REAL_ESTATE_AGENT, listRealEstateAgent);
         startActivity(intent);
     }
 
     @Override
-    public void search(long houseType, long minSurface, long maxSurface, long minPrice, long maxPrice, long availabilityDate, String district, long numberPhoto) {
-        listHousesDisplayed.clear();
-
-        if(houseType == -1 && maxSurface == -1 && maxPrice == -1 && availabilityDate == 0 && district.equals(getString(R.string.no_district_defined)) && numberPhoto == -1){
-            listHousesDisplayed.addAll(listHouses);
-            realEstateListAdapter.notifyDataSetChanged();
-            return;
-        }
-
-        if(houseType != -1){
-            for(House house : listHouses)
-                if(house.getIdHouseType() == houseType)
-                    listHousesDisplayed.add(house);
-        }
-
-        if(maxSurface != -1){
-            for(House house : listHouses)
-                if(house.getSurface() <= maxSurface && house.getSurface() >= minSurface && !listHousesDisplayed.contains(house))
-                    listHousesDisplayed.add(house);
-        }
-
-        if(maxPrice != -1){
-            for(House house : listHouses)
-                if(house.getPrice() <= maxPrice && house.getPrice() >= minPrice && !listHousesDisplayed.contains(house))
-                    listHousesDisplayed.add(house);
-        }
-
-        if(availabilityDate != 0){
-            for(House house : listHouses)
-                if(house.getAvailableDate() >= availabilityDate && !listHousesDisplayed.contains(house))
-                    listHousesDisplayed.add(house);
-        }
-
-        if(!district.equals("")){
-            for(House house : listHouses)
-                if(hashMapAddress.get(house.getIdAddress()).getDistrict().equals(district) && !listHousesDisplayed.contains(house))
-                    listHousesDisplayed.add(house);
-        }
-
-        if(numberPhoto > 0){
-            for(House house : listHouses)
-                if(hashMapPhoto.get(house.getIdHouse()) != null && hashMapPhoto.get(house.getIdHouse()).size() >= numberPhoto && !listHousesDisplayed.contains(house))
-                    listHousesDisplayed.add(house);
-        }
-
+    public void search(long houseType, long minSurface, long maxSurface, long minPrice, long maxPrice, long availabilityDate, String district, long numberPhoto, HashMap<String, Boolean> nearbyTypesHashMap) {
+        listHousesDisplayed.addAll(SearchUtils.getListHouseFiltered(listHouses, hashMapAddress, hashMapPhoto, houseType, minSurface, maxSurface, minPrice, maxPrice,
+        availabilityDate, district, numberPhoto, nearbyTypesHashMap, getContext(), hashMapHouseTypePointOfInterest, hashMapPointOfInterest, hashMapTypePointOfInterest));
         realEstateListAdapter.notifyDataSetChanged();
     }
 

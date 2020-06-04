@@ -105,6 +105,10 @@ public class RealEstateViewModel extends ViewModel {
         return housePointOfInterestDataRepository.getHousePointOfInterest();
     }
 
+    public List<HousePointOfInterest> getListHousePointOfInterest() {
+        return housePointOfInterestDataRepository.getListHousePointOfInterest();
+    }
+
     public void insertHousePointOfInterest(HousePointOfInterest housePointOfInterest) {
         executor.execute(() -> {
             housePointOfInterestDataRepository.insertHousePointOfInterest(housePointOfInterest);
@@ -121,6 +125,10 @@ public class RealEstateViewModel extends ViewModel {
 
     public Flowable<List<HousePointOfInterest>> getFlowableHousePointOfInterestFromHouseId(long idHouse){
         return housePointOfInterestDataRepository.getFlowableHousePointOfInterestFromHouseId(idHouse);
+    }
+
+    public Single<List<HousePointOfInterest>> getSingleHousePointOfInterest(){
+        return housePointOfInterestDataRepository.getSingleousePointOfInterest();
     }
 
     // House's type
@@ -164,6 +172,14 @@ public class RealEstateViewModel extends ViewModel {
     // Point of interest
     public LiveData<List<PointOfInterest>> getPointOfInterest() {
         return pointOfInterestDataRepository.getPointOfInterest();
+    }
+
+    public List<PointOfInterest> getListPointOfInterest() {
+        return pointOfInterestDataRepository.getListPointOfInterest();
+    }
+
+    public Single<List<PointOfInterest>> getSinglePointOfInterest() {
+        return pointOfInterestDataRepository.getSinglePointOfInterest();
     }
 
     public long insertPointOfInterest(PointOfInterest pointOfInterest) {
@@ -224,6 +240,10 @@ public class RealEstateViewModel extends ViewModel {
         return typePointOfInterestDataRepository.getTypePointOfInterest();
     }
 
+    public List<TypePointOfInterest> getListTypePointOfInterest() {
+        return typePointOfInterestDataRepository.getListTypePointOfInterest();
+    }
+
     public long insertTypePointOfInterest(TypePointOfInterest typePointOfInterest) {
         return typePointOfInterestDataRepository.insertTypePointOfInterest(typePointOfInterest);
     }
@@ -234,6 +254,10 @@ public class RealEstateViewModel extends ViewModel {
 
     public TypePointOfInterest getTypePointOfInterest(long idTypePointOfInterest){
         return typePointOfInterestDataRepository.getTypePointOfInterest(idTypePointOfInterest);
+    }
+
+    public Single<List<TypePointOfInterest>> getSingleListTypePointOfInterest(){
+        return typePointOfInterestDataRepository.getSingleTypePointOfInterest();
     }
 
 }

@@ -243,6 +243,8 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
         binding.tvHouseType.setText(houseType[(int) house.getIdHouseType()-1], false);
         if(house.getVideoPath() != null)
             binding.tvAddVideo.setText(house.getVideoPath());
+        else
+            binding.tvAddVideo.setText(R.string.no_video_added);
     }
 
     /**
@@ -443,7 +445,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
      */
     private void insertNewTypePointOfInterest() {
         int id;
-        Callable<Long> insertCallable = () -> realEstateViewModel.insertTypePointOfInterest(new TypePointOfInterest(TypeConverter.convertPlaceTypeString(place.getTypes().get(0).toString())));
+        Callable<Long> insertCallable = () -> realEstateViewModel.insertTypePointOfInterest(new TypePointOfInterest(place.getTypes().get(0).toString()));
         Future<Long> future = executorService.submit(insertCallable);
         try {
             id = future.get().intValue();

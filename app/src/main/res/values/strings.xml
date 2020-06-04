@@ -78,4 +78,14 @@
     <string name="unchange_house_sold">Unchangeable : The house has been sold !</string>
     <string name="point_of_interest_succesfully_removed">The point of interest has been successfully removed !</string>
     <string name="photo_successfully_removed">The photo has been successfully removed !</string>
+    <string name="update_availability_date">Update availability date</string>
+    <string name="update_point_interest">Update points of interest</string>
+    <string name="add_a_video">Add a video</string>
+    <string name="video">Video</string>
+    <string name="no_video_added">No video added</string>
+    <string name="school">Schools</string>
+    <string name="shops">Shops</string>
+    <string name="park">Parks</string>
+    <string name="stations">Stations</string>
+    <string name="update_video">update video</string>
 </resources>

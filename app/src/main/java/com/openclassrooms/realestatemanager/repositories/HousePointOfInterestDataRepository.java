@@ -8,6 +8,7 @@ import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 public class HousePointOfInterestDataRepository {
 
@@ -19,6 +20,10 @@ public class HousePointOfInterestDataRepository {
 
     public LiveData<List<HousePointOfInterest>> getHousePointOfInterest(){
         return housePointOfInterestDao.getHousePointOfInterest();
+    }
+
+    public List<HousePointOfInterest> getListHousePointOfInterest(){
+        return housePointOfInterestDao.getListHousePointOfInterest();
     }
 
     public long insertHousePointOfInterest(HousePointOfInterest housePointOfInterest){
@@ -35,6 +40,10 @@ public class HousePointOfInterestDataRepository {
 
     public Flowable<List<HousePointOfInterest>> getFlowableHousePointOfInterestFromHouseId(long idHouse){
         return housePointOfInterestDao.getFlowableHousePointOfInterestFromHouseId(idHouse);
+    }
+
+    public Single<List<HousePointOfInterest>> getSingleousePointOfInterest(){
+        return housePointOfInterestDao.getSingleListHousePointOfInterest();
     }
 
 

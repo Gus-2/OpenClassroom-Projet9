@@ -50,8 +50,7 @@ public class AdapterPointOfInterestDetail extends RecyclerView.Adapter<AdapterPo
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         PointOfInterest pointOfInterest = listPointOfInterest.get(position);
-        String type = listTypePointOfInterest.get(pointOfInterest.getTypePointOfInterest()).getTypePointOfInterest();
-        holder.tvNamePointOfInterest.setText(type + ": " + pointOfInterest.getName());
+        holder.tvNamePointOfInterest.setText(pointOfInterest.getName());
         holder.tvAddressPointOfInterest.setText(listPointOfInterest.get(position).getAddress());
     }
 

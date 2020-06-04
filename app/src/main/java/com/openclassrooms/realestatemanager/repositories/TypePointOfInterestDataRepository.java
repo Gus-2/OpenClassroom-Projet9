@@ -7,6 +7,8 @@ import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 
 import java.util.List;
 
+import io.reactivex.Single;
+
 public class TypePointOfInterestDataRepository {
 
     private final TypePointOfInterestDao typePointOfInterestDao;
@@ -19,6 +21,10 @@ public class TypePointOfInterestDataRepository {
         return typePointOfInterestDao.getTypePointOfInterest();
     }
 
+    public List<TypePointOfInterest> getListTypePointOfInterest(){
+        return typePointOfInterestDao.getListTypePointOfInterest();
+    }
+
     public long insertTypePointOfInterest(TypePointOfInterest typePointOfInterest){
         return typePointOfInterestDao.insertTypePointOfInterest(typePointOfInterest);
     }
@@ -29,5 +35,9 @@ public class TypePointOfInterestDataRepository {
 
     public TypePointOfInterest getTypePointOfInterest(long idTypePointOfInterest){
         return  typePointOfInterestDao.getTypePointOfInterestFromId(idTypePointOfInterest);
+    }
+
+    public Single<List<TypePointOfInterest>> getSingleTypePointOfInterest(){
+        return  typePointOfInterestDao.getSingleTypePointOfInterestList();
     }
 }

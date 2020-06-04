@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
@@ -31,6 +31,7 @@ import com.openclassrooms.realestatemanager.ui.realestateform.FormActivity;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,6 +45,11 @@ import static com.openclassrooms.realestatemanager.ui.realestate.RealEstateListF
 import static com.openclassrooms.realestatemanager.ui.realestate.RealEstateListFragment.MIN_SURFACE;
 
 public class SearchDialog extends AppCompatDialogFragment {
+
+    public static final String SCHOOL = "SCHOOL";
+    public static final String SHOP = "SHOP";
+    public static final String STATION = "STATION";
+    public static final String PARK = "PARK";
 
     @BindView(R.id.tv_house_type_dialog)
     AutoCompleteTextView dropDownHouseType;
@@ -66,9 +72,22 @@ public class SearchDialog extends AppCompatDialogFragment {
     @BindView(R.id.tv_price)
     MaterialTextView tvPrice;
 
+    @BindView(R.id.cb_park)
+    MaterialCheckBox cbPark;
+
+    @BindView(R.id.cb_school)
+    MaterialCheckBox cbSchool;
+
+    @BindView(R.id.cb_shop)
+    MaterialCheckBox cbShop;
+
+    @BindView(R.id.cb_station)
+    MaterialCheckBox cbStation;
+
     private SearchDialogListener searchDialogListener;
     private List<HouseType> listHousesTypes;
     private ArrayList<String> listDistrict;
+    private HashMap<String, Boolean> hashMapCheckBox;
     private Activity activity;
     private double maxPrice;
     private double minPrice;
@@ -92,6 +111,7 @@ public class SearchDialog extends AppCompatDialogFragment {
         maxSurface = getArguments().getDouble(MAX_SURFACE);
         minSurface = getArguments().getDouble(MIN_SURFACE);
         listDistrict = getArguments().getStringArrayList(DISTRICT);
+
     }
 
     @NonNull
@@ -100,7 +120,7 @@ public class SearchDialog extends AppCompatDialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.layout_dialog, null);
+        View view = inflater.inflate(R.layout.layout_search_dialog, null);
         ButterKnife.bind(this, view);
 
         this.configureHouseTypes();
@@ -115,16 +135,19 @@ public class SearchDialog extends AppCompatDialogFragment {
 
                 })
                 .setPositiveButton(R.string.search, (dialog, which) -> {
+                    setHashMapCheckBox();
                     long numberPhoto = -1;
                     if(!dropDownNumberPhoto.getText().toString().equals(""))
                         numberPhoto = Long.parseLong(dropDownNumberPhoto.getText().toString());
-
-                    searchDialogListener.search(TypeConverter.getHouseTypeId(listHousesTypes, dropDownHouseType.getText().toString()),
+                    long houseTypeId = TypeConverter.getHouseTypeId(listHousesTypes, dropDownHouseType.getText().toString());
+                    searchDialogListener.search(houseTypeId,
                             minSurfaceSelected, maxSurfaceSelected, minPriceSelected, maxPriceSelected,
-                            availabilityDate,dropDownDistrict.getText().toString(), numberPhoto);
+                            availabilityDate,dropDownDistrict.getText().toString(), numberPhoto, hashMapCheckBox);
                 })
                 .create();
     }
+
+
 
     private void configureSeekBarPrice() {
         if(maxPrice > 0){
@@ -200,6 +223,15 @@ public class SearchDialog extends AppCompatDialogFragment {
         }
     }
 
+    public void setHashMapCheckBox(){
+        hashMapCheckBox = new HashMap<>();
+
+        hashMapCheckBox.put(SCHOOL, cbSchool.isChecked());
+        hashMapCheckBox.put(PARK, cbPark.isChecked());
+        hashMapCheckBox.put(STATION, cbStation.isChecked());
+        hashMapCheckBox.put(SHOP, cbShop.isChecked());
+    }
+
     private void configureAddAvailabilityDateButton() {
         btAddAvailabilityDate.setOnClickListener(l -> showDatePickerDialog());
     }
@@ -212,13 +244,9 @@ public class SearchDialog extends AppCompatDialogFragment {
     private void configureDistricts() {
         String[] districtArray = listDistrict.toArray(new String[listDistrict.size()]);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, R.layout.dropdown_menu_popup_item, districtArray);
+        dropDownDistrict.setText("");
+        dropDownDistrict.setAdapter(adapter);
 
-        if(listDistrict.size() == 1 && listDistrict.get(0).equals(""))
-            dropDownDistrict.setText(R.string.no_district_defined);
-        else{
-            dropDownDistrict.setText("");
-            dropDownDistrict.setAdapter(adapter);
-        }
     }
 
     private void configureHouseTypes() {
@@ -256,7 +284,7 @@ public class SearchDialog extends AppCompatDialogFragment {
 
     public interface SearchDialogListener{
         void search(long houseType, long minSurface, long maxSurface, long minPrice, long maxPrice,
-            long availabilityDate, String district, long numberPhoto);
+            long availabilityDate, String district, long numberPhoto, HashMap<String, Boolean> nearbyTypeHashMap);
     }
 
     

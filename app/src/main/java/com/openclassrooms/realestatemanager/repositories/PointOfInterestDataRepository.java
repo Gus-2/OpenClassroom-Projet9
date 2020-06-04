@@ -8,6 +8,8 @@ import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 
 import java.util.List;
 
+import io.reactivex.Single;
+
 public class PointOfInterestDataRepository {
 
     private final PointOfInterestDao pointOfInterestDao;
@@ -18,6 +20,14 @@ public class PointOfInterestDataRepository {
 
     public LiveData<List<PointOfInterest>> getPointOfInterest(){
         return pointOfInterestDao.getPointOfInterest();
+    }
+
+    public Single<List<PointOfInterest>> getSinglePointOfInterest(){
+        return pointOfInterestDao.getSinglePointOfInterest();
+    }
+
+    public List<PointOfInterest> getListPointOfInterest(){
+        return pointOfInterestDao.getPointOfInterestList();
     }
 
     public long insertPointOfInterest(PointOfInterest pointOfInterest){

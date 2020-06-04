@@ -70,19 +70,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="13dp"
         android:padding="15dp"
-        app:rsb_mode="range"
-        app:rsb_steps="5"
-        app:rsb_progress_color="@color/colorAccent"
-        app:rsb_thumb_width="23dp"
-        app:rsb_thumb_height="23dp"
-        app:rsb_thumb_scale_ratio="0.8"
-        app:rsb_indicator_show_mode="alwaysShow"
-        app:rsb_indicator_width="30dp"
-        app:rsb_indicator_height="30dp"
-        app:rsb_indicator_margin="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_surface" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_surface"
+        app:rsb_indicator_height="30dp"
+        app:rsb_indicator_margin="10dp"
+        app:rsb_indicator_show_mode="alwaysShow"
+        app:rsb_indicator_width="30dp"
+        app:rsb_mode="range"
+        app:rsb_progress_color="@color/colorAccent"
+        app:rsb_steps="5"
+        app:rsb_thumb_height="23dp"
+        app:rsb_thumb_scale_ratio="0.8"
+        app:rsb_thumb_width="23dp" />
 
     <View
         android:id="@+id/v_price_view"
@@ -125,21 +125,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="13dp"
-        android:paddingRight="10dp"
         android:paddingLeft="10dp"
-        app:rsb_mode="range"
-        app:rsb_steps="5"
-        app:rsb_progress_color="@color/colorAccent"
-        app:rsb_thumb_width="23dp"
-        app:rsb_thumb_height="23dp"
-        app:rsb_thumb_scale_ratio="0.8"
-        app:rsb_indicator_show_mode="alwaysShow"
-        app:rsb_indicator_width="35dp"
-        app:rsb_indicator_height="35dp"
-        app:rsb_indicator_margin="10dp"
+        android:paddingRight="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_price" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_price"
+        app:rsb_indicator_height="35dp"
+        app:rsb_indicator_margin="10dp"
+        app:rsb_indicator_show_mode="alwaysShow"
+        app:rsb_indicator_width="35dp"
+        app:rsb_mode="range"
+        app:rsb_progress_color="@color/colorAccent"
+        app:rsb_steps="5"
+        app:rsb_thumb_height="23dp"
+        app:rsb_thumb_scale_ratio="0.8"
+        app:rsb_thumb_width="23dp" />
 
     <View
         android:id="@+id/v_availability_date_view"
@@ -147,8 +147,8 @@
         android:layout_height="1dp"
         android:layout_marginStart="2dp"
         android:layout_marginTop="15dp"
-        android:paddingTop="15dp"
         android:background="@android:color/darker_gray"
+        android:paddingTop="15dp"
         app:layout_constraintEnd_toStartOf="@+id/tv_availability_date"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sb_price" />
@@ -203,8 +203,8 @@
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         android:layout_margin="13dp"
+        android:padding="10dp"
         android:text="@string/select_date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -229,7 +229,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="3dp"
         android:layout_marginRight="8dp"
-        android:text="@string/district"
+        android:text="District And Number Pictures"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/v_district_view_2"
         app:layout_constraintStart_toEndOf="@+id/v_district_view"
@@ -250,12 +250,13 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_district_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:hint="@string/district"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/til_photo_layout"
         app:layout_constraintTop_toBottomOf="@+id/tv_district_date">
 
         <AutoCompleteTextView
@@ -270,52 +271,17 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <View
-        android:id="@+id/v_photo_number_view"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="15dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintEnd_toStartOf="@+id/tv_photo_number"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_district_layout" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tv_photo_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginRight="8dp"
-        android:text="@string/photo_number"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/v_photo_number_view_2"
-        app:layout_constraintStart_toEndOf="@+id/v_photo_number_view"
-        app:layout_constraintTop_toBottomOf="@+id/til_district_layout"
-        tools:ignore="MissingConstraints" />
-
-    <View
-        android:id="@+id/v_photo_number_view_2"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="15dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tv_photo_number"
-        app:layout_constraintTop_toBottomOf="@+id/til_district_layout" />
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_photo_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:hint="Photo number"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/til_district_layout"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_photo_number">
+        app:layout_constraintTop_toBottomOf="@+id/tv_district_date">
 
         <AutoCompleteTextView
             android:id="@+id/tv_nb_photo_selected"
@@ -329,6 +295,87 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <View
+        android:id="@+id/v_nearby_view"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="15dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintEnd_toStartOf="@+id/tv_nearby_date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/til_photo_layout" />
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_nearby_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginRight="8dp"
+        android:text="Nearby Places"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/v_nearby_view_2"
+        app:layout_constraintStart_toEndOf="@+id/v_nearby_view"
+        app:layout_constraintTop_toBottomOf="@+id/til_photo_layout"
+        tools:ignore="MissingConstraints" />
 
+    <View
+        android:id="@+id/v_nearby_view_2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="15dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_nearby_date"
+        app:layout_constraintTop_toBottomOf="@+id/til_photo_layout" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cb_school"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/school"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/cb_shop"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_nearby_date" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cb_shop"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/shops"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/cb_school"
+        app:layout_constraintTop_toBottomOf="@+id/tv_nearby_date" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cb_park"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/park"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/cb_station"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cb_shop" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cb_station"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/stations"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/cb_park"
+        app:layout_constraintTop_toBottomOf="@+id/cb_shop" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class RealEstateDetailActivity extends AppCompatActivity {
 
-    public static final String ID_HOUSE = "ID_HOUSE";
+    public static final String ID_HOUSE = "HOUSE_ID";
     public static final String REAL_ESTATE_AGENT_LIST = "REAL_ESTATE_AGENT";
     public static final String HOUSE_TYPE_HASH_MAP = "HOUSE_TYPE_HASH_MAP";
 

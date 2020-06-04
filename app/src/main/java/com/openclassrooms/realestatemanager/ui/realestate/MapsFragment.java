@@ -38,9 +38,13 @@ import com.google.android.material.bottomappbar.BottomAppBar;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.Address;
 import com.openclassrooms.realestatemanager.models.pojo.House;
+import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
+import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
+import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
+import com.openclassrooms.realestatemanager.tools.SearchUtils;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailActivity;
 import com.openclassrooms.realestatemanager.ui.viewmodels.SharedViewModel;
@@ -71,8 +75,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private HashMap<Long, HouseType> hashMapHouseType;
     private HashMap<Long, Address> hashMapAddress;
     private HashMap<Long, Address> hashMapAddressDisplayed;
-    private HashMap<Long, List<Photo>> hashMapPhoto;
+    private HashMap<Long, ArrayList<Photo>> hashMapPhoto;
     private HashMap<String, Long> hashMapIdMarkerIdHouse;
+    private HashMap<Long, List<HousePointOfInterest>> hashMapHouseTypePointOfInterest;
+    private HashMap<Long, PointOfInterest> hashMapPointOfInterest;
+    private HashMap<Long, TypePointOfInterest> hashMapTypePointOfInterest;
     private List<RealEstateAgent> listRealEstateAgent;
     private ArrayList<HouseType> listHousesTypes;
     private ArrayList<String> listDistrict = new ArrayList<>();
@@ -185,19 +192,23 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             hashMapAddress = TypeConverter.convertAddressListToHashMap((List<Address>) databaseValue.get(MainActivity.ADDRESS));
             hashMapAddressDisplayed = new HashMap<>(hashMapAddress);
             listRealEstateAgent = (List<RealEstateAgent>) databaseValue.get(MainActivity.REAL_ESTATE_AGENT);
+            hashMapPointOfInterest = (HashMap<Long, PointOfInterest>) databaseValue.get(MainActivity.POINT_OF_INTEREST);
+            hashMapHouseTypePointOfInterest = (HashMap<Long, List<HousePointOfInterest>>) databaseValue.get(MainActivity.HOUSE_POINT_OF_INTEREST);
+            hashMapTypePointOfInterest = (HashMap<Long, TypePointOfInterest>) databaseValue.get(MainActivity.TYPE_POINT_OF_INTEREST);
             displayHousesOnTheMap();
         });
     }
 
     public void displayHousesOnTheMap(){
-        for (Long idHouse : hashMapAddressDisplayed.keySet()) {
-            Address address = hashMapAddressDisplayed.get(idHouse);
+        googleMap.clear();
+        for (House house : listHousesDisplayed) {
+            Address address = hashMapAddressDisplayed.get(house.getIdHouse());
             if(address.getLongitude() != null){
                 Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_place_blue_24dp);
                 BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
                 MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(address.getLatitude(), address.getLongitude())).icon(markerIcon);
                 Marker marker = googleMap.addMarker(markerOptions);
-                hashMapIdMarkerIdHouse.put(marker.getId(), idHouse);
+                hashMapIdMarkerIdHouse.put(marker.getId(), house.getIdHouse());
             }
         }
     }
@@ -294,67 +305,20 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public boolean onMarkerClick(Marker marker) {
         Intent intent = new Intent(getActivity(), RealEstateDetailActivity.class);
-        House houseToSet = null;
-        for(House house : listHouses){
-            if(house.getIdHouse() == hashMapIdMarkerIdHouse.get(marker.getId())) {
-                houseToSet = house;
-                break;
-            }
-        }
-        intent.putExtra(MainActivity.HOUSES, houseToSet);
+        Bundle bundle = new Bundle();
+        intent.putExtra(RealEstateDetailActivity.ID_HOUSE, hashMapIdMarkerIdHouse.get(marker.getId()));
         intent.putExtra(MainActivity.HOUSES_TYPES, hashMapHouseType);
-        intent.putParcelableArrayListExtra(MainActivity.PHOTOS, ((ArrayList<Photo>) hashMapPhoto.get(houseToSet.getIdHouse())));
-        intent.putParcelableArrayListExtra(MainActivity.REAL_ESTATE_AGENT, ((ArrayList<RealEstateAgent>) listRealEstateAgent));
-        intent.putExtra(MainActivity.ADDRESS, hashMapAddress.get(houseToSet.getIdAddress()));
+        intent.putParcelableArrayListExtra(MainActivity.REAL_ESTATE_AGENT, (ArrayList<RealEstateAgent>) listRealEstateAgent);
+        intent.putExtras(bundle);
         startActivity(intent);
         return false;
     }
 
     @Override
-    public void search(long houseType, long minSurface, long maxSurface, long minPrice, long maxPrice, long availabilityDate, String district, long numberPhoto) {
-        googleMap.clear();
-
-        if(houseType == -1 && maxSurface == -1 && maxPrice == -1 && availabilityDate == 0 && district.equals(getString(R.string.no_district_defined)) && numberPhoto == -1){
-            listHousesDisplayed.addAll(listHouses);
-            displayHousesOnTheMap();
-            return;
-        }
-
-        if(houseType != -1){
-            for(House house : listHouses)
-                if(house.getIdHouseType() == houseType)
-                    listHousesDisplayed.add(house);
-        }
-
-        if(maxSurface != -1){
-            for(House house : listHouses)
-                if(house.getSurface() <= maxSurface && house.getSurface() >= minSurface && !listHousesDisplayed.contains(house))
-                    listHousesDisplayed.add(house);
-        }
-
-        if(maxPrice != -1){
-            for(House house : listHouses)
-                if(house.getPrice() <= maxPrice && house.getPrice() >= minPrice && !listHousesDisplayed.contains(house))
-                    listHousesDisplayed.add(house);
-        }
-
-        if(availabilityDate != 0){
-            for(House house : listHouses)
-                if(house.getAvailableDate() >= availabilityDate && !listHousesDisplayed.contains(house))
-                    listHousesDisplayed.add(house);
-        }
-
-        if(!district.equals("")){
-            for(House house : listHouses)
-                if(hashMapAddress.get(house.getIdAddress()).getDistrict().equals(district) && !listHousesDisplayed.contains(house))
-                    listHousesDisplayed.add(house);
-        }
-
-        if(numberPhoto > 0){
-            for(House house : listHouses)
-                if(hashMapPhoto.get(house.getIdHouse()) != null && hashMapPhoto.get(house.getIdHouse()).size() >= numberPhoto && !listHousesDisplayed.contains(house))
-                    listHousesDisplayed.add(house);
-        }
+    public void search(long houseType, long minSurface, long maxSurface, long minPrice, long maxPrice, long availabilityDate, String district, long numberPhoto, HashMap<String, Boolean> nearbyTypesHashMap) {
+        listHousesDisplayed.clear();
+        listHousesDisplayed.addAll(SearchUtils.getListHouseFiltered(listHouses, hashMapAddress, hashMapPhoto, houseType, minSurface, maxSurface, minPrice, maxPrice,
+                availabilityDate, district, numberPhoto, nearbyTypesHashMap, getContext(), hashMapHouseTypePointOfInterest, hashMapPointOfInterest, hashMapTypePointOfInterest));
         hashMapIdMarkerIdHouse.clear();
         displayHousesOnTheMap();
     }
