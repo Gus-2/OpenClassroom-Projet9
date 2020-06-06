@@ -7,6 +7,7 @@ import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 
@@ -46,5 +47,12 @@ public class HousePointOfInterestDataRepository {
         return housePointOfInterestDao.getSingleListHousePointOfInterest();
     }
 
+    public Completable deleteListHousePointOfInterest(List<HousePointOfInterest> listHousePointOfInterest){
+        return housePointOfInterestDao.deleteListHousePointOfInterest(listHousePointOfInterest);
+    }
+
+    public Completable insertListHousePointOfInterest(List<HousePointOfInterest> listHousePointOfInterest){
+        return housePointOfInterestDao.insertHousePointOfInterest(listHousePointOfInterest);
+    }
 
 }

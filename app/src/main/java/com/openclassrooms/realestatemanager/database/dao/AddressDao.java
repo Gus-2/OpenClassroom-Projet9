@@ -8,10 +8,13 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.openclassrooms.realestatemanager.models.pojo.Address;
 
 import java.util.List;
+
+import io.reactivex.Completable;
 
 @Dao
 public interface AddressDao {
@@ -34,4 +37,6 @@ public interface AddressDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertAddress(Address address);
 
+    @Update
+    Completable updateAddress(Address address);
 }

@@ -13,12 +13,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.openclassrooms.realestatemanager.R;
+import com.openclassrooms.realestatemanager.injections.Injection;
+import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
 import com.openclassrooms.realestatemanager.models.pojo.Address;
 import com.openclassrooms.realestatemanager.models.pojo.House;
 import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
@@ -31,11 +34,20 @@ import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 import com.openclassrooms.realestatemanager.tools.SearchUtils;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailActivity;
+import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.ui.viewmodels.SharedViewModel;
+
+import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
+
+import io.reactivex.FlowableSubscriber;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.DisposableSubscriber;
 
 public class RealEstateListFragment extends Fragment implements RealEstateListAdapter.OnItemClickListener, SearchDialog.SearchDialogListener {
 
@@ -50,6 +62,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     private BottomAppBar bottomAppBar;
     private RecyclerView recyclerView;
     private RealEstateListAdapter realEstateListAdapter;
+    private RealEstateViewModel realEstateViewModel;
     private SharedViewModel sharedViewModel;
     private List<House> listHouses;
     private List<House> listHousesDisplayed;
@@ -97,7 +110,6 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
         sharedViewModel.getListData().observe(getViewLifecycleOwner(), databaseValue -> {
             listHouses = (List<House>) databaseValue.get(MainActivity.HOUSES);
             listHousesDisplayed = new ArrayList<>(listHouses);
-            hashMapPhoto = TypeConverter.getPhotoListToHashMap((List<Photo>) databaseValue.get(MainActivity.PHOTOS));
             listHousesTypes = (ArrayList<HouseType>) databaseValue.get(MainActivity.HOUSES_TYPES);
             hashMapHouseType = TypeConverter.convertHouseTypeListToHashMap(listHousesTypes);
             hashMapAddress = TypeConverter.convertAddressListToHashMap((List<Address>) databaseValue.get(MainActivity.ADDRESS));
@@ -107,7 +119,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
             hashMapHouseTypePointOfInterest = (HashMap<Long, List<HousePointOfInterest>>) databaseValue.get(MainActivity.HOUSE_POINT_OF_INTEREST);
             hashMapTypePointOfInterest = (HashMap<Long, TypePointOfInterest>) databaseValue.get(MainActivity.TYPE_POINT_OF_INTEREST);
             realEstateListAdapter = null;
-            initializeAdapter();
+            configureViewModels();
         });
     }
 
@@ -198,6 +210,13 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
         realEstateListAdapter = new RealEstateListAdapter(getContext(), listHousesDisplayed, hashMapHouseType,
                 hashMapAddress, hashMapPhoto, TypeConverter.listRoomToHashMap(listRoom), this);
         recyclerView.setAdapter(realEstateListAdapter);
+
+    }
+
+    private void configureViewModels(){
+        ViewModelFactory mViewModelFactory = Injection.provideDaoViewModelFactory(getActivity());
+        this.realEstateViewModel = new ViewModelProvider(this, mViewModelFactory).get(RealEstateViewModel.class);
+        observePhoto();
     }
 
     @Override
@@ -221,6 +240,32 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
         availabilityDate, district, numberPhoto, nearbyTypesHashMap, getContext(), hashMapHouseTypePointOfInterest, hashMapPointOfInterest, hashMapTypePointOfInterest));
         realEstateListAdapter.notifyDataSetChanged();
     }
+
+    public void observePhoto(){
+        realEstateViewModel.getListLiveDataPhoto()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableSubscriber<List<Photo>>() {
+                    @Override
+                    public void onNext(List<Photo> photos) {
+                        hashMapPhoto.clear();
+                        hashMapPhoto = TypeConverter.getPhotoListToHashMap(photos);
+                        initializeAdapter();
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+
 
     @Override
     public void onResume() {

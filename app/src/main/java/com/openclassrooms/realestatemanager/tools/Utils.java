@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -89,7 +90,8 @@ public class Utils {
     }
 
     public static String formatDisplayedPrice(double price){
-        return String.format("%1$,.2f", price);
+        String priceString = String.valueOf((int) price);
+        return priceString.replaceAll("(.{" + 3 + "})", "$1 ").trim();
     }
 
     public static void setNumberRoomForEachPhoto(List<Room> listRoom, HashMap<Uri, Photo> uriPhotoHashMap){

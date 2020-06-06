@@ -7,6 +7,7 @@ import com.openclassrooms.realestatemanager.models.pojo.Photo;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 
 public class PhotoDataRepository {
@@ -35,5 +36,21 @@ public class PhotoDataRepository {
 
     public Flowable<List<Photo>> getFlowablePhotoFromIdHouse(long idHouse){
         return photoDao.getFlowablePhotoFromIdHouse(idHouse);
+    }
+
+    public Completable deleteListPhoto(List<Photo> listPhotoToDelete){
+        return photoDao.deleteListPhoto(listPhotoToDelete);
+    }
+
+    public Completable insertListPhoto(List<Photo> listPhotoToInsert){
+        return photoDao.insertListPhoto(listPhotoToInsert);
+    }
+
+    public Completable updateListPhoto(List<Photo> listPhotoToUpdate){
+        return photoDao.updateListPhoto(listPhotoToUpdate);
+    }
+
+    public Flowable<List<Photo>> getListPhotoFlowable(){
+        return photoDao.getFlowablePhoto();
     }
 }

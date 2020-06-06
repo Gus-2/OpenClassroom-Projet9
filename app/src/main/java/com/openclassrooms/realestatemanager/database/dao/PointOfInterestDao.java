@@ -5,15 +5,18 @@ import android.database.Cursor;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 
+import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 @Dao
@@ -40,5 +43,7 @@ public interface PointOfInterestDao {
     @Query("SELECT * FROM points_of_interest")
     Single<List<PointOfInterest>> getSinglePointOfInterest();
 
+    @Delete
+    Completable deleteListPointOfInterest(List<PointOfInterest> listPointOfInterest);
 
 }

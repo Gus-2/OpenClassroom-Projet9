@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.ui.viewmodels;
 
+import android.graphics.Point;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -29,6 +31,7 @@ import com.openclassrooms.realestatemanager.repositories.TypePointOfInterestData
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 
@@ -77,6 +80,10 @@ public class RealEstateViewModel extends ViewModel {
         return addressDataRepository.getAddressFromId(idAddress);
     }
 
+    public Completable updateAddress(Address address){
+        return addressDataRepository.updateAddress(address);
+    }
+
     //House
     public LiveData<List<House>> getHouseData() {
         return houseDataRepository.getHouses();
@@ -98,6 +105,10 @@ public class RealEstateViewModel extends ViewModel {
 
     public LiveData<House> getHouseFromId(long idHouse){
         return houseDataRepository.getHouseFromId(idHouse);
+    }
+
+    public Completable updateHouse(House house){
+        return houseDataRepository.updateHouse(house);
     }
 
     // House's point of interest
@@ -129,6 +140,14 @@ public class RealEstateViewModel extends ViewModel {
 
     public Single<List<HousePointOfInterest>> getSingleHousePointOfInterest(){
         return housePointOfInterestDataRepository.getSingleousePointOfInterest();
+    }
+
+    public Completable deleteListHousePointOfInterest(List<HousePointOfInterest> listHousePointOfInterest){
+        return housePointOfInterestDataRepository.deleteListHousePointOfInterest(listHousePointOfInterest);
+    }
+
+    public Completable insertListHousePointOfInterest(List<HousePointOfInterest> listHousePointOfInterest){
+        return housePointOfInterestDataRepository.insertListHousePointOfInterest(listHousePointOfInterest);
     }
 
     // House's type
@@ -165,8 +184,24 @@ public class RealEstateViewModel extends ViewModel {
         return photoDataRepository.getLiveDataPhotoFromIdHouse(idHouse);
     }
 
+    public Flowable<List<Photo>> getListLiveDataPhoto(){
+        return photoDataRepository.getListPhotoFlowable();
+    }
+
     public Flowable<List<Photo>> getListPhotoFlowableFromIdHouse(long idHouse){
         return photoDataRepository.getFlowablePhotoFromIdHouse(idHouse);
+    }
+
+    public Completable deleteListPhoto(List<Photo> listPhotoToDelete){
+        return photoDataRepository.deleteListPhoto(listPhotoToDelete);
+    }
+
+    public Completable insertListPhoto(List<Photo> listPhotoToInsert){
+        return photoDataRepository.insertListPhoto(listPhotoToInsert);
+    }
+
+    public Completable updateListPhoto(List<Photo> listPhotoToUpdate){
+        return photoDataRepository.updateListPhoto(listPhotoToUpdate);
     }
 
     // Point of interest
@@ -188,6 +223,10 @@ public class RealEstateViewModel extends ViewModel {
 
     public PointOfInterest getPointOfInterestFromId(long idPointOfInterest){
         return pointOfInterestDataRepository.getPointOfInterestFromId(idPointOfInterest);
+    }
+
+    public Completable deleteListPointOfInterest(List<PointOfInterest> listPointOfInterest){
+        return pointOfInterestDataRepository.deleteListPointOfInterest(listPointOfInterest);
     }
 
     // Real Estate Agent
@@ -233,6 +272,10 @@ public class RealEstateViewModel extends ViewModel {
 
     public LiveData<List<RoomNumber>> getLiveDataRoomNumberForHouse(long idHouse){
         return roomNumberDataRepository.getLiveDataRoomNumberForHouse(idHouse);
+    }
+
+    public Completable updateRoomNumber(List<RoomNumber> roomNumbers){
+        return roomNumberDataRepository.updateRoomNumber(roomNumbers);
     }
 
     // Type Point Of Interest

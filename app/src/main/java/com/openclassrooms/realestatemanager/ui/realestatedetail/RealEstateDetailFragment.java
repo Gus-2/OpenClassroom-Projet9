@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,6 +76,7 @@ public class RealEstateDetailFragment extends Fragment {
     private HashMap<Long, HouseType> listHouseTypes;
     private List<HousePointOfInterest> listHousePointOfInterest = new ArrayList<>();
     private AdapterPointOfInterestDetail adapterPointOfInterest;
+    private PicturePagerAdapter picturePagerAdapter;
     private RealEstateViewModel realEstateViewModel;
     private SimpleExoPlayer player;
     private RealEstateDetailFragmentBinding binding;
@@ -93,6 +95,7 @@ public class RealEstateDetailFragment extends Fragment {
             realEstateAgents = new ArrayList<>(getArguments().getParcelableArrayList(RealEstateDetailActivity.REAL_ESTATE_AGENT_LIST));
             listHouseTypes = new HashMap<>((HashMap<Long, HouseType>)getArguments().getSerializable(RealEstateDetailActivity.HOUSE_TYPE_HASH_MAP));
         }
+        photoList = new ArrayList<>();
     }
 
     @Override
@@ -102,18 +105,18 @@ public class RealEstateDetailFragment extends Fragment {
         realEstateDetailContentBinding = binding.layoutIncludedRealEstateDetailFragment;
         player = new SimpleExoPlayer.Builder(context).build();
         collapsingToolbar = binding.tbCollapsing;
+        this.configureViewPager();
         this.initializeRecyclerViewPointOfInterest();
         this.configureSoldHomeButton();
         this.configureViewModels();
         this.setFragmentMenu();
+
         return binding.getRoot();
     }
 
     private void configureViewPager(){
-        if(photoList != null){
-            PicturePagerAdapter picturePagerAdapter = new PicturePagerAdapter(getContext(), photoList, null);
-            binding.vpRealEstateDetail.setAdapter(picturePagerAdapter);
-        }
+        picturePagerAdapter = new PicturePagerAdapter(getContext(), photoList, null);
+        binding.vpRealEstateDetail.setAdapter(picturePagerAdapter);
     }
 
     private void setFragmentMenu(){
@@ -171,12 +174,21 @@ public class RealEstateDetailFragment extends Fragment {
                 .subscribeWith(new DisposableSubscriber<List<HousePointOfInterest>>() {
                     @Override
                     public void onNext(List<HousePointOfInterest> housePointOfInterestList) {
+                        listHousePointOfInterest.clear();
                         listHousePointOfInterest = new ArrayList<>(housePointOfInterestList);
+                        listPointOfInterest.clear();
                         for(HousePointOfInterest housePointOfInterest : listHousePointOfInterest)
                             listPointOfInterest.add(realEstateViewModel.getPointOfInterestFromId(housePointOfInterest.getIdPointOfInterest()));
                         for(PointOfInterest pointOfInterest: listPointOfInterest)
                             listTypePointOfInterest.put(pointOfInterest.getIdPointOfInterest(), realEstateViewModel.getTypePointOfInterest(pointOfInterest.getTypePointOfInterest()));
-                        getActivity().runOnUiThread(() -> updateAdapterPointOfInterest());
+
+                        Handler mainHandler = new Handler(context.getMainLooper());
+                        Runnable myRunnable = new Runnable() {
+                            @Override
+                            public void run() {updateAdapterPointOfInterest();} // This is your code
+                        };
+
+                        mainHandler.post(myRunnable);
                     }
 
                     @Override
@@ -226,7 +238,7 @@ public class RealEstateDetailFragment extends Fragment {
 
     private void initializeRecyclerViewPointOfInterest(){
         realEstateDetailContentBinding.rvPointOfInterestDetail.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(context);
         realEstateDetailContentBinding.rvPointOfInterestDetail.setLayoutManager(layoutManager1);
         adapterPointOfInterest = new AdapterPointOfInterestDetail(listPointOfInterest, listTypePointOfInterest);
         realEstateDetailContentBinding.rvPointOfInterestDetail.setAdapter(adapterPointOfInterest);
@@ -295,12 +307,14 @@ public class RealEstateDetailFragment extends Fragment {
         realEstateDetailContentBinding.tvRealEstateAgentDetail.setText(String.format(getString(R.string.real_estate_agent_name), realEstateAgents.get((int) house.getIdRealEstateAgent()-1).getName(),  realEstateAgents.get((int) house.getIdRealEstateAgent()-1).getFirstname()));
 
         if(house.getChildPathPlacePreview() != null){
+            realEstateDetailContentBinding.cvMapDetail.setVisibility(View.VISIBLE);
             realEstateDetailContentBinding.ivMapDetail.setImageBitmap(ImageUtils.loadImageFromStorage(house.getParentPathPlacePreview(), house.getChildPathPlacePreview()));
         }else{
             realEstateDetailContentBinding.cvMapDetail.setVisibility(View.GONE);
         }
 
         if(house.getVideoPath() != null){
+            binding.layoutIncludedRealEstateDetailFragment.cvVideoDetail.setVisibility(View.VISIBLE);
             File file = new File(house.getVideoPath());
             Uri localUri = Uri.fromFile(file);
             initializePlayer(localUri);
@@ -326,8 +340,9 @@ public class RealEstateDetailFragment extends Fragment {
                 .subscribeWith(new DisposableSubscriber<List<Photo>>() {
                     @Override
                     public void onNext(List<Photo> photos) {
-                        photoList = new ArrayList<>(photos);
-                        configureViewPager();
+                        photoList.clear();
+                        photoList.addAll(photos);
+                        updateViewPagerPhoto();
                     }
 
                     @Override
@@ -339,6 +354,11 @@ public class RealEstateDetailFragment extends Fragment {
                     public void onComplete() { }
                 })
         );
+    }
+
+    private void updateViewPagerPhoto(){
+        picturePagerAdapter = null;
+        configureViewPager();
     }
 
     @Override

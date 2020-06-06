@@ -35,40 +35,42 @@ public class SearchUtils {
         }
 
         if(houseType != -1){
-            for(House house : listHouseFiltered)
+            for(House house : listHouses)
                 if(house.getIdHouseType() != houseType)
                     listHouseFiltered.remove(house);
         }
 
+        listHouses.removeAll(listHouseFiltered);
         if(maxSurface != -1){
-            for(House house : listHouseFiltered)
+            for(House house : listHouses)
                 if(house.getSurface() > maxSurface || house.getSurface() < minSurface)
                     listHouseFiltered.remove(house);
         }
-
+        listHouses.removeAll(listHouseFiltered);
         if(maxPrice != -1){
-            for(House house : listHouseFiltered)
+            for(House house : listHouses)
                 if(house.getPrice() > maxPrice || house.getPrice() > minPrice)
                     listHouseFiltered.remove(house);
         }
-
+        listHouses.removeAll(listHouseFiltered);
         if(availabilityDate > 0){
-            for(House house : listHouseFiltered)
+            for(House house : listHouses)
                 if(house.getAvailableDate() < availabilityDate)
                     listHouseFiltered.remove(house);
         }
-
+        listHouses.removeAll(listHouseFiltered);
         if(!district.equals("")){
-            for(House house : listHouseFiltered)
+            for(House house : listHouses)
                 if(!hashMapAddress.get(house.getIdAddress()).getDistrict().equals(district))
                     listHouseFiltered.remove(house);
         }
-
+        listHouses.removeAll(listHouseFiltered);
         if(numberPhoto > 0){
-            for(House house : listHouseFiltered)
+            for(House house : listHouses)
                 if(hashMapPhoto.get(house.getIdHouse()) != null && hashMapPhoto.get(house.getIdHouse()).size() < numberPhoto)
-                    listHouseFiltered.add(house);
+                    listHouseFiltered.remove(house);
         }
+        listHouses.removeAll(listHouseFiltered);
 
         ArrayList<House> houseToRemove = new ArrayList<>();
         boolean containPark = false;
@@ -86,6 +88,9 @@ public class SearchUtils {
                         houseToRemove.add(house);
                         containPark = false;
                     }
+                    containPark = false;
+                }else if(hashMapHouseTypePointOfInterest.get(house.getIdHouse()) == null){
+                    houseToRemove.add(house);
                 }
             }
         }
@@ -106,6 +111,8 @@ public class SearchUtils {
                         houseToRemove.add(house);
                     }
                     containSchool = false;
+                }else if(hashMapHouseTypePointOfInterest.get(house.getIdHouse()) == null){
+                    houseToRemove.add(house);
                 }
             }
         }
@@ -125,6 +132,8 @@ public class SearchUtils {
                         houseToRemove.add(house);
                     }
                     containStation = false;
+                }else if(hashMapHouseTypePointOfInterest.get(house.getIdHouse()) == null){
+                    houseToRemove.add(house);
                 }
             }
         }
@@ -144,6 +153,8 @@ public class SearchUtils {
                         houseToRemove.add(house);
                     }
                     containShop = false;
+                }else if(hashMapHouseTypePointOfInterest.get(house.getIdHouse()) == null){
+                    houseToRemove.add(house);
                 }
             }
         }

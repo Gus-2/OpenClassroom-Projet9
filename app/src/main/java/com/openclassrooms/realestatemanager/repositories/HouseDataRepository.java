@@ -8,6 +8,8 @@ import com.openclassrooms.realestatemanager.models.pojo.HouseDateState;
 
 import java.util.List;
 
+import io.reactivex.Completable;
+
 public class HouseDataRepository {
     private final HouseDao houseDao;
 
@@ -34,4 +36,6 @@ public class HouseDataRepository {
     public LiveData<House> getHouseFromId(long idHouse){
         return houseDao.getHouseFromId(idHouse);
     }
+
+    public Completable updateHouse(House house){ return  houseDao.updateHouse(house); }
 }

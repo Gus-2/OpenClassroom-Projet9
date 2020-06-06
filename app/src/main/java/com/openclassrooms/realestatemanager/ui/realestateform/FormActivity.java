@@ -209,29 +209,22 @@ public class FormActivity extends AppCompatActivity implements AdapterPointOfInt
     }
 
     private void createAndInsertNewData() {
-        String street = DataInsertConverter.getStringFromEditTextString(editTextAddressStreet.getText().toString());
-        String addressNumber = DataInsertConverter.getStringFromEditTextString(editTextAddressNumber.getText().toString());
-        String district = DataInsertConverter.getStringFromEditTextString(editTextAddressDistrict.getText().toString());
-        String city = DataInsertConverter.getStringFromEditTextString(editTextAddressCity.getText().toString());
-        String postCode = DataInsertConverter.getStringFromEditTextString(editTextAddressPostCode.getText().toString());
-        String additionalInformation = DataInsertConverter.getStringFromEditTextString(editTextAddressAdditionnalInformation.getText().toString());
+        String street = ToolsUpdateData.processAddressString(editTextAddressStreet.getText().toString());
+        String addressNumber = ToolsUpdateData.processAddressString(editTextAddressNumber.getText().toString());
+        String district = ToolsUpdateData.processAddressString(editTextAddressDistrict.getText().toString());
+        String city = ToolsUpdateData.processAddressString(editTextAddressCity.getText().toString());
+        String postCode = ToolsUpdateData.processAddressString(editTextAddressPostCode.getText().toString());
+        String additionalInformation = ToolsUpdateData.processAddressString(editTextAddressAdditionnalInformation.getText().toString());
 
         newAddressToInsert = new Address(street, addressNumber, district, city, COUNTRY,  postCode, additionalInformation);
 
         long idHouseTypeToInsert = TypeConverter.getHouseTypeId(listHouseTypes, dropDownMenuHouseType.getText().toString());
         long idRealEstateAgentToInsert = TypeConverter.getRealEstateAgentId(listRealEstateAgent, dropDownMenuRealEstateAgent.getText().toString());
 
-        String priceString = DataInsertConverter.getHousePrice(editTextPrice.getText().toString());
-        double price = -1;
-        if(!priceString.equals("-1"))
-            price = Double.parseDouble(priceString);
+        double price  = ToolsUpdateData.processPriceAndSurfaceString(editTextPrice.getText().toString());
+        double surface = ToolsUpdateData.processPriceAndSurfaceString(editTextSurface.getText().toString());
 
-        String surfaceString = DataInsertConverter.getHousePrice(editTextSurface.getText().toString());
-        double surface = -1;
-        if(!surfaceString.equals(""))
-            surface = Double.parseDouble(surfaceString);
-
-        String description = DataInsertConverter.getDescription(editTextDescription.getText().toString());
+        String description = ToolsUpdateData.processDescriptionString(editTextDescription.getText().toString());
 
         houseToInsert = new House(idHouseTypeToInsert, idRealEstateAgentToInsert, price, surface, description, STATE_AVAILABLE, availabilityDate);
 

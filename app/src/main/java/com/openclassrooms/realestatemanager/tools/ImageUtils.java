@@ -84,4 +84,18 @@ public class ImageUtils {
         }
         return "";
     }
+
+    public static void deleteFile(String path){
+        File fdelete = new File(path);
+        if (fdelete.exists()) {
+            fdelete.delete();
+        }
+    }
+
+    public static void deleteFileFromStorageChildPathParentPath(String path, String childPath) {
+        File f=new File(path, childPath);
+        if(f.exists()){
+            f.delete();
+        }
+    }
 }

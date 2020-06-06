@@ -7,6 +7,8 @@ import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 
 import java.util.List;
 
+import io.reactivex.Completable;
+
 public class RoomNumberDataRepository {
 
     private final RoomNumberDao roomNumberDao;
@@ -29,5 +31,9 @@ public class RoomNumberDataRepository {
 
     public LiveData<List<RoomNumber>> getLiveDataRoomNumberForHouse(long idHouse){
         return roomNumberDao.getLiveDataRoomNumberForHouse(idHouse);
+    }
+
+    public Completable updateRoomNumber(List<RoomNumber> roomNumbers){
+        return roomNumberDao.updateRoomNumber(roomNumbers);
     }
 }

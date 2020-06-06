@@ -7,11 +7,14 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.openclassrooms.realestatemanager.models.pojo.House;
 import com.openclassrooms.realestatemanager.models.pojo.HouseDateState;
 
 import java.util.List;
+
+import io.reactivex.Completable;
 
 @Dao
 public interface HouseDao {
@@ -36,4 +39,7 @@ public interface HouseDao {
 
     @Query("SELECT * FROM houses WHERE id_house = :idHouse")
     LiveData<House> getHouseFromId(long idHouse);
+
+    @Update
+    Completable updateHouse(House house);
 }

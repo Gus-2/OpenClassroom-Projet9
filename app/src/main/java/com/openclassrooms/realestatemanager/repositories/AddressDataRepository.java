@@ -7,6 +7,8 @@ import com.openclassrooms.realestatemanager.models.pojo.Address;
 
 import java.util.List;
 
+import io.reactivex.Completable;
+
 public class AddressDataRepository {
 
     private final AddressDao addressDao;
@@ -31,4 +33,7 @@ public class AddressDataRepository {
         return addressDao.insertAddress(address);
     }
 
+    public Completable updateAddress(Address address){
+        return addressDao.updateAddress(address);
+    }
 }

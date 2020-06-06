@@ -3,8 +3,12 @@ package com.openclassrooms.realestatemanager.ui.realestateedit;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,8 +51,11 @@ import com.openclassrooms.realestatemanager.tools.Utils;
 import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
 import com.openclassrooms.realestatemanager.ui.realestateform.AdapterPointOfInterest;
 import com.openclassrooms.realestatemanager.ui.realestateform.FormActivity;
+import com.openclassrooms.realestatemanager.ui.realestateform.ToolsUpdateData;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RetrofitViewModel;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -59,11 +66,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -87,8 +97,10 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
     private List<PointOfInterest> listPointOfInterestToRemove;
     private List<PointOfInterest> listPointOfInterestToAdd;
     private List<PointOfInterest> listPointOfInterestToDisplay;
-    private List<HousePointOfInterest> listHousePointOfInterest;
+    private List<HousePointOfInterest> listHousePointOfInterestToRemove;
+    private List<HousePointOfInterest> getListHousePointOfInterestToAdd;
     private List<Room> listRoom;
+    private List<HouseType> listHouseTypes;
     private HashMap<Long, HouseType> hashMapHouseTypes;
     private EditRealEstateFragmentBinding binding;
     private DateFormat df;
@@ -100,8 +112,13 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
     private Place place;
     private RealEstateViewModel realEstateViewModel;
     private RetrofitViewModel retrofitViewModel;
+    private Disposable coordinatesObserver;
     private boolean removeVideo;
     private String videoPathToRemove;
+    private House houseToUpdate;
+    private Address addressToUpdate;
+    private Bitmap newBitmapToInsert;
+    private List<RoomNumber> listRoomNumberProcessed;
 
     @Override
     @SuppressWarnings("all")
@@ -117,7 +134,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
             listRealEstateAgent = new ArrayList<>(getArguments().getParcelableArrayList(MainActivity.REAL_ESTATE_AGENT));
             listRoomNumber = new ArrayList<>(getArguments().getParcelableArrayList(MainActivity.ROOM_NUMBER));
             listPointOfInterest = new ArrayList<>(getArguments().getParcelableArrayList(MainActivity.POINT_OF_INTEREST));
-            listHousePointOfInterest = new ArrayList<>(getArguments().getParcelableArrayList(MainActivity.HOUSE_POINT_OF_INTEREST));
+            listHousePointOfInterestToRemove = new ArrayList<>();
             listPhoto = new ArrayList<>(getArguments().getParcelableArrayList(MainActivity.PHOTOS));
             hashMapHouseTypes = (HashMap<Long, HouseType>) getArguments().getSerializable(MainActivity.HOUSES_TYPES);
         }
@@ -130,6 +147,10 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
         listPhotoToAdd = new ArrayList<>();
         listPhotoDisplayed = new ArrayList<>(listPhoto);
         removeVideo = false;
+         listHouseTypes= new ArrayList<>();
+        for(Long key : hashMapHouseTypes.keySet()){
+            listHouseTypes.add(hashMapHouseTypes.get(key));
+        }
     }
 
     @Nullable
@@ -144,6 +165,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
         configureButtonAddPointOfInterest();
         configureButtonAddPictures();
         configureButtonAddVideo();
+        configureButtonAddHouse();
         configureRecyclerViewPointOfInterest();
         getRoomFromDatabase();
         return binding.getRoot();
@@ -233,10 +255,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
             binding.edDescriptionHouse.setText(house.getDescription());
 
         // Fill the House's Types dropDownMenu
-        List<HouseType> listHouseTypes = new ArrayList<>();
-        for(Long key : hashMapHouseTypes.keySet()){
-            listHouseTypes.add(hashMapHouseTypes.get(key));
-        }
+
         String[] houseType = TypeConverter.houseTypeToStringArray(listHouseTypes);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.dropdown_menu_popup_item, houseType);
         binding.tvHouseType.setAdapter(adapter);
@@ -337,6 +356,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
         if(listPointOfInterest.contains(pointOfInterestToRemove)){
             listPointOfInterestToRemove.add(pointOfInterestToRemove);
             listPointOfInterest.remove(pointOfInterestToRemove);
+            listHousePointOfInterestToRemove.add(new HousePointOfInterest(house.getIdHouse(), pointOfInterestToRemove.getIdPointOfInterest()));
         }
         listPointOfInterestToDisplay.remove(position);
         adapterPointOfInterest.notifyItemRemoved(position);
@@ -486,11 +506,319 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
         adapterPicturesHouse.notifyDataSetChanged();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        executorService.shutdownNow();
+    private void configureButtonAddHouse() {
+        binding.btAddProperty.setOnClickListener(v -> {
+
+            String street = binding.tvStreet.getText().toString();
+            String number = binding.tvNumber.getText().toString();
+            String district = binding.tvDistrict.getText().toString();
+            String city = binding.tvCity.getText().toString();
+            String postCode = binding.tvPostcode.getText().toString();
+            String additionalInformation = binding.tvAdditionalInformation.getText().toString();
+            addressToUpdate = ToolsUpdateData.processAddress(address, street, number, district, city, postCode, additionalInformation);
+
+            long houseTypeId = TypeConverter.getHouseTypeId(listHouseTypes, binding.tvHouseType.getText().toString());
+            long idRealEstateAgent = TypeConverter.getRealEstateAgentId(listRealEstateAgent, binding.atvRealEstateAgent.getText().toString());
+            String price = binding.tvHousePrice.getText().toString();
+            String surface = binding.tvHouseSurface.getText().toString();
+            String state = FormActivity.STATE_AVAILABLE;
+            String description = binding.edDescriptionHouse.getText().toString();
+            houseToUpdate = ToolsUpdateData.processHouse(house, houseTypeId, idRealEstateAgent, price, surface, description, state, availabilityDate);
+
+            listRoomNumberProcessed = ToolsUpdateData.processRoom(house.getIdHouse(), listRoomNumber, binding.actvNumberKitchen.getText().toString(), binding.actvNumberBathroom.getText().toString(), binding.actvNumberBedroom.getText().toString(),
+                    binding.actvNumberLivingroom.getText().toString(), binding.actvNumberToilet.getText().toString(), binding.actvNumberCellar.getText().toString(), binding.actvNumberPool.getText().toString());
+
+            if(addressToUpdate != null){
+                getLongitudeAndLatitudeForAddress(addressToUpdate.getNumber() + " " +  addressToUpdate.getStreet() + "," +  addressToUpdate.getDistrict() + "," + addressToUpdate.getPostCode() + "," +addressToUpdate.getCity());
+            }
+
+            if(addressToUpdate == null && houseToUpdate != null && !removeVideo)
+                updateHouse();
+
+            if(listRoomNumberProcessed != null)
+                updateRoomNumber();
+
+            if(removeVideo){
+                if(videoPathToRemove != null)
+                    ImageUtils.deleteFile(videoPathToRemove);
+                 Executor executor = Executors.newSingleThreadExecutor();
+                 executor.execute(() -> {
+                     house.setVideoPath(ImageUtils.saveVideoToInternalStorage(Uri.parse(house.getVideoPath()), context));
+                     updateHouse();
+                 });
+            }
+
+            if(listPointOfInterestToRemove.size() > 0){
+                deleteHousePointOfInterests();
+            }
+
+            if(listPointOfInterestToAdd.size() > 0){
+                MyAsyncTask myAsyncTask = new MyAsyncTask();
+                myAsyncTask.execute();
+            }
+
+            if(listPhotoToAdd.size() > 0 || listPhotoToRemove.size() > 0){
+                if(listPhotoToAdd.size() > 0){
+                    insertPhoto();
+                }
+                if(listPhotoToRemove.size() > 0){
+                    deletePhoto();
+                    Executor executor = Executors.newSingleThreadExecutor();
+                    executor.execute(() ->{
+                        for(Photo photo : listPhotoToRemove){
+                            ImageUtils.deleteFileFromStorageChildPathParentPath(photo.getPath(), photo.getChildPath());
+                        }
+                    });
+                }
+            }
+
+            listPhotoDisplayed.removeAll(listPhotoToRemove);
+            updateList();
+
+        });
+    }
+
+    private void updateList() {
+        realEstateViewModel.updateListPhoto(listPhotoDisplayed)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+        getActivity().finish();
+    }
+
+    public void deletePhoto(){
+        realEstateViewModel.deleteListPhoto(listPhotoToRemove)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
+    public void insertPhoto(){
+        realEstateViewModel.insertListPhoto(listPhotoToAdd)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
+    List<HousePointOfInterest> listHousePointOfInterestAdd = new ArrayList<>();
+    public void insertHousePointOfInterest(){
+        realEstateViewModel.insertListHousePointOfInterest(listHousePointOfInterestAdd)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("INSERT", "House point of interest inserted !");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
+    }
+
+    private class MyAsyncTask extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params) {
+            for(PointOfInterest pointOfInterest : listPointOfInterestToAdd){
+               listHousePointOfInterestAdd.add(new HousePointOfInterest(house.getIdHouse(), realEstateViewModel.insertPointOfInterest(pointOfInterest)));
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+            insertHousePointOfInterest();
+        }
+    }
+
+    private void deletePointOfInterests() {
+        realEstateViewModel.deleteListPointOfInterest(listPointOfInterestToRemove)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("DELETE", "Point of interest !");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
+    }
+
+    private void deleteHousePointOfInterests() {
+        realEstateViewModel.deleteListHousePointOfInterest(listHousePointOfInterestToRemove)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        deletePointOfInterests();
+                        Log.d("DELETE", "House point of interest !");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                });
+    }
+
+    private void updateRoomNumber() {
+        realEstateViewModel.updateRoomNumber(listRoomNumberProcessed)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) { }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("UPDATE", "List room number is updated !");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
 
+    private void getLongitudeAndLatitudeForAddress(String address) {
+        coordinatesObserver = retrofitViewModel.getCoordinates(address)
+                .subscribe(coordinates -> {
+                    if(coordinates.getResults().size() != 0){
+                        Double lat = coordinates.getResults().get(0).getGeometry().getLocation().getLat();
+                        Double lon = coordinates.getResults().get(0).getGeometry().getLocation().getLng();
+                        addressToUpdate.setLatitude(lat);
+                        addressToUpdate.setLongitude(lon);
+                        getMapPicture(lat, lon);
+                    }else{
+                        updateAddress();
+                    }
+                });
+    }
+
+    private void getMapPicture(Double lat, Double lon){
+        Picasso.with(getActivity().getApplicationContext())
+                .load(String.format(FormActivity.URL, lat, lon))
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        newBitmapToInsert = bitmap;
+                        insertNewStaticMap();
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) { }
+                });
+    }
+    String childPath;
+    String parentPathPlacePreview;
+    public void insertNewStaticMap(){
+        if(newBitmapToInsert != null){
+            childPath = addressToUpdate.getIdAddress() + "_map_image.jpg";
+            parentPathPlacePreview = ImageUtils.saveToInternalStorage(childPath, newBitmapToInsert, getActivity().getApplicationContext(), ImageUtils.MAP_IMAGE);
+            updateAddress();
+        }
+    }
+
+    public void updateAddress(){
+        realEstateViewModel.updateAddress(addressToUpdate)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) { }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("UPDATE", "Address is updated !");
+                        if(!removeVideo)
+                            updateHouse();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
+    }
+
+    public void updateHouse(){
+        if(removeVideo){
+            if(houseToUpdate == null && childPath != null){
+                house.setChildPathPlacePreview(childPath);
+                house.setParentPathPlacePreview(parentPathPlacePreview);
+                houseToUpdate = house;
+            } else if(houseToUpdate != null && childPath != null){
+                houseToUpdate.setParentPathPlacePreview(parentPathPlacePreview);
+                houseToUpdate.setChildPathPlacePreview(childPath);
+                houseToUpdate.setVideoPath(house.getVideoPath());
+            }else if(houseToUpdate == null){
+                houseToUpdate = house;
+            }else{
+                houseToUpdate.setVideoPath(house.getVideoPath());
+            }
+        }else{
+            if(houseToUpdate == null && childPath != null){
+                house.setChildPathPlacePreview(childPath);
+                house.setParentPathPlacePreview(parentPathPlacePreview);
+                houseToUpdate = house;
+            } else if(houseToUpdate != null && childPath != null){
+                houseToUpdate.setParentPathPlacePreview(parentPathPlacePreview);
+                houseToUpdate.setChildPathPlacePreview(childPath);
+            }
+        }
+
+        realEstateViewModel.updateHouse(houseToUpdate)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) { }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("UPDATE", "House is updated !");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(coordinatesObserver != null && !coordinatesObserver.isDisposed())
+            coordinatesObserver.dispose();
+        executorService.shutdownNow();
+    }
 }

@@ -8,6 +8,7 @@ import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 public class PointOfInterestDataRepository {
@@ -36,5 +37,9 @@ public class PointOfInterestDataRepository {
 
     public PointOfInterest getPointOfInterestFromId(long idPointOfInterest){
         return  pointOfInterestDao.getPointOfInterestFromId(idPointOfInterest);
+    }
+
+    public Completable deleteListPointOfInterest(List<PointOfInterest> listPointOfInterest){
+        return pointOfInterestDao.deleteListPointOfInterest(listPointOfInterest);
     }
 }
