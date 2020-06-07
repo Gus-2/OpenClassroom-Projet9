@@ -31,18 +31,14 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
     private OnItemClickListener mListener;
 
     public interface OnItemClickListener{
-        void OnSetAsDefaultPictureClick(int position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
-        mListener = onItemClickListener;
+        void onDeletePhotoClickListener(int position);
+        void onSetAsDefaultPictureListener(int position);
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView ivPictureHouse;
-
         ImageView ivSetAsDefaultPicture;
-
+        ImageView ivDeletePhoto;
         AutoCompleteTextView edPhotoDescription;
 
         public MyViewHolder(View itemView, OnItemClickListener listener) {
@@ -50,25 +46,26 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
             ButterKnife.bind(this, itemView);
             ivPictureHouse = itemView.findViewById(R.id.iv_picture_house);
             ivSetAsDefaultPicture = itemView.findViewById(R.id.iv_set_as_default_picture);
+            ivDeletePhoto = itemView.findViewById(R.id.iv_remove_picture);
             ivSetAsDefaultPicture.setOnClickListener(v -> {
-                if(listener != null){
-                    int position = getAdapterPosition();
-                    if(position != RecyclerView.NO_POSITION){
-                        listener.OnSetAsDefaultPictureClick(position);
-                    }
-                }
+                listener.onSetAsDefaultPictureListener(getAdapterPosition());
             });
+            ivDeletePhoto.setOnClickListener(v -> {
+                listener.onDeletePhotoClickListener(getAdapterPosition());
+            });
+
             edPhotoDescription = itemView.findViewById(R.id.tv_house_room_picture);
         }
     }
 
-    public AdapterPicturesHouse(List<Uri> uriPhoto, HashMap<Uri, Photo> uriPhotoHashMap, HashMap<Uri, Bitmap> uriBitmapHashMap, List<Room> listRoom, String[] tabStringRoom, Context context) {
+    public AdapterPicturesHouse(List<Uri> uriPhoto, HashMap<Uri, Photo> uriPhotoHashMap, HashMap<Uri, Bitmap> uriBitmapHashMap, List<Room> listRoom, String[] tabStringRoom, Context context, OnItemClickListener mListener) {
         this.listUri = uriPhoto;
         this.uriPhotoHashMap = uriPhotoHashMap;
         this.uriBitmapHashMap = uriBitmapHashMap;
         this.context = context;
         this.tabStringRoom = tabStringRoom;
         this.listRoom = listRoom;
+        this.mListener = mListener;
     }
 
     @Override
@@ -81,13 +78,9 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-
         Uri uri = listUri.get(position);
-
         Bitmap picture = uriBitmapHashMap.get(uri);
-
         holder.ivPictureHouse.setImageBitmap(picture);
-
         Photo photo = uriPhotoHashMap.get(uri);
 
         if(photo.isMainPicture()){

@@ -27,6 +27,7 @@ import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.ui.realestateform.FormActivity;
+import com.openclassrooms.realestatemanager.ui.realestateform.FragmentFormAddRealEstate;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -237,7 +238,7 @@ public class SearchDialog extends AppCompatDialogFragment {
     }
 
     private void configureNumberPhoto() {
-        ArrayAdapter<Integer> adapter = new ArrayAdapter<>(activity, R.layout.dropdown_menu_popup_item, FormActivity.numberRoom);
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<>(activity, R.layout.dropdown_menu_popup_item, FragmentFormAddRealEstate.numberRoom);
         dropDownNumberPhoto.setAdapter(adapter);
     }
 

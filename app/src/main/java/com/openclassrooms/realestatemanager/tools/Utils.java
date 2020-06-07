@@ -116,4 +116,27 @@ public class Utils {
             }
         }
     }
+
+    public static void setNumberRoomForEachPhotoList(List<Room> listRoom, List<Photo> listPhoto){
+        HashMap<String, Integer> numberRoomHashMap = new HashMap<>();
+        for(Room room : listRoom)
+            numberRoomHashMap.put(room.getRoomType(), 1);
+
+        for(Photo photo : listPhoto){
+            String roomTypeName = photo.getSpecificRoom();
+            if(numberRoomHashMap.containsKey(roomTypeName)){
+                photo.setNumOrderRoom(numberRoomHashMap.get(roomTypeName));
+                int i = numberRoomHashMap.get(roomTypeName).intValue();
+                i++;
+                numberRoomHashMap.put(roomTypeName, i);
+                for(Room room : listRoom){
+                    if(room.getRoomType().equals(roomTypeName)){
+                        photo.setIdRoom(room.getIdRoom());
+                        photo.setSpecificRoom(null);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }

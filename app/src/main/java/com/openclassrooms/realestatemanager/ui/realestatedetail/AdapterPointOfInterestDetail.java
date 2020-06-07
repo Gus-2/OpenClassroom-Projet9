@@ -43,7 +43,7 @@ public class AdapterPointOfInterestDetail extends RecyclerView.Adapter<AdapterPo
     public AdapterPointOfInterestDetail.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                                         int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.i_point_of_interest, parent, false);
+                .inflate(R.layout.i_point_of_interest_detail, parent, false);
         return new MyViewHolder(v);
     }
 

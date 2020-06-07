@@ -45,7 +45,7 @@ import com.openclassrooms.realestatemanager.tools.Utils;
 import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
 import com.openclassrooms.realestatemanager.ui.realestate.PicturePagerAdapter;
 import com.openclassrooms.realestatemanager.ui.realestateedit.EditRealEstateActivity;
-import com.openclassrooms.realestatemanager.ui.realestateform.FormActivity;
+import com.openclassrooms.realestatemanager.ui.realestateform.FragmentFormAddRealEstate;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 
 import java.io.File;
@@ -62,7 +62,7 @@ import io.reactivex.subscribers.DisposableSubscriber;
 public class RealEstateDetailFragment extends Fragment {
     private final static int REQUEST_CODE = 20;
     private final static int RESULT_CODE = 30;
-    public final static String STATE_SOLD = "Sold";
+    private final static String STATE_SOLD = "Sold";
 
     private long idHouse;
     private House house;
@@ -295,7 +295,7 @@ public class RealEstateDetailFragment extends Fragment {
             realEstateDetailContentBinding.tvSurfaceDetail.setText(R.string.house_surface_not_specified);
 
         realEstateViewModel.getHouseSate(house.getIdHouse()).observe(getViewLifecycleOwner(), houseDateState -> {
-            if(houseDateState.getState().equals(FormActivity.STATE_AVAILABLE))
+            if(houseDateState.getState().equals(FragmentFormAddRealEstate.STATE_AVAILABLE))
                 if(house.getAvailableDate() == 0)
                     realEstateDetailContentBinding.tvStateDetail.setText(R.string.availability_date_not_specified);
                 else

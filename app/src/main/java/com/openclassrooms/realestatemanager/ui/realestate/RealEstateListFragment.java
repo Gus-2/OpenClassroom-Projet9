@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +34,7 @@ import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 import com.openclassrooms.realestatemanager.tools.SearchUtils;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
+import com.openclassrooms.realestatemanager.tools.Utils;
 import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailActivity;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.ui.viewmodels.SharedViewModel;
@@ -271,11 +273,15 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     public void onResume() {
         super.onResume();
         bottomAppBar.setNavigationIcon(R.drawable.ic_map_white_32dp);
-        if(getActivity()!= null){
-            bottomAppBar.setNavigationOnClickListener(v -> getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container_view, new MapsFragment())
-                    .addToBackStack(null)
-                    .commit());
+        if(Utils.isInternetAvailable(getContext())){
+            if(getActivity()!= null){
+                bottomAppBar.setNavigationOnClickListener(v -> getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container_view, new MapsFragment())
+                        .addToBackStack(null)
+                        .commit());
+            }
+        }else{
+            Toast.makeText(getActivity(), "Your need internet to access to display the map !", Toast.LENGTH_LONG).show();
         }
     }
 }

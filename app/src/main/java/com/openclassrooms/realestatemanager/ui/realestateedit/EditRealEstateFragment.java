@@ -51,6 +51,7 @@ import com.openclassrooms.realestatemanager.tools.Utils;
 import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
 import com.openclassrooms.realestatemanager.ui.realestateform.AdapterPointOfInterest;
 import com.openclassrooms.realestatemanager.ui.realestateform.FormActivity;
+import com.openclassrooms.realestatemanager.ui.realestateform.FragmentFormAddRealEstate;
 import com.openclassrooms.realestatemanager.ui.realestateform.ToolsUpdateData;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RetrofitViewModel;
@@ -119,6 +120,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
     private Address addressToUpdate;
     private Bitmap newBitmapToInsert;
     private List<RoomNumber> listRoomNumberProcessed;
+    private List<HousePointOfInterest> listHousePointOfInterestAdd = new ArrayList<>();
 
     @Override
     @SuppressWarnings("all")
@@ -270,7 +272,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
      * Fill the form with the number of house's rooms known
      */
     private void fillNumberRoomDropDownMenus() {
-        ArrayAdapter<Integer> adapter = new ArrayAdapter<>(context, R.layout.dropdown_menu_popup_item, FormActivity.numberRoom);
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<>(context, R.layout.dropdown_menu_popup_item, FragmentFormAddRealEstate.numberRoom);
 
         binding.actvNumberKitchen.setAdapter(adapter);
         binding.actvNumberBathroom.setAdapter(adapter);
@@ -372,7 +374,13 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
         Intent intent = new Autocomplete.IntentBuilder(
                 AutocompleteActivityMode.OVERLAY, fields)
                 .build(context);
-        binding.btAddPointOfInterest.setOnClickListener(v -> startActivityForResult(intent, PLACE_REQUEST));
+        binding.btAddPointOfInterest.setOnClickListener(v -> {
+            if (Utils.isInternetAvailable(getContext())) {
+                startActivityForResult(intent, PLACE_REQUEST);
+            } else {
+                Toast.makeText(getContext(), "You need internet to add a point of interest !", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void configureButtonAddPictures() {
@@ -521,7 +529,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
             long idRealEstateAgent = TypeConverter.getRealEstateAgentId(listRealEstateAgent, binding.atvRealEstateAgent.getText().toString());
             String price = binding.tvHousePrice.getText().toString();
             String surface = binding.tvHouseSurface.getText().toString();
-            String state = FormActivity.STATE_AVAILABLE;
+            String state = FragmentFormAddRealEstate.STATE_AVAILABLE;
             String description = binding.edDescriptionHouse.getText().toString();
             houseToUpdate = ToolsUpdateData.processHouse(house, houseTypeId, idRealEstateAgent, price, surface, description, state, availabilityDate);
 
@@ -579,6 +587,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
     }
 
     private void updateList() {
+        Utils.setNumberRoomForEachPhotoList(listRoom, listPhotoDisplayed);
         realEstateViewModel.updateListPhoto(listPhotoDisplayed)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -594,13 +603,14 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
     }
 
     public void insertPhoto(){
+        Utils.setNumberRoomForEachPhotoList(listRoom, listPhoto);
         realEstateViewModel.insertListPhoto(listPhotoToAdd)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
     }
 
-    List<HousePointOfInterest> listHousePointOfInterestAdd = new ArrayList<>();
+
     public void insertHousePointOfInterest(){
         realEstateViewModel.insertListHousePointOfInterest(listHousePointOfInterestAdd)
                 .subscribeOn(Schedulers.io())
@@ -721,7 +731,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
 
     private void getMapPicture(Double lat, Double lon){
         Picasso.with(getActivity().getApplicationContext())
-                .load(String.format(FormActivity.URL, lat, lon))
+                .load(String.format(FragmentFormAddRealEstate.URL, lat, lon))
                 .into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
