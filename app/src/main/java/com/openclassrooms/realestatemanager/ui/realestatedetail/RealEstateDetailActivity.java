@@ -25,6 +25,7 @@ public class RealEstateDetailActivity extends AppCompatActivity {
     private HashMap<Long, HouseType> longHouseTypeHashMap;
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_real_estate_detail);

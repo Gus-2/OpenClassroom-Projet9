@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.ui.realestate;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,7 +13,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,17 +34,14 @@ import com.openclassrooms.realestatemanager.tools.SearchUtils;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.tools.Utils;
 import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailActivity;
+import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailFragment;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.ui.viewmodels.SharedViewModel;
-
-import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Observable;
 
-import io.reactivex.FlowableSubscriber;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
@@ -54,12 +49,12 @@ import io.reactivex.subscribers.DisposableSubscriber;
 public class RealEstateListFragment extends Fragment implements RealEstateListAdapter.OnItemClickListener, SearchDialog.SearchDialogListener {
 
     final static String MAX_PRICE = "MAX_PRICE";
-    public final static String MIN_PRICE = "MIN_PRICE";
-    public final static String MIN_SURFACE = "MIN_SURFACE";
-    public final static String MAX_SURFACE = "MAX_SURFACE";
-    public final static String TAG_SEARCH_DIALOG = "search dialog";
+    final static String MIN_PRICE = "MIN_PRICE";
+    final static String MIN_SURFACE = "MIN_SURFACE";
+    final static String MAX_SURFACE = "MAX_SURFACE";
+    final static String TAG_SEARCH_DIALOG = "search dialog";
     public final static String HOUSE_ID = "HOUSE_ID";
-    public static String DISTRICT = "DISTRICT";
+    static String DISTRICT = "DISTRICT";
 
     private BottomAppBar bottomAppBar;
     private RecyclerView recyclerView;
@@ -111,9 +106,9 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     private void configureList() {
         sharedViewModel.getListData().observe(getViewLifecycleOwner(), databaseValue -> {
             listHouses = (List<House>) databaseValue.get(MainActivity.HOUSES);
-            listHousesDisplayed = new ArrayList<>(listHouses);
+            if(listHouses != null) listHousesDisplayed = new ArrayList<>(listHouses);
             listHousesTypes = (ArrayList<HouseType>) databaseValue.get(MainActivity.HOUSES_TYPES);
-            hashMapHouseType = TypeConverter.convertHouseTypeListToHashMap(listHousesTypes);
+            if(listHousesTypes != null) hashMapHouseType = TypeConverter.convertHouseTypeListToHashMap(listHousesTypes);
             hashMapAddress = TypeConverter.convertAddressListToHashMap((List<Address>) databaseValue.get(MainActivity.ADDRESS));
             listRealEstateAgent = (ArrayList<RealEstateAgent>) databaseValue.get(MainActivity.REAL_ESTATE_AGENT);
             listRoom = (List<Room>) databaseValue.get(MainActivity.ROOM);
@@ -159,13 +154,14 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
         bundle.putStringArrayList(DISTRICT, listDistrict);
 
         searchDialog.setArguments(bundle);
-        searchDialog.show(getActivity().getSupportFragmentManager(), TAG_SEARCH_DIALOG);
+        if(getActivity() != null)
+            searchDialog.show(getActivity().getSupportFragmentManager(), TAG_SEARCH_DIALOG);
     }
 
     private void getAllDistrict() {
         for(House house : listHouses){
             Address address = hashMapAddress.get(house.getIdHouse());
-            if(!listDistrict.contains(address.getDistrict())) listDistrict.add(address.getDistrict());
+            if(address != null && !listDistrict.contains(address.getDistrict())) listDistrict.add(address.getDistrict());
         }
     }
 
@@ -201,7 +197,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
         super.onActivityCreated(savedInstanceState);
     }
 
-    public void configureViewModel(){
+    private void configureViewModel(){
         if(getActivity() != null){
             sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
             this.configureList();
@@ -228,12 +224,24 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
 
     @Override
     public void onItemClickt(int position) {
-        Intent intent = new Intent(getActivity(), RealEstateDetailActivity.class);
-        House house = listHousesDisplayed.get(position);
-        intent.putExtra(RealEstateDetailActivity.ID_HOUSE, house.getIdHouse());
-        intent.putExtra(MainActivity.HOUSES_TYPES, hashMapHouseType);
-        intent.putParcelableArrayListExtra(MainActivity.REAL_ESTATE_AGENT, listRealEstateAgent);
-        startActivity(intent);
+        if(getActivity() != null && getActivity().findViewById(R.id.frame_layout_detail) != null){
+            RealEstateDetailFragment realEstateDetailFragment = new RealEstateDetailFragment();
+            Bundle bundle = new Bundle();
+            bundle.putLong(RealEstateDetailActivity.ID_HOUSE, listHouses.get(position).getIdHouse());
+            bundle.putParcelableArrayList(RealEstateDetailActivity.REAL_ESTATE_AGENT_LIST, listRealEstateAgent);
+            bundle.putSerializable(RealEstateDetailActivity.HOUSE_TYPE_HASH_MAP, TypeConverter.convertHouseTypeListToHashMap(listHousesTypes));
+            realEstateDetailFragment.setArguments(bundle);
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frame_layout_detail, realEstateDetailFragment)
+                    .commit();
+        }else{
+            Intent intent = new Intent(getActivity(), RealEstateDetailActivity.class);
+            House house = listHousesDisplayed.get(position);
+            intent.putExtra(RealEstateDetailActivity.ID_HOUSE, house.getIdHouse());
+            intent.putExtra(MainActivity.HOUSES_TYPES, hashMapHouseType);
+            intent.putParcelableArrayListExtra(MainActivity.REAL_ESTATE_AGENT, listRealEstateAgent);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -243,7 +251,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
         realEstateListAdapter.notifyDataSetChanged();
     }
 
-    public void observePhoto(){
+    private void observePhoto(){
         realEstateViewModel.getListLiveDataPhoto()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -273,15 +281,24 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     public void onResume() {
         super.onResume();
         bottomAppBar.setNavigationIcon(R.drawable.ic_map_white_32dp);
-        if(Utils.isInternetAvailable(getContext())){
-            if(getActivity()!= null){
-                bottomAppBar.setNavigationOnClickListener(v -> getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container_view, new MapsFragment())
-                        .addToBackStack(null)
-                        .commit());
+        if(getContext() != null && Utils.isInternetAvailable(getContext())){
+                if(getActivity()!= null){
+                    bottomAppBar.setNavigationOnClickListener(v -> {
+                        if(getActivity().findViewById(R.id.frame_layout_detail) != null) {
+                            MapsFragment mapsFragment = new MapsFragment();
+                            getActivity().getSupportFragmentManager().beginTransaction()
+                                    .add(R.id.frame_layout_detail, mapsFragment)
+                                    .commit();
+                        }else{
+                            getActivity().getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.frame_layout_main, new MapsFragment())
+                                    .addToBackStack(null)
+                                    .commit();
+                        }
+                    });
             }
         }else{
-            Toast.makeText(getActivity(), "Your need internet to access to display the map !", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), R.string.need_internet_access, Toast.LENGTH_LONG).show();
         }
     }
 }

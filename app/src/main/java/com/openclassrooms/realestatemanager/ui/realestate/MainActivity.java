@@ -22,25 +22,19 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.injections.Injection;
 import com.openclassrooms.realestatemanager.injections.ViewModelFactory;
-import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
-import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
-import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
-import com.openclassrooms.realestatemanager.tools.SearchUtils;
+import com.openclassrooms.realestatemanager.models.pojo.House;
+import com.openclassrooms.realestatemanager.models.pojo.HouseType;
+import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
+import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailActivity;
+import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailFragment;
 import com.openclassrooms.realestatemanager.ui.realestateform.FormActivity;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
 import com.openclassrooms.realestatemanager.ui.viewmodels.SharedViewModel;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Observable;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,12 +53,12 @@ public class MainActivity extends AppCompatActivity {
     public static final String TYPE_POINT_OF_INTEREST = "TYPE_POINT_OF_INTEREST";
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 20;
-    private final int ERROR_DIALOG_REQUEST = 9001;
-    private BottomAppBar bottomAppBar;
+    private static final int ERROR_DIALOG_REQUEST = 9001;
+    private ArrayList<RealEstateAgent> realEstateAgents;
+    private ArrayList<HouseType> listHousesTypes;
     private FloatingActionButton addHouse;
     private final int ADD_PROPERTY = 80;
     private RealEstateViewModel realEstateViewModel;
-    private GetDataFromDatabaseAsyncTask getDataFromDatabaseAsyncTask;
     private boolean mLocationPermissionGranted = false;
     private SharedViewModel sharedViewModel;
     private HashMap<String, Object> databaseValues;
@@ -76,20 +70,40 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getLocationPermission();
         if(iseServicesOk()){
-            bottomAppBar = findViewById(R.id.bottom_app_bar);
+            BottomAppBar bottomAppBar = findViewById(R.id.bottom_app_bar);
             setSupportActionBar(bottomAppBar);
             addHouse = findViewById(R.id.fab_add_house);
             configureViewModels();
             databaseValues = new HashMap<>();
-            getDataFromDatabaseAsyncTask = new GetDataFromDatabaseAsyncTask(this);
             this.configureFabAddHouse();
             this.getDataFromDatabase();
-            startFragment();
+            configureAndShowMainFragment();
         }
     }
 
-    public void startFragment(){
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container_view, new RealEstateListFragment()).commit();
+    private void configureAndShowSecondFragment() {
+        RealEstateDetailFragment realEstateDetailFragment = (RealEstateDetailFragment) getSupportFragmentManager().findFragmentById(R.id.frame_layout_detail);
+        if(realEstateDetailFragment == null && findViewById(R.id.frame_layout_detail) != null){
+            realEstateDetailFragment = new RealEstateDetailFragment();
+            Bundle bundle = new Bundle();
+            bundle.putLong(RealEstateDetailActivity.ID_HOUSE, 1);
+            bundle.putParcelableArrayList(RealEstateDetailActivity.REAL_ESTATE_AGENT_LIST, realEstateAgents);
+            bundle.putSerializable(RealEstateDetailActivity.HOUSE_TYPE_HASH_MAP, TypeConverter.convertHouseTypeListToHashMap(listHousesTypes));
+            realEstateDetailFragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.frame_layout_detail, realEstateDetailFragment)
+                    .commit();
+        }
+    }
+
+    private void configureAndShowMainFragment(){
+        RealEstateListFragment realEstateListFragment = (RealEstateListFragment) getSupportFragmentManager().findFragmentById(R.id.frame_layout_main);
+        if (realEstateListFragment == null) {
+            realEstateListFragment = new RealEstateListFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.frame_layout_main, realEstateListFragment)
+                    .commit();
+        }
     }
 
     private void configureViewModels(){
@@ -153,13 +167,10 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         mLocationPermissionGranted = false;
-        switch(requestCode){
-            case LOCATION_PERMISSION_REQUEST_CODE :
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    mLocationPermissionGranted = true;
-                    return;
-                }
-                break;
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mLocationPermissionGranted = true;
+            }
         }
     }
 
@@ -180,15 +191,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         protected String doInBackground(String... strings) {
-            weakReference.get().databaseValues.put(HOUSES_TYPES, weakReference.get().realEstateViewModel.getHouseType());
+            weakReference.get().listHousesTypes = new ArrayList<>(weakReference.get().realEstateViewModel.getHouseType());
+            weakReference.get().databaseValues.put(HOUSES_TYPES, weakReference.get().listHousesTypes);
             weakReference.get().databaseValues.put(ADDRESS, weakReference.get().realEstateViewModel.getAddress());
             weakReference.get().databaseValues.put(PHOTOS, weakReference.get().realEstateViewModel.getPhoto());
-            weakReference.get().databaseValues.put(REAL_ESTATE_AGENT, weakReference.get().realEstateViewModel.getRealEstateAgent());
+            weakReference.get().realEstateAgents = new ArrayList<>(weakReference.get().realEstateViewModel.getRealEstateAgent());
+            weakReference.get().databaseValues.put(REAL_ESTATE_AGENT, weakReference.get().realEstateAgents);
             weakReference.get().databaseValues.put(ROOM, weakReference.get().realEstateViewModel.getRoom());
             weakReference.get().databaseValues.put(POINT_OF_INTEREST, TypeConverter.listPointOfInterestToHashMap(weakReference.get().realEstateViewModel.getListPointOfInterest()));
             weakReference.get().databaseValues.put(HOUSE_POINT_OF_INTEREST, TypeConverter.listHousePointOfInterestToHashMap(weakReference.get().realEstateViewModel.getListHousePointOfInterest()));
             weakReference.get().databaseValues.put(TYPE_POINT_OF_INTEREST, TypeConverter.listTypePointOfInterestToHashMap(weakReference.get().realEstateViewModel.getListTypePointOfInterest()));
+            ArrayList<House> listHouses = (ArrayList<House>)weakReference.get().databaseValues.get(HOUSES);
+            if(listHouses != null && listHouses.size() > 0){
+                weakReference.get().configureAndShowSecondFragment();
+            }
             return null;
         }
 

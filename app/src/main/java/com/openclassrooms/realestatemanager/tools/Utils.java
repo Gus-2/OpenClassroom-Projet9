@@ -1,34 +1,19 @@
 package com.openclassrooms.realestatemanager.tools;
 
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.Uri;
-import android.os.Environment;
-import android.util.Log;
-import android.widget.ImageView;
 
-import androidx.core.content.ContextCompat;
+import androidx.room.TypeConverter;
 
-import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.models.pojo.Room;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 
 /**
  * Created by Philippe on 21/02/2018.
@@ -79,14 +64,14 @@ public class Utils {
         return connectionManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
     }
 
-    public static int getNumOrderRoom(HashMap<Uri, Photo> hashMapRoom, long roomId){
-        int i = 0;
-        for(Uri uri : hashMapRoom.keySet()){
-            if(hashMapRoom.get(uri).getIdRoom() == roomId){
-                i++;
-            }
-        }
-        return i;
+    @androidx.room.TypeConverter
+    public static Date toDate(Long dateLong){
+        return dateLong == null ? null: new Date(dateLong);
+    }
+
+    @TypeConverter
+    public static Long fromDate(Date date){
+        return date == null ? null : date.getTime();
     }
 
     public static String formatDisplayedPrice(double price){

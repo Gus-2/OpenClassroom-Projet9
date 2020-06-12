@@ -9,16 +9,13 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-
 import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
-import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 
 import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
-import retrofit2.http.DELETE;
 
 @Dao
 public interface HousePointOfInterestDao {

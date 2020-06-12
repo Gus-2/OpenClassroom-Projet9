@@ -11,7 +11,7 @@ public class PictureChainedComparator implements Comparator<Photo> {
     private List<Comparator<Photo>> listComparators;
  
     @SafeVarargs
-    public PictureChainedComparator(Comparator<Photo>... comparators) {
+    PictureChainedComparator(Comparator<Photo>... comparators) {
         this.listComparators = Arrays.asList(comparators);
     }
  

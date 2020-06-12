@@ -20,59 +20,59 @@ import java.util.concurrent.Executors;
 
 public class Injection {
 
-    public static AddressDataRepository provideAddressDataRepository(Context context) {
+    private static AddressDataRepository provideAddressDataRepository(Context context) {
         RealEstateDatabase realEstateDatabase = RealEstateDatabase.getInstance(context);
         return new AddressDataRepository(realEstateDatabase.addressDao());
     }
 
-    public static PointOfInterestDataRepository provideDataPointOfInterestRepository(Context context) {
+    private static PointOfInterestDataRepository provideDataPointOfInterestRepository(Context context) {
         RealEstateDatabase realEstateDatabase = RealEstateDatabase.getInstance(context);
         return new PointOfInterestDataRepository(realEstateDatabase.pointOfInterestDao());
     }
 
-    public static HouseDataRepository provideHouseDataRepository(Context context) {
+    private static HouseDataRepository provideHouseDataRepository(Context context) {
         RealEstateDatabase realEstateDatabase = RealEstateDatabase.getInstance(context);
         return new HouseDataRepository(realEstateDatabase.houseDao());
     }
 
-    public static HousePointOfInterestDataRepository provideHousePointOfInterestDataRepository(Context context) {
+    private static HousePointOfInterestDataRepository provideHousePointOfInterestDataRepository(Context context) {
         RealEstateDatabase realEstateDatabase = RealEstateDatabase.getInstance(context);
         return new HousePointOfInterestDataRepository(realEstateDatabase.housePointOfInterestDao());
     }
 
-    public static HouseTypeDataRepository provideHouseTypeRepository(Context context) {
+    private static HouseTypeDataRepository provideHouseTypeRepository(Context context) {
         RealEstateDatabase realEstateDatabase = RealEstateDatabase.getInstance(context);
         return new HouseTypeDataRepository(realEstateDatabase.houseTypeDao());
     }
 
-    public static PhotoDataRepository providePhotoDataRepository(Context context) {
+    private static PhotoDataRepository providePhotoDataRepository(Context context) {
         RealEstateDatabase realEstateDatabase = RealEstateDatabase.getInstance(context);
         return new PhotoDataRepository(realEstateDatabase.photoDao());
     }
 
-    public static RealEstateAgentDataRepository provideRealEstateAgentDataRepository(Context context) {
+    private static RealEstateAgentDataRepository provideRealEstateAgentDataRepository(Context context) {
         RealEstateDatabase realEstateDatabase = RealEstateDatabase.getInstance(context);
         return new RealEstateAgentDataRepository(realEstateDatabase.realEstateAgentDao());
     }
 
-    public static RoomDataRepository provideRoomDataRepository(Context context) {
+    private static RoomDataRepository provideRoomDataRepository(Context context) {
         RealEstateDatabase realEstateDatabase = RealEstateDatabase.getInstance(context);
         return new RoomDataRepository(realEstateDatabase.roomDao());
     }
 
-    public static RoomNumberDataRepository provideRoomNumberDataRepository(Context context) {
+    private static RoomNumberDataRepository provideRoomNumberDataRepository(Context context) {
         RealEstateDatabase realEstateDatabase = RealEstateDatabase.getInstance(context);
         return new RoomNumberDataRepository(realEstateDatabase.roomNumberDao());
     }
 
-    public static TypePointOfInterestDataRepository provideTypePointOfInterestDataRepository(Context context) {
+    private static TypePointOfInterestDataRepository provideTypePointOfInterestDataRepository(Context context) {
         RealEstateDatabase realEstateDatabase = RealEstateDatabase.getInstance(context);
         return new TypePointOfInterestDataRepository(realEstateDatabase.typePointOfInterestDao());
     }
 
-    public static Executor provideExecutor(){ return Executors.newSingleThreadExecutor(); }
+    private static Executor provideExecutor(){ return Executors.newSingleThreadExecutor(); }
 
-    public static CoordinatesRepository provideCoordinatesRepository(){
+    private static CoordinatesRepository provideCoordinatesRepository(){
         return CoordinatesRepository.getInstance();
     }
 

@@ -10,8 +10,8 @@ import static com.openclassrooms.realestatemanager.provider.HouseContract.PATH_P
 public class PhotoEntry implements BaseColumns {
 
     public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_PHOTO).build();
-    public static final String CONTENT_PHOTO = "vnd.android.cursor.dir/" + CONTENT_URI + "/" + PATH_PHOTO;
-    public static final String CONTENT_ITEM_PHOTO = "vnd.android.cursor.item/" + CONTENT_URI + "/" + PATH_PHOTO;
+    static final String CONTENT_PHOTO = "vnd.android.cursor.dir/" + CONTENT_URI + "/" + PATH_PHOTO;
+    static final String CONTENT_ITEM_PHOTO = "vnd.android.cursor.item/" + CONTENT_URI + "/" + PATH_PHOTO;
 
     public static Uri buildPhotoUriWithId(long id){
         return ContentUris.withAppendedId(CONTENT_URI, id);

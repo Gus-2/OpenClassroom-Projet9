@@ -9,8 +9,8 @@ import static com.openclassrooms.realestatemanager.provider.HouseContract.PATH_P
 
 public class PointOfInterestEntry implements BaseColumns {
     public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_POINT_OF_INTEREST).build();
-    public static final String CONTENT_POINT_OF_INTEREST = "vnd.android.cursor.dir/" + CONTENT_URI + "/" + PATH_POINT_OF_INTEREST;
-    public static final String CONTENT_ITEM_POINT_OF_INTEREST = "vnd.android.cursor.item/" + CONTENT_URI + "/" + PATH_POINT_OF_INTEREST;
+    static final String CONTENT_POINT_OF_INTEREST = "vnd.android.cursor.dir/" + CONTENT_URI + "/" + PATH_POINT_OF_INTEREST;
+    static final String CONTENT_ITEM_POINT_OF_INTEREST = "vnd.android.cursor.item/" + CONTENT_URI + "/" + PATH_POINT_OF_INTEREST;
 
     public static Uri buildPointOfInterestUriWithId(long id){
         return ContentUris.withAppendedId(CONTENT_URI, id);

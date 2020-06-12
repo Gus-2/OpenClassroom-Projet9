@@ -2,17 +2,12 @@ package com.openclassrooms.realestatemanager.ui.realestateform;
 
 import com.openclassrooms.realestatemanager.models.pojo.Address;
 import com.openclassrooms.realestatemanager.models.pojo.House;
-import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ToolsUpdateData {
-
-
-    private ArrayList<RoomNumber> listRoomNumbersProcessed;
 
     public static Address processAddress(Address address, String street, String number, String district, String city, String postCode, String additionalInformation){
         String streetProcessed = processAddressString(street);
@@ -36,7 +31,7 @@ public class ToolsUpdateData {
         String descriptionProcessed = processDescriptionString(description);
 
         if(idHouseType != house.getIdHouseType() || idRealEstateAgent != house.getIdRealEstateAgent() || priceProcessed != house.getPrice() ||
-                surfaceProcessed != house.getSurface() || !house.getDescription().equals(house.getDescription()) || availableDate != house.getAvailableDate()){
+                surfaceProcessed != house.getSurface() || !house.getDescription().equals(description) || availableDate != house.getAvailableDate()){
             House houseUpdated = new House(idHouseType, idRealEstateAgent, priceProcessed, surfaceProcessed, descriptionProcessed, state, availableDate);
             houseUpdated.setIdHouse(house.getIdHouse());
             houseUpdated.setIdAddress(house.getIdAddress());
@@ -67,7 +62,7 @@ public class ToolsUpdateData {
     }
 
 
-    public static String processAddressString(String string){
+    static String processAddressString(String string){
         if(string.equals("Unspecified")){
             return "";
         }else if(string.equals("")){
@@ -77,7 +72,7 @@ public class ToolsUpdateData {
         }
     }
 
-    public static double processPriceAndSurfaceString(String string){
+    static double processPriceAndSurfaceString(String string){
         if(string.equals("NS")){
             return -1;
         }else if(string.equals("")){
@@ -89,7 +84,7 @@ public class ToolsUpdateData {
         }
     }
 
-    public static String processDescriptionString(String string){
+    static String processDescriptionString(String string){
         if(string.equals("Description unspecified")){
             return "";
         }else{

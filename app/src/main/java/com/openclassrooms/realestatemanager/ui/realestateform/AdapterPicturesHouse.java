@@ -17,6 +17,8 @@ import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.models.pojo.Room;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.List;
 import butterknife.ButterKnife;
@@ -35,13 +37,13 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
         void onSetAsDefaultPictureListener(int position);
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView ivPictureHouse;
         ImageView ivSetAsDefaultPicture;
         ImageView ivDeletePhoto;
         AutoCompleteTextView edPhotoDescription;
 
-        public MyViewHolder(View itemView, OnItemClickListener listener) {
+        MyViewHolder(View itemView, OnItemClickListener listener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             ivPictureHouse = itemView.findViewById(R.id.iv_picture_house);
@@ -58,7 +60,7 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
         }
     }
 
-    public AdapterPicturesHouse(List<Uri> uriPhoto, HashMap<Uri, Photo> uriPhotoHashMap, HashMap<Uri, Bitmap> uriBitmapHashMap, List<Room> listRoom, String[] tabStringRoom, Context context, OnItemClickListener mListener) {
+    AdapterPicturesHouse(List<Uri> uriPhoto, HashMap<Uri, Photo> uriPhotoHashMap, HashMap<Uri, Bitmap> uriBitmapHashMap, List<Room> listRoom, String[] tabStringRoom, Context context, OnItemClickListener mListener) {
         this.listUri = uriPhoto;
         this.uriPhotoHashMap = uriPhotoHashMap;
         this.uriBitmapHashMap = uriBitmapHashMap;
@@ -68,6 +70,7 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
         this.mListener = mListener;
     }
 
+    @NotNull
     @Override
     public AdapterPicturesHouse.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                                   int viewType) {
@@ -83,7 +86,7 @@ public class AdapterPicturesHouse extends RecyclerView.Adapter<AdapterPicturesHo
         holder.ivPictureHouse.setImageBitmap(picture);
         Photo photo = uriPhotoHashMap.get(uri);
 
-        if(photo.isMainPicture()){
+        if(photo != null && photo.isMainPicture()){
             holder.ivSetAsDefaultPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_crop_original_green_24dp));
         }else{
             holder.ivSetAsDefaultPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_crop_original_white_24dp));

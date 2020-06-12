@@ -47,6 +47,4 @@ public class UtilsTest {
 
         assertNotEquals(null, Utils.getTodayDate());
     }
-
-
 }

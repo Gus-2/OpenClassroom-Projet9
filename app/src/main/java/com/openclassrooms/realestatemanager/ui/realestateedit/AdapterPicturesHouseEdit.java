@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.realestatemanager.R;
@@ -17,6 +18,8 @@ import com.openclassrooms.realestatemanager.databinding.ItemHousePictureBinding;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.tools.ImageUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -35,7 +38,7 @@ public class AdapterPicturesHouseEdit extends RecyclerView.Adapter<AdapterPictur
         ImageView ivRemovePicture;
         AutoCompleteTextView edPhotoDescription;
 
-        public MyViewHolder(ItemHousePictureBinding binding, PhotoOnClickListener photoOnClickListener) {
+        MyViewHolder(ItemHousePictureBinding binding, PhotoOnClickListener photoOnClickListener) {
             super(binding.getRoot());
             ivPictureHouse = binding.ivPictureHouse;
             ivSetAsDefaultPicture = binding.ivSetAsDefaultPicture;
@@ -47,7 +50,7 @@ public class AdapterPicturesHouseEdit extends RecyclerView.Adapter<AdapterPictur
         }
     }
 
-    public AdapterPicturesHouseEdit(Context context, List<Photo> listPhoto, List<Room> listRoom, String[] tabRooms, PhotoOnClickListener photoOnClickListener) {
+    AdapterPicturesHouseEdit(Context context, List<Photo> listPhoto, List<Room> listRoom, String[] tabRooms, PhotoOnClickListener photoOnClickListener) {
         this.context = context;
         this.photoOnClickListener = photoOnClickListener;
         this.listPhoto = listPhoto;
@@ -55,8 +58,9 @@ public class AdapterPicturesHouseEdit extends RecyclerView.Adapter<AdapterPictur
         this.tabRooms = tabRooms;
     }
 
+    @NotNull
     @Override
-    public AdapterPicturesHouseEdit.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AdapterPicturesHouseEdit.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new MyViewHolder(ItemHousePictureBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false), photoOnClickListener);
     }
 

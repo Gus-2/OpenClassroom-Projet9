@@ -22,7 +22,7 @@ public class RealEstateAgent implements Parcelable {
     private String firstname;
 
 
-    public RealEstateAgent(String name, String firstname) {
+    public RealEstateAgent(@NonNull String name,@NonNull String firstname) {
         this.name = name;
         this.firstname = firstname;
     }
@@ -56,21 +56,17 @@ public class RealEstateAgent implements Parcelable {
             return new RealEstateAgent[size];
         }
     };
-
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
-
+    @NonNull
     public String getFirstname() {
         return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
     }
 
     public long getIdRealEstateAgent() {

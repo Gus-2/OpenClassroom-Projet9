@@ -19,7 +19,7 @@ public class Room implements Parcelable {
     @ColumnInfo(name = "room_type")
     private String roomType;
 
-    public Room(String roomType) {
+    public Room(@NonNull String roomType) {
         this.roomType = roomType;
     }
 
@@ -50,13 +50,9 @@ public class Room implements Parcelable {
             return new Room[size];
         }
     };
-
+    @NonNull
     public String getRoomType() {
         return roomType;
-    }
-
-    public void setRoomType(String roomType) {
-        this.roomType = roomType;
     }
 
     public long getIdRoom() {

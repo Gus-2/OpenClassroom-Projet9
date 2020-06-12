@@ -19,7 +19,7 @@ public class TypePointOfInterest implements Parcelable {
     @NonNull
     private String typePointOfInterest;
 
-    public TypePointOfInterest(String typePointOfInterest) {
+    public TypePointOfInterest(@NonNull String typePointOfInterest) {
         this.typePointOfInterest = typePointOfInterest;
     }
 
@@ -51,12 +51,9 @@ public class TypePointOfInterest implements Parcelable {
         }
     };
 
+    @NonNull
     public String getTypePointOfInterest() {
         return typePointOfInterest;
-    }
-
-    public void setTypePointOfInterest(String typePointOfInterest) {
-        this.typePointOfInterest = typePointOfInterest;
     }
 
     public long getIdTypePointOfInterest() {

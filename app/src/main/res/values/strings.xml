@@ -88,4 +88,8 @@
     <string name="park">Parks</string>
     <string name="stations">Stations</string>
     <string name="update_video">update video</string>
+    <string name="unable_get_location">Unable to get your location ! Please allow the app to get your location.</string>
+    <string name="not_retrieving_data_for_place">Coudn\'t retrieve data for this place !</string>
+    <string name="picture_room_name_num_order_room">%1$s %02d</string>
+    <string name="need_internet_access">You need internet to access to display the map !</string>
 </resources>

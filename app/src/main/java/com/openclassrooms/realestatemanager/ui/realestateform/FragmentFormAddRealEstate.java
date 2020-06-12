@@ -3,10 +3,12 @@ package com.openclassrooms.realestatemanager.ui.realestateform;
 import android.app.Notification;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,7 +50,6 @@ import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
 import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
-import com.openclassrooms.realestatemanager.tools.DataConverter;
 import com.openclassrooms.realestatemanager.tools.ImageUtils;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.tools.Utils;
@@ -56,6 +58,7 @@ import com.openclassrooms.realestatemanager.ui.viewmodels.RetrofitViewModel;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -84,9 +87,10 @@ public class FragmentFormAddRealEstate extends Fragment implements AdapterPointO
     private final static int AUTOCOMPLETE_REQUEST_CODE = 1;
     private final static int RESULT_LOAD_IMG = 2;
     private final static int RESULT_LOAD_VIDEO = 3;
+    private final static int REQUEST_IMAGE_CAPTURE = 4;
     public final static String STATE_AVAILABLE = "Available";
 
-    public final static String COUNTRY = "United States";
+    private final static String COUNTRY = "United States";
     public final static Integer[] numberRoom = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     @BindView(R.id.actv_number_bathroom)
@@ -135,6 +139,8 @@ public class FragmentFormAddRealEstate extends Fragment implements AdapterPointO
     Button buttonAddPointOfInterest;
     @BindView(R.id.bt_add_pictures)
     Button buttonAddPicture;
+    @BindView(R.id.bt_take_pictures)
+    Button buttonTakePicture;
     @BindView(R.id.bt_add_property)
     Button buttonAddProperty;
 
@@ -150,7 +156,6 @@ public class FragmentFormAddRealEstate extends Fragment implements AdapterPointO
     public static final String URL = "https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=350x300&maptype=roadmap&markers=color:red|%4.6f,%4.6f&key=AIzaSyBk5oJO4prnmEvqvzwO6koHtHDLXBlfByA";
     private ExecutorService executorService;
     private Disposable coordinatesObserver;
-    private Disposable mapsImageObserver;
     private Bitmap photoMap = null;
     private AdapterPointOfInterest adapterPointOfInterest;
     private AdapterPicturesHouse adapterHousePicture;
@@ -171,14 +176,17 @@ public class FragmentFormAddRealEstate extends Fragment implements AdapterPointO
     private long availabilityDate = 0;
     private NotificationManagerCompat notificationManager;
     private Uri videoPath;
+    private String pathToFile;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        notificationManager = NotificationManagerCompat.from(getContext());
-        Places.initialize(getActivity().getApplicationContext(), BuildConfig.API_KEY);
-        executorService = Executors.newCachedThreadPool();
-        Places.createClient(getContext());
+        if(getActivity() != null && getContext() != null){
+            notificationManager = NotificationManagerCompat.from(getContext());
+            Places.initialize(getActivity().getApplicationContext(), BuildConfig.API_KEY);
+            executorService = Executors.newCachedThreadPool();
+            Places.createClient(getContext());
+        }
     }
 
     @Nullable
@@ -195,6 +203,7 @@ public class FragmentFormAddRealEstate extends Fragment implements AdapterPointO
         this.configureRecycleViewPointOfInterest();
         this.configureButtonAddHouse();
         this.configureButtonAddPictures();
+        this.configureButtonTakePictures();
         this.configureButtonAddVideo();
 
         GetDataFromDatabase getDataFromDatabase = new GetDataFromDatabase(this);
@@ -271,7 +280,22 @@ public class FragmentFormAddRealEstate extends Fragment implements AdapterPointO
         });
     }
 
-    public void configureRecycleViewPointOfInterest(){
+    private void configureButtonTakePictures() {
+        buttonTakePicture.setOnClickListener(v -> {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (getActivity() != null && takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                File photoFile = ImageUtils.createPhotoFile(getActivity());
+                pathToFile = photoFile.getAbsolutePath();
+                Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent,REQUEST_IMAGE_CAPTURE);
+            }
+        });
+    }
+
+    private void configureRecycleViewPointOfInterest(){
         recyclerViewPointOfInterest.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(getContext());
         recyclerViewPointOfInterest.setLayoutManager(layoutManager1);
@@ -281,12 +305,10 @@ public class FragmentFormAddRealEstate extends Fragment implements AdapterPointO
     }
 
     private void initializeDropDownRealEstateAgent(){
-
         String[] realEstateAgents = TypeConverter.realEstateAgentToStringArray(listRealEstateAgent);
         ArrayAdapter<String> adapter = new ArrayAdapter<>( getActivity().getApplicationContext(), R.layout.dropdown_menu_popup_item, realEstateAgents);
         dropDownMenuRealEstateAgent.setText(realEstateAgents[0]);
         dropDownMenuRealEstateAgent.setAdapter(adapter);
-
     }
 
     /**
@@ -323,14 +345,14 @@ public class FragmentFormAddRealEstate extends Fragment implements AdapterPointO
             if(null != data.getClipData()) {
                 for(int i = 0; i < data.getClipData().getItemCount(); i++) {
                     Uri uri = data.getClipData().getItemAt(i).getUri();
-                    Bitmap bitmap = DataConverter.convertUriToBitmap(uri, getContext());
+                    Bitmap bitmap = ImageUtils.convertUriToBitmap(uri, getContext());
                     listUri.add(uri);
                     hashMapUriBitmap.put(uri, bitmap);
                     hashMapUriPhoto.put(uri, new Photo());
                 }
             } else if(data.getData() != null){
                 Uri uri = data.getData();
-                Bitmap bitmap = DataConverter.convertUriToBitmap(uri, getContext());
+                Bitmap bitmap = ImageUtils.convertUriToBitmap(uri, getContext());
                 listUri.add(uri);
                 hashMapUriBitmap.put(uri, bitmap);
                 hashMapUriPhoto.put(uri, new Photo());
@@ -340,8 +362,18 @@ public class FragmentFormAddRealEstate extends Fragment implements AdapterPointO
             videoPath = data.getData();
             tvAddVideo.setText(videoPath.getPath());
             ImageUtils.saveVideoToInternalStorage(videoPath, getContext());
+        }else if(requestCode == REQUEST_IMAGE_CAPTURE){
+            if (resultCode == PLACE_RETRIEVED) {
+                Bitmap imageBitmap = BitmapFactory.decodeFile(pathToFile);
+                Uri uri = Uri.parse(pathToFile);
+                listUri.add(uri);
+                hashMapUriBitmap.put(uri, imageBitmap);
+                hashMapUriPhoto.put(uri, new Photo());
+                adapterHousePicture.notifyDataSetChanged();
+            }
         }
     }
+
 
     /**
      * Insert into the database a new point of interest
@@ -358,7 +390,7 @@ public class FragmentFormAddRealEstate extends Fragment implements AdapterPointO
         }
     }
 
-    public void addPointOfInterest(int id){
+    private void addPointOfInterest(int id){
         listPointOfInterests.add(new PointOfInterest(id, place.getAddress(), place.getName()));
         adapterPointOfInterest.notifyDataSetChanged();
     }
@@ -437,13 +469,15 @@ public class FragmentFormAddRealEstate extends Fragment implements AdapterPointO
     /**
      * Initialize the dropdrown menu on the main thread
      */
-    public void initializeDropDownHouseTypeMenu(){
-        String[] houseType = TypeConverter.houseTypeToStringArray(listHouseTypes);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>( getContext(), R.layout.dropdown_menu_popup_item, houseType);
-        getActivity().runOnUiThread(() -> {
-            dropDownMenuHouseType.setAdapter(adapter);
-            dropDownMenuHouseType.setText(houseType[0], false);
-        });
+    private void initializeDropDownHouseTypeMenu(){
+        if(getActivity() != null && getContext() != null){
+            String[] houseType = TypeConverter.houseTypeToStringArray(listHouseTypes);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>( getContext(), R.layout.dropdown_menu_popup_item, houseType);
+            getActivity().runOnUiThread(() -> {
+                dropDownMenuHouseType.setAdapter(adapter);
+                dropDownMenuHouseType.setText(houseType[0], false);
+            });
+        }
     }
 
     @Override
@@ -452,21 +486,21 @@ public class FragmentFormAddRealEstate extends Fragment implements AdapterPointO
         executorService.shutdownNow();
         if(coordinatesObserver!= null && !coordinatesObserver.isDisposed())
             coordinatesObserver.dispose();
-        if(mapsImageObserver!= null && !mapsImageObserver.isDisposed())
-            mapsImageObserver.dispose();
     }
 
-    public void showNotification(){
-        Notification notification = new NotificationCompat.Builder(getContext(), CHANNEL_1_ID)
-                .setSmallIcon(R.drawable.ic_check_blue_24dp)
-                .setContentTitle("Good news !")
-                .setContentText("The new property has been added successfully !")
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_EVENT)
-                .build();
-        notificationManager.notify(1, notification);
+    private void showNotification(){
+        if(getContext() != null && getActivity() != null){
+            Notification notification = new NotificationCompat.Builder(getContext(), CHANNEL_1_ID)
+                    .setSmallIcon(R.drawable.ic_check_blue_24dp)
+                    .setContentTitle("Good news !")
+                    .setContentText("The new property has been added successfully !")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setCategory(NotificationCompat.CATEGORY_EVENT)
+                    .build();
+            notificationManager.notify(1, notification);
 
-        getActivity().finish();
+            getActivity().finish();
+        }
     }
 
     private void insertIntoDatabase(){

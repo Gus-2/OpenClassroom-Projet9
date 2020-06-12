@@ -13,7 +13,6 @@ import androidx.room.PrimaryKey;
 public class Address implements Parcelable {
 
     @ColumnInfo(name = "id_address")
-    @NonNull
     @PrimaryKey(autoGenerate = true)
     private long idAddress;
 
@@ -128,10 +127,6 @@ public class Address implements Parcelable {
         return street;
     }
 
-    public void setStreet(@NonNull String street) {
-        this.street = street;
-    }
-
     @NonNull
     public String getNumber() {
         return number;
@@ -155,17 +150,9 @@ public class Address implements Parcelable {
         return city;
     }
 
-    public void setCity(@NonNull String city) {
-        this.city = city;
-    }
-
     @NonNull
     public String getCountry() {
         return country;
-    }
-
-    public void setCountry(@NonNull String country) {
-        this.country = country;
     }
 
     @NonNull
@@ -173,16 +160,8 @@ public class Address implements Parcelable {
         return postCode;
     }
 
-    public void setPostCode(@NonNull String postCode) {
-        this.postCode = postCode;
-    }
-
     public String getAdditionalInformation() {
         return additionalInformation;
-    }
-
-    public void setAdditionalInformation(String additionalInformation) {
-        this.additionalInformation = additionalInformation;
     }
 
     public Double getLatitude() {

@@ -1,7 +1,5 @@
 package com.openclassrooms.realestatemanager.repositories;
 
-import androidx.lifecycle.LiveData;
-
 import com.openclassrooms.realestatemanager.database.dao.RealEstateAgentDao;
 import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
 

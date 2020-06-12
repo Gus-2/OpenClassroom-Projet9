@@ -9,6 +9,8 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import org.jetbrains.annotations.NotNull;
+
 @Entity(tableName = "house_types")
 public class HouseType implements Parcelable {
 
@@ -20,7 +22,7 @@ public class HouseType implements Parcelable {
     @ColumnInfo(name = "house_type")
     private String houseType;
 
-    public HouseType(String houseType) {
+    public HouseType(@NotNull String houseType) {
         this.houseType = houseType;
     }
 
@@ -60,11 +62,12 @@ public class HouseType implements Parcelable {
         this.idHouseType = idHouseType;
     }
 
+    @NonNull
     public String getHouseType() {
         return houseType;
     }
 
-    public void setHouseType(String houseType) {
+    public void setHouseType(@NonNull String houseType) {
         this.houseType = houseType;
     }
 }

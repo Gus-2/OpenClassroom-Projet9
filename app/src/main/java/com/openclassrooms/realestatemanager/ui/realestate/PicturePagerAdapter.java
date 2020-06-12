@@ -21,13 +21,11 @@ public class PicturePagerAdapter extends PagerAdapter {
     private Context context;
     private ArrayList<Photo> listPhoto;
     private HashMap<Long, String> hashMapRoom;
-    private int size;
 
     public PicturePagerAdapter(Context context, ArrayList<Photo> listPhoto, HashMap<Long, String> hashMapRoom){
         this.context = context;
         this.listPhoto = listPhoto;
         this.hashMapRoom = hashMapRoom;
-        size =listPhoto.size();
     }
     @Override
     public int getCount() {
@@ -45,7 +43,6 @@ public class PicturePagerAdapter extends PagerAdapter {
         ImageView imageView;
         TextView tvDescription;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
         View itemView = inflater.inflate(R.layout.slider_item,container,false);
 
         imageView = itemView.findViewById(R.id.slider_image_view);
@@ -57,12 +54,11 @@ public class PicturePagerAdapter extends PagerAdapter {
             if(photo.getIdRoom() == -1){
                 tvDescription.setText(photo.getSpecificRoom());
             }else{
-                tvDescription.setText(hashMapRoom.get(photo.getIdRoom())  + " " + photo.getNumOrderRoom());
+                tvDescription.setText(String.format(context.getResources().getString(R.string.picture_room_name_num_order_room),hashMapRoom.get(photo.getIdRoom()), photo.getNumOrderRoom()));
             }
         }else{
             tvDescription.setVisibility(View.GONE);
         }
-
         container.addView(itemView);
         return itemView;
     }

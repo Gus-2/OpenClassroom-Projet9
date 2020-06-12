@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.repositories;
 
 import androidx.lifecycle.LiveData;
-import androidx.room.Query;
 
 import com.openclassrooms.realestatemanager.database.dao.PointOfInterestDao;
 import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;

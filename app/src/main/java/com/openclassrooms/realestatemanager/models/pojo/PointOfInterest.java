@@ -20,7 +20,6 @@ public class PointOfInterest implements Parcelable {
     @PrimaryKey(autoGenerate = true)
     private long idPointOfInterest;
 
-    @NonNull
     @ColumnInfo(name = "type_point_of_interest", index = true)
     private long typePointOfInterest;
 
@@ -31,7 +30,7 @@ public class PointOfInterest implements Parcelable {
     @NonNull
     private String name;
 
-    public PointOfInterest(long typePointOfInterest, String address, String name) {
+    public PointOfInterest(long typePointOfInterest, @NonNull String address, @NonNull String name) {
         this.typePointOfInterest = typePointOfInterest;
         this.address = address;
         this.name = name;
@@ -81,23 +80,20 @@ public class PointOfInterest implements Parcelable {
         return typePointOfInterest;
     }
 
-    public void setTypePointOfInterest(long typePointOfInterest) {
-        this.typePointOfInterest = typePointOfInterest;
-    }
-
+    @NonNull
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(@NonNull String address) {
         this.address = address;
     }
-
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 }

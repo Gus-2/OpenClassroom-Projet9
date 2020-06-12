@@ -10,8 +10,6 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-
-import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 
 import java.util.List;

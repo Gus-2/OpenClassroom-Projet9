@@ -184,8 +184,4 @@ public class ItemContentProviderTest {
         assertThat(cursor.getCount(), is(0));
         cursor.close();
     }
-
-
-
-
 }

@@ -3,7 +3,6 @@ package com.openclassrooms.realestatemanager;
 import android.content.Context;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -24,6 +23,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -36,7 +36,7 @@ public class RealEstateDatabaseTest {
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
-/*
+
     @Before
     public void createDb() {
         Context context = ApplicationProvider.getApplicationContext();
@@ -46,7 +46,7 @@ public class RealEstateDatabaseTest {
     // TEST address TABLE
     private static Address ADDRESS1 = new Address("Rue des choux-fleurs", "15A", "New York",
             "United-States", "1310", "East Side", "bte 2");
-    private static int ADDRESS1_ID = 1;
+    private static final int ADDRESS1_ID = 1;
 
     @Test
     public void insertAndGetAddress() throws InterruptedException {
@@ -73,7 +73,7 @@ public class RealEstateDatabaseTest {
 
     // TEST point_of_interest TABLE
     private static String NAME_POINT_OF_INTEREST1 = "Athénée Royal de Waterloo";
-    private static PointOfInterest POINT_OF_INTEREST1 = new PointOfInterest(TYPE_POINT_OF_INTEREST_ID1, ADDRESS1_ID, NAME_POINT_OF_INTEREST1);
+    private static PointOfInterest POINT_OF_INTEREST1 = new PointOfInterest(TYPE_POINT_OF_INTEREST_ID1, "", NAME_POINT_OF_INTEREST1);
     private static int POINT_OF_INTEREST_ID1 = 1;
 
     @Test
@@ -94,11 +94,11 @@ public class RealEstateDatabaseTest {
     private static int HOUSE_TYPE_ID1 = 1;
 
     @Test
-    public void insertAndGetHouseTypes() throws InterruptedException {
+    public void insertAndGetHouseTypes(){
         this.realEstateDatabase.houseTypeDao().insertHouseType(HOUSE_TYPE1);
         this.realEstateDatabase.houseTypeDao().insertHouseType(HOUSE_TYPE2);
 
-        List<HouseType> houseTypeList = LiveDataTestUtil.getValue(this.realEstateDatabase.houseTypeDao().getHouseTypes());
+        List<HouseType> houseTypeList = this.realEstateDatabase.houseTypeDao().getHouseTypes();
         assertEquals(2, houseTypeList.size());
         assertEquals(houseTypeList.get(0).getIdHouseType(), HOUSE_TYPE_ID1);
         int HOUSE_TYPE_ID2 = 2;
@@ -112,11 +112,11 @@ public class RealEstateDatabaseTest {
     private static int REAL_ESTATE_AGENT_ID1 = 1;
 
     @Test
-    public void insertAndGetRealEstateAgent() throws InterruptedException {
+    public void insertAndGetRealEstateAgent(){
         this.realEstateDatabase.realEstateAgentDao().insertRealEstateAgent(REAL_ESTATE_AGENT_1);
         this.realEstateDatabase.realEstateAgentDao().insertRealEstateAgent(REAL_ESTATE_AGENT_2);
 
-        List<RealEstateAgent> realEstateAgents = LiveDataTestUtil.getValue(this.realEstateDatabase.realEstateAgentDao().getRealEstateAgent());
+        List<RealEstateAgent> realEstateAgents = this.realEstateDatabase.realEstateAgentDao().getRealEstateAgent();
         assertEquals(2, realEstateAgents.size());
         assertEquals(realEstateAgents.get(0).getIdRealEstateAgent(), REAL_ESTATE_AGENT_ID1);
         int REAL_ESTATE_AGENT_ID2 = 2;
@@ -131,18 +131,18 @@ public class RealEstateDatabaseTest {
     private static int ROOM_ID2 = 2;
 
     @Test
-    public void insertAndGetRoom() throws InterruptedException {
+    public void insertAndGetRoom(){
         this.realEstateDatabase.roomDao().insertRoom(ROOM_1);
         this.realEstateDatabase.roomDao().insertRoom(ROOM_2);
 
-        List<com.openclassrooms.realestatemanager.models.pojo.Room> roomList = LiveDataTestUtil.getValue(this.realEstateDatabase.roomDao().getRooms());
+        List<com.openclassrooms.realestatemanager.models.pojo.Room> roomList = this.realEstateDatabase.roomDao().getRooms();
         assertEquals(2, roomList.size());
         assertEquals(roomList.get(0).getIdRoom(), ROOM_ID1);
         assertEquals(roomList.get(1).getIdRoom(), ROOM_ID2);
     }
 
     // TEST house TABLE
-    private static House HOUSE_1 = new House(HOUSE_TYPE_ID1, REAL_ESTATE_AGENT_ID1, ADDRESS1_ID, 150000, 150, "Petite maison",
+    private static House HOUSE_1 = new House(HOUSE_TYPE_ID1, REAL_ESTATE_AGENT_ID1, 150000, 150, "Petite maison",
             "Available", 150000);
     private static int HOUSE_ID1 = 1;
 
@@ -181,11 +181,11 @@ public class RealEstateDatabaseTest {
     }
 
     // TEST photos TABLE
-    private static Photo PHOTO_1 = new Photo(HOUSE_ID1, 1, ROOM_ID1, false, "folder1/photo1.jpg");
-    private static Photo PHOTO_2 = new Photo(HOUSE_ID1, 2, ROOM_ID2, true, "folder1/photo2.jpg");
+    private static Photo PHOTO_1 = new Photo();
+    private static Photo PHOTO_2 = new Photo();
 
     @Test
-    public void insertAndGetPhotos() throws InterruptedException {
+    public void insertAndGetPhotos(){
         this.realEstateDatabase.houseTypeDao().insertHouseType(HOUSE_TYPE1);
         this.realEstateDatabase.realEstateAgentDao().insertRealEstateAgent(REAL_ESTATE_AGENT_1);
         this.realEstateDatabase.addressDao().insertAddress(ADDRESS1);
@@ -197,11 +197,8 @@ public class RealEstateDatabaseTest {
         this.realEstateDatabase.photoDao().insertPhotos(PHOTO_1);
         this.realEstateDatabase.photoDao().insertPhotos(PHOTO_2);
 
-        List<Photo> photoList = LiveDataTestUtil.getValue(this.realEstateDatabase.photoDao().getPhotos());
+        List<Photo> photoList = this.realEstateDatabase.photoDao().getPhotos();
         assertEquals(2, photoList.size());
-        assertEquals(photoList.get(0).getIdHouse(), HOUSE_ID1);
-        assertEquals(photoList.get(1).getIdHouse(), HOUSE_ID1);
-        assertEquals("folder1/photo2.jpg", photoList.get(1).getUri());
     }
 
     // TEST house_point_of_interest TABLE
@@ -224,10 +221,7 @@ public class RealEstateDatabaseTest {
     }
 
     @After
-    public void closeDb() throws Exception {
+    public void closeDb(){
         realEstateDatabase.close();
     }
-
-    */
-
 }

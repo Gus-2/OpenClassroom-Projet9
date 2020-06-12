@@ -38,7 +38,6 @@ import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
 import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
-import com.openclassrooms.realestatemanager.tools.DateConverter;
 import com.openclassrooms.realestatemanager.tools.ImageUtils;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.tools.Utils;
@@ -240,7 +239,7 @@ public class RealEstateDetailFragment extends Fragment {
         realEstateDetailContentBinding.rvPointOfInterestDetail.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(context);
         realEstateDetailContentBinding.rvPointOfInterestDetail.setLayoutManager(layoutManager1);
-        adapterPointOfInterest = new AdapterPointOfInterestDetail(listPointOfInterest, listTypePointOfInterest);
+        adapterPointOfInterest = new AdapterPointOfInterestDetail(listPointOfInterest);
         realEstateDetailContentBinding.rvPointOfInterestDetail.setAdapter(adapterPointOfInterest);
     }
 
@@ -299,9 +298,9 @@ public class RealEstateDetailFragment extends Fragment {
                 if(house.getAvailableDate() == 0)
                     realEstateDetailContentBinding.tvStateDetail.setText(R.string.availability_date_not_specified);
                 else
-                    realEstateDetailContentBinding.tvStateDetail.setText(String.format(getString(R.string.available_for), TypeConverter.convertDateToString(DateConverter.toDate(house.getAvailableDate()))));
+                    realEstateDetailContentBinding.tvStateDetail.setText(String.format(getString(R.string.available_for), TypeConverter.convertDateToString(Utils.toDate(house.getAvailableDate()))));
             else
-                realEstateDetailContentBinding.tvStateDetail.setText(String.format(getString(R.string.sold), TypeConverter.convertDateToString(DateConverter.toDate(houseDateState.getSoldDate()))));
+                realEstateDetailContentBinding.tvStateDetail.setText(String.format(getString(R.string.sold), TypeConverter.convertDateToString(Utils.toDate(houseDateState.getSoldDate()))));
 
         });
         realEstateDetailContentBinding.tvRealEstateAgentDetail.setText(String.format(getString(R.string.real_estate_agent_name), realEstateAgents.get((int) house.getIdRealEstateAgent()-1).getName(),  realEstateAgents.get((int) house.getIdRealEstateAgent()-1).getFirstname()));

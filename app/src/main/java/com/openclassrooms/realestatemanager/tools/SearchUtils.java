@@ -16,10 +16,10 @@ import java.util.List;
 
 public class SearchUtils {
 
-    public static final String STATION_KEY = "TRAIN_STATION";
-    public static final String PARK_KEY = "PARK";
-    public static final String SHOP_KEY = "SUPERMARKET";
-    public static final String SCHOOL_KEY = "SCHOOL";
+    private static final String STATION_KEY = "TRAIN_STATION";
+    private static final String PARK_KEY = "PARK";
+    private static final String SHOP_KEY = "SUPERMARKET";
+    private static final String SCHOOL_KEY = "SCHOOL";
 
     @SuppressWarnings("all")
     public static List<House> getListHouseFiltered(List<House> listHouses, HashMap<Long, Address> hashMapAddress,
@@ -165,5 +165,4 @@ public class SearchUtils {
 
         return listHouseFiltered;
     }
-
 }

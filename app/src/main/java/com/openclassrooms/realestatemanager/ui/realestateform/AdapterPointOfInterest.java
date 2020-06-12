@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -20,7 +22,7 @@ public class AdapterPointOfInterest extends RecyclerView.Adapter<AdapterPointOfI
     private List<PointOfInterest> listPointOfInterest;
     private OnPointOfInterestClickListener onPointOfInterestClickListener;
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    static class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tv_name_point_of_interest)
         TextView tvNamePointOfInterest;
 
@@ -32,7 +34,7 @@ public class AdapterPointOfInterest extends RecyclerView.Adapter<AdapterPointOfI
 
         OnPointOfInterestClickListener onPointOfInterestClickListener;
 
-        public MyViewHolder(View itemView, OnPointOfInterestClickListener onPointOfInterestClickListener) {
+        MyViewHolder(View itemView, OnPointOfInterestClickListener onPointOfInterestClickListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             this.onPointOfInterestClickListener = onPointOfInterestClickListener;
@@ -45,6 +47,7 @@ public class AdapterPointOfInterest extends RecyclerView.Adapter<AdapterPointOfI
         this.onPointOfInterestClickListener = onPointOfInterestClickListener;
     }
 
+    @NotNull
     @Override
     public AdapterPointOfInterest.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                                   int viewType) {

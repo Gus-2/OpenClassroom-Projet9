@@ -23,7 +23,6 @@ public class Photo implements Parcelable {
     private long idPhoto;
 
     @ColumnInfo(name = "id_house", index = true)
-    @NonNull
     private long idHouse;
 
     @ColumnInfo(name = "id_room", index = true)
@@ -35,7 +34,6 @@ public class Photo implements Parcelable {
     @ColumnInfo(name = "specific_room")
     private String specificRoom;
 
-    @NonNull
     @ColumnInfo(name = "is_main_picture")
     private boolean isMainPicture;
 

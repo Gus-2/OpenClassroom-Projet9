@@ -7,9 +7,9 @@ import androidx.lifecycle.Observer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public class LiveDataTestUtil {
+class LiveDataTestUtil {
 
-    public static <T> T getValue(final LiveData<T> liveData) throws InterruptedException {
+    static <T> T getValue(final LiveData<T> liveData) throws InterruptedException {
         final Object[] data = new Object[1];
         final CountDownLatch latch = new CountDownLatch(1);
         Observer<T> observer = new Observer<T>() {

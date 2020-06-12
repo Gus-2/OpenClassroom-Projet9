@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -43,14 +42,11 @@ import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
 import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
-import com.openclassrooms.realestatemanager.tools.DataConverter;
-import com.openclassrooms.realestatemanager.tools.DateConverter;
 import com.openclassrooms.realestatemanager.tools.ImageUtils;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.tools.Utils;
 import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
 import com.openclassrooms.realestatemanager.ui.realestateform.AdapterPointOfInterest;
-import com.openclassrooms.realestatemanager.ui.realestateform.FormActivity;
 import com.openclassrooms.realestatemanager.ui.realestateform.FragmentFormAddRealEstate;
 import com.openclassrooms.realestatemanager.ui.realestateform.ToolsUpdateData;
 import com.openclassrooms.realestatemanager.ui.viewmodels.RealEstateViewModel;
@@ -79,10 +75,10 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class EditRealEstateFragment extends Fragment implements AdapterPointOfInterest.OnPointOfInterestClickListener, AdapterPicturesHouseEdit.PhotoOnClickListener{
-    public final static int PLACE_REQUEST = 1;
-    public final static int PLACE_RETRIEVED = -1;
-    public final static int LOAD_IMG_REQUEST = 2;
-    public final static int LOAD_VIDEO_REQUEST = 3;
+    private final static int PLACE_REQUEST = 1;
+    private final static int PLACE_RETRIEVED = -1;
+    private final static int LOAD_IMG_REQUEST = 2;
+    private final static int LOAD_VIDEO_REQUEST = 3;
 
     private Context context;
     private House house;
@@ -99,14 +95,11 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
     private List<PointOfInterest> listPointOfInterestToAdd;
     private List<PointOfInterest> listPointOfInterestToDisplay;
     private List<HousePointOfInterest> listHousePointOfInterestToRemove;
-    private List<HousePointOfInterest> getListHousePointOfInterestToAdd;
     private List<Room> listRoom;
     private List<HouseType> listHouseTypes;
     private HashMap<Long, HouseType> hashMapHouseTypes;
     private EditRealEstateFragmentBinding binding;
     private DateFormat df;
-    private RecyclerView recyclerViewPointOfInterest;
-    private RecyclerView recyclerViewPhoto;
     private AdapterPointOfInterest adapterPointOfInterest;
     private AdapterPicturesHouseEdit adapterPicturesHouse;
     private ExecutorService executorService;
@@ -121,6 +114,8 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
     private Bitmap newBitmapToInsert;
     private List<RoomNumber> listRoomNumberProcessed;
     private List<HousePointOfInterest> listHousePointOfInterestAdd = new ArrayList<>();
+    private String childPath;
+    private String parentPathPlacePreview;
 
     @Override
     @SuppressWarnings("all")
@@ -193,8 +188,8 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
     /**
      * Configure recycler view to display the known house's point of interest
      */
-    public void configureRecyclerViewPointOfInterest(){
-        recyclerViewPointOfInterest = binding.rvPointOfInterest;
+    private void configureRecyclerViewPointOfInterest(){
+        RecyclerView recyclerViewPointOfInterest = binding.rvPointOfInterest;
         recyclerViewPointOfInterest.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManagerRecyclerViewPointOfInterest = new LinearLayoutManager(context);
         recyclerViewPointOfInterest.setLayoutManager(layoutManagerRecyclerViewPointOfInterest);
@@ -205,8 +200,8 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
     /**
      * Configure recycler view to display the known house's point of interest
      */
-    public void configureRecyclerViewPhoto(){
-        recyclerViewPhoto = binding.rvHousePicture;
+    private void configureRecyclerViewPhoto(){
+        RecyclerView recyclerViewPhoto = binding.rvHousePicture;
         recyclerViewPhoto.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManagerRecyclerViewPhoto = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         recyclerViewPhoto.setLayoutManager(layoutManagerRecyclerViewPhoto);
@@ -330,7 +325,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
 
         if(house.getAvailableDate() > 0){
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            binding.tietAvailibilityDate.setText(df.format(DateConverter.toDate(house.getAvailableDate())));
+            binding.tietAvailibilityDate.setText(df.format(Utils.toDate(house.getAvailableDate())));
         }else{
             binding.tietAvailibilityDate.setText(R.string.date_unspecified);
         }
@@ -375,7 +370,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
                 AutocompleteActivityMode.OVERLAY, fields)
                 .build(context);
         binding.btAddPointOfInterest.setOnClickListener(v -> {
-            if (Utils.isInternetAvailable(getContext())) {
+            if (getContext() != null && Utils.isInternetAvailable(getContext())) {
                 startActivityForResult(intent, PLACE_REQUEST);
             } else {
                 Toast.makeText(getContext(), "You need internet to add a point of interest !", Toast.LENGTH_LONG).show();
@@ -405,8 +400,10 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
 
     private void configureViewModels(){
         ViewModelFactory mViewModelFactory = Injection.provideDaoViewModelFactory(context);
-        this.realEstateViewModel = new ViewModelProvider(getActivity(), mViewModelFactory).get(RealEstateViewModel.class);
-        this.retrofitViewModel = new ViewModelProvider(getActivity(), mViewModelFactory).get(RetrofitViewModel.class);
+        if(getActivity() != null){
+            this.realEstateViewModel = new ViewModelProvider(getActivity(), mViewModelFactory).get(RealEstateViewModel.class);
+            this.retrofitViewModel = new ViewModelProvider(getActivity(), mViewModelFactory).get(RetrofitViewModel.class);
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -448,8 +445,8 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
         }
     }
 
-    public void createNewPhoto(Uri uri){
-        Bitmap bitmap = DataConverter.convertUriToBitmap(uri, context);
+    private void createNewPhoto(Uri uri){
+        Bitmap bitmap = ImageUtils.convertUriToBitmap(uri, context);
         String childPath = house.getIdHouse() + "" + listPhotoDisplayed.size()+1 + ".jpg";
         String path = ImageUtils.saveToInternalStorage(childPath, bitmap, context, ImageUtils.HOUSE_PICTURES);
         Photo photo = new Photo();
@@ -486,7 +483,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
     @Override
     public void onDeletePhotoClickListener(int position) {
         Photo photoToRemove = listPhotoDisplayed.get(position);
-        if(listPhoto.contains(photoToRemove)) listPhoto.remove(photoToRemove);
+        listPhoto.remove(photoToRemove);
         listPhotoToRemove.add(photoToRemove);
         listPhotoDisplayed.remove(position);
         adapterPicturesHouse.notifyItemRemoved(position);
@@ -592,17 +589,18 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
+        if(getActivity() != null)
         getActivity().finish();
     }
 
-    public void deletePhoto(){
+    private void deletePhoto(){
         realEstateViewModel.deleteListPhoto(listPhotoToRemove)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
     }
 
-    public void insertPhoto(){
+    private void insertPhoto(){
         Utils.setNumberRoomForEachPhotoList(listRoom, listPhoto);
         realEstateViewModel.insertListPhoto(listPhotoToAdd)
                 .subscribeOn(Schedulers.io())
@@ -611,26 +609,11 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
     }
 
 
-    public void insertHousePointOfInterest(){
+    private void insertHousePointOfInterest(){
         realEstateViewModel.insertListHousePointOfInterest(listHousePointOfInterestAdd)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d("INSERT", "House point of interest inserted !");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-                });
+                .subscribe();
     }
 
     private class MyAsyncTask extends AsyncTask<Void, Void, Void>
@@ -652,65 +635,21 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
         realEstateViewModel.deleteListPointOfInterest(listPointOfInterestToRemove)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d("DELETE", "Point of interest !");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-                });
+                .subscribe();
     }
 
     private void deleteHousePointOfInterests() {
         realEstateViewModel.deleteListHousePointOfInterest(listHousePointOfInterestToRemove)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        deletePointOfInterests();
-                        Log.d("DELETE", "House point of interest !");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-                });
+                .subscribe();
     }
 
     private void updateRoomNumber() {
         realEstateViewModel.updateRoomNumber(listRoomNumberProcessed)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) { }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d("UPDATE", "List room number is updated !");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-                });
+                .subscribe();
     }
 
 
@@ -730,34 +669,35 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
     }
 
     private void getMapPicture(Double lat, Double lon){
-        Picasso.with(getActivity().getApplicationContext())
-                .load(String.format(FragmentFormAddRealEstate.URL, lat, lon))
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        newBitmapToInsert = bitmap;
-                        insertNewStaticMap();
-                    }
+        if(getActivity() != null){
+            Picasso.with(getActivity().getApplicationContext())
+                    .load(String.format(FragmentFormAddRealEstate.URL, lat, lon))
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            newBitmapToInsert = bitmap;
+                            insertNewStaticMap();
+                        }
 
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
-                    }
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                        }
 
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) { }
-                });
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) { }
+                    });
+        }
     }
-    String childPath;
-    String parentPathPlacePreview;
-    public void insertNewStaticMap(){
-        if(newBitmapToInsert != null){
+
+    private void insertNewStaticMap(){
+        if(getActivity() != null && newBitmapToInsert != null){
             childPath = addressToUpdate.getIdAddress() + "_map_image.jpg";
             parentPathPlacePreview = ImageUtils.saveToInternalStorage(childPath, newBitmapToInsert, getActivity().getApplicationContext(), ImageUtils.MAP_IMAGE);
             updateAddress();
         }
     }
 
-    public void updateAddress(){
+    private void updateAddress(){
         realEstateViewModel.updateAddress(addressToUpdate)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -767,7 +707,6 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
 
                     @Override
                     public void onComplete() {
-                        Log.d("UPDATE", "Address is updated !");
                         if(!removeVideo)
                             updateHouse();
                     }
@@ -779,7 +718,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
                 });
     }
 
-    public void updateHouse(){
+    private void updateHouse(){
         if(removeVideo){
             if(houseToUpdate == null && childPath != null){
                 house.setChildPathPlacePreview(childPath);
@@ -808,20 +747,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
         realEstateViewModel.updateHouse(houseToUpdate)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) { }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d("UPDATE", "House is updated !");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-                });
+                .subscribe();
     }
 
     @Override

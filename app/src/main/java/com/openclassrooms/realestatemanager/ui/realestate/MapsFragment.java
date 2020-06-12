@@ -1,14 +1,13 @@
 package com.openclassrooms.realestatemanager.ui.realestate;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,8 +21,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -47,6 +53,7 @@ import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 import com.openclassrooms.realestatemanager.tools.SearchUtils;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailActivity;
+import com.openclassrooms.realestatemanager.ui.realestatedetail.RealEstateDetailFragment;
 import com.openclassrooms.realestatemanager.ui.viewmodels.SharedViewModel;
 
 import java.util.ArrayList;
@@ -63,11 +70,16 @@ import static com.openclassrooms.realestatemanager.ui.realestate.RealEstateListF
 public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, GoogleMap.OnMarkerClickListener, SearchDialog.SearchDialogListener {
 
     private static final int DEFAULT_ZOOM = 10;
+    private static final int REQUEST_CHECK_SETTINGS = 20;
+    private static final int REQUEST_LOCATION_AUTHORIZED = -1;
+    private static final int REQUEST_LOCATION_NON_AUTHORIZED = 0;
 
     private BottomAppBar bottomAppBar;
     private MapView mapView;
     private GoogleMap googleMap;
     private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
     private boolean mLocationPermissionGranted;
     private SharedViewModel sharedViewModel;
     private List<House> listHouses;
@@ -87,19 +99,36 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private double maxPrice = 0;
     private double maxSurface;
     private double minSurface;
+    private LocationSettingsRequest.Builder builder;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLocationPermissionGranted = ((MainActivity) getActivity()).ismLocationPermissionGranted();
+        if(getActivity() != null){
+            mLocationPermissionGranted = ((MainActivity) getActivity()).ismLocationPermissionGranted();
+        }
         hashMapIdMarkerIdHouse = new HashMap<>();
+    }
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CHECK_SETTINGS){
+            if(resultCode == REQUEST_LOCATION_AUTHORIZED){
+                getDeviceLocation();
+            }else if(resultCode == REQUEST_LOCATION_NON_AUTHORIZED){
+                Toast.makeText(getContext(), R.string.unable_get_location, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.maps_fragment, container, false);
         setHasOptionsMenu(true);
-        bottomAppBar = getActivity().findViewById(R.id.bottom_app_bar);
+        if(getActivity() != null) bottomAppBar = getActivity().findViewById(R.id.bottom_app_bar);
         mapView = result.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         if(mLocationPermissionGranted) initMap();
@@ -109,14 +138,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
-
+        if(getActivity() != null)
+            sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu, menu);
+        if(getActivity() != null && getActivity().findViewById(R.id.frame_layout_detail) == null){
+            super.onCreateOptionsMenu(menu, inflater);
+            inflater.inflate(R.menu.menu, menu);
+        }
     }
 
     @Override
@@ -146,13 +177,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         bundle.putStringArrayList(DISTRICT, listDistrict);
 
         searchDialog.setArguments(bundle);
-        searchDialog.show(getActivity().getSupportFragmentManager(), TAG_SEARCH_DIALOG);
+        if(getActivity() != null)
+            searchDialog.show(getActivity().getSupportFragmentManager(), TAG_SEARCH_DIALOG);
     }
 
     private void getAllDistrict() {
         for(House house : listHouses){
             Address address = hashMapAddress.get(house.getIdHouse());
-            if(!listDistrict.contains(address.getDistrict())) listDistrict.add(address.getDistrict());
+            if(address != null && !listDistrict.contains(address.getDistrict())) listDistrict.add(address.getDistrict());
         }
     }
 
@@ -182,13 +214,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void configureList() {
         sharedViewModel.getListData().observe(getViewLifecycleOwner(), databaseValue -> {
             listHouses = (List<House>) databaseValue.get(MainActivity.HOUSES);
-            listHousesDisplayed = new ArrayList<>(listHouses);
+            if(listHouses != null) listHousesDisplayed = new ArrayList<>(listHouses);
             hashMapPhoto = new HashMap<>(TypeConverter.getPhotoListToHashMap((List<Photo>) databaseValue.get(MainActivity.PHOTOS)));
             listHousesTypes = (ArrayList<HouseType>) databaseValue.get(MainActivity.HOUSES_TYPES);
-            hashMapHouseType = TypeConverter.convertHouseTypeListToHashMap(listHousesTypes);
+            if(listHousesTypes != null) hashMapHouseType = TypeConverter.convertHouseTypeListToHashMap(listHousesTypes);
             hashMapAddress = TypeConverter.convertAddressListToHashMap((List<Address>) databaseValue.get(MainActivity.ADDRESS));
             hashMapAddressDisplayed = new HashMap<>(hashMapAddress);
             listRealEstateAgent = (List<RealEstateAgent>) databaseValue.get(MainActivity.REAL_ESTATE_AGENT);
@@ -199,11 +232,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         });
     }
 
-    public void displayHousesOnTheMap(){
+    private void displayHousesOnTheMap(){
         googleMap.clear();
         for (House house : listHousesDisplayed) {
             Address address = hashMapAddressDisplayed.get(house.getIdHouse());
-            if(address.getLongitude() != null){
+            if(address != null && address.getLongitude() != null){
                 Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_place_blue_24dp);
                 BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
                 MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(address.getLatitude(), address.getLongitude())).icon(markerIcon);
@@ -222,50 +255,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
-    public void initMap(){
+    private void initMap(){
         mapView.getMapAsync(this);
-    }
-
-    private void getDeviceLocation(){
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
-        try{
-            if(mLocationPermissionGranted){
-                Task location = fusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        Location currentLocation = (Location) task.getResult();
-                        if(currentLocation == null){
-                            LocationManager locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
-                            Criteria criteria = new Criteria();
-                            String provider = locationManager.getBestProvider(criteria, true);
-                            currentLocation = locationManager.getLastKnownLocation(provider);
-                        }
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM));
-                        moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
-
-                    }else{
-                        Toast.makeText(getContext(), R.string.couldnt_get_location, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        }catch (SecurityException e){
-            e.printStackTrace();
-        }
-    }
-
-    private void moveCamera(LatLng latLng, float zoom){
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        bottomAppBar.setNavigationIcon(R.drawable.ic_list_white_32dp);
-        bottomAppBar.setNavigationOnClickListener(v -> getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container_view, new RealEstateListFragment())
-                .addToBackStack(null)
-                .commit());
-        mapView.onResume();
     }
 
     @Override
@@ -277,6 +268,100 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         googleMap.setOnMarkerClickListener(this);
         getDeviceLocation();
     }
+
+    private void getDeviceLocation(){
+        if(getContext() != null) fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
+        try{
+            if(mLocationPermissionGranted){
+                Task<Location> location = fusedLocationProviderClient.getLastLocation();
+                location.addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        Location currentLocation = task.getResult();
+                        if(currentLocation == null){
+                            builder = new LocationSettingsRequest.Builder();
+                            checkIfCurrentLocationSettingsSatisfied();
+                        }else{
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+                        }
+                    }else{
+                        Toast.makeText(getContext(), R.string.couldnt_get_location, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }catch (SecurityException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void moveCamera(LatLng latLng){
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
+    }
+
+    private void checkIfCurrentLocationSettingsSatisfied(){
+        if(getActivity() != null){
+            SettingsClient client = LocationServices.getSettingsClient(getActivity());
+            Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+            task.addOnSuccessListener(locationSettingsResponse ->
+                createLocationRequest()
+            );
+
+            task.addOnFailureListener(getActivity(), e -> {
+                if (e instanceof ResolvableApiException) {
+                    try {
+                        ResolvableApiException resolvable = (ResolvableApiException) e;
+                        startIntentSenderForResult(resolvable.getResolution().getIntentSender(), REQUEST_CHECK_SETTINGS, null, 0, 0, 0, null);
+                    } catch (IntentSender.SendIntentException sendEx) {
+                        sendEx.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
+    private void createLocationRequest() {
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(2000);
+        initializeLocationCallback();
+    }
+
+    private void initializeLocationCallback() {
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    Toast.makeText(getContext(), R.string.couldnt_get_location, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    moveCamera(new LatLng(location.getLatitude(),location.getLongitude()));
+                }
+            }
+        };
+        startLocationUpdates();
+    }
+
+    private void startLocationUpdates() {
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest,
+                locationCallback,
+                Looper.getMainLooper());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(getActivity() != null && getActivity().findViewById(R.id.frame_layout_detail) == null){
+            bottomAppBar.setNavigationIcon(R.drawable.ic_list_white_32dp);
+            bottomAppBar.setNavigationOnClickListener(v -> getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frame_layout_main, new RealEstateListFragment())
+                    .addToBackStack(null)
+                    .commit());
+        }
+        mapView.onResume();
+    }
+
+
 
     @Override
     public void onPause() {
@@ -304,13 +389,32 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        Intent intent = new Intent(getActivity(), RealEstateDetailActivity.class);
-        Bundle bundle = new Bundle();
-        intent.putExtra(RealEstateDetailActivity.ID_HOUSE, hashMapIdMarkerIdHouse.get(marker.getId()));
-        intent.putExtra(MainActivity.HOUSES_TYPES, hashMapHouseType);
-        intent.putParcelableArrayListExtra(MainActivity.REAL_ESTATE_AGENT, (ArrayList<RealEstateAgent>) listRealEstateAgent);
-        intent.putExtras(bundle);
-        startActivity(intent);
+        if(getActivity()!= null && getActivity().findViewById(R.id.frame_layout_detail) == null){
+            Intent intent = new Intent(getActivity(), RealEstateDetailActivity.class);
+            Bundle bundle = new Bundle();
+            intent.putExtra(RealEstateDetailActivity.ID_HOUSE, hashMapIdMarkerIdHouse.get(marker.getId()));
+            intent.putExtra(MainActivity.HOUSES_TYPES, hashMapHouseType);
+            intent.putParcelableArrayListExtra(MainActivity.REAL_ESTATE_AGENT, (ArrayList<RealEstateAgent>) listRealEstateAgent);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            return false;
+        }else{
+            Long idHouse;
+            if((idHouse = hashMapIdMarkerIdHouse.get(marker.getId())) != null){
+                RealEstateDetailFragment realEstateDetailFragment = new RealEstateDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putLong(RealEstateDetailActivity.ID_HOUSE, idHouse);
+                bundle.putParcelableArrayList(RealEstateDetailActivity.REAL_ESTATE_AGENT_LIST, (ArrayList<RealEstateAgent>) listRealEstateAgent);
+                bundle.putSerializable(RealEstateDetailActivity.HOUSE_TYPE_HASH_MAP, TypeConverter.convertHouseTypeListToHashMap(listHousesTypes));
+                realEstateDetailFragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_layout_detail, realEstateDetailFragment)
+                        .commit();
+                return true;
+            }else{
+                Toast.makeText(getActivity(), R.string.not_retrieving_data_for_place, Toast.LENGTH_SHORT).show();
+            }
+        }
         return false;
     }
 

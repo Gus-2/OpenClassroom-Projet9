@@ -11,6 +11,8 @@ import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,26 +21,25 @@ import butterknife.ButterKnife;
 
 public class AdapterPointOfInterestDetail extends RecyclerView.Adapter<AdapterPointOfInterestDetail.MyViewHolder> {
     private List<PointOfInterest> listPointOfInterest;
-    private HashMap<Long, TypePointOfInterest> listTypePointOfInterest;
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    static class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tv_name_point_of_interest)
         TextView tvNamePointOfInterest;
 
         @BindView(R.id.tv_address_point_of_interest)
         TextView tvAddressPointOfInterest;
 
-        public MyViewHolder(View itemView) {
+        MyViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
     }
 
-    public AdapterPointOfInterestDetail(List<PointOfInterest> listPointOfInterest, HashMap<Long, TypePointOfInterest> listTypePointOfInterest) {
+    AdapterPointOfInterestDetail(List<PointOfInterest> listPointOfInterest) {
         this.listPointOfInterest = listPointOfInterest;
-        this.listTypePointOfInterest = listTypePointOfInterest;
     }
 
+    @NotNull
     @Override
     public AdapterPointOfInterestDetail.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                                         int viewType) {

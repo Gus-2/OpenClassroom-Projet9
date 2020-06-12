@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.injections;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -57,6 +58,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     }
 
     @Override
+    @NonNull
+    @SuppressWarnings({"unchecked"})
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.isAssignableFrom(RealEstateViewModel.class)) {
             return (T) new RealEstateViewModel(addressDataRepository, houseDataRepository, housePointOfInterestDataRepository, houseTypeDataRepository, photoDataRepository, pointOfInterestDataRepository, realEstateAgentDataRepository, roomNumberDataRepository, roomDataRepository, typePointOfInterestDataRepository, executor);

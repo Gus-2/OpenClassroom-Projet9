@@ -23,14 +23,11 @@ import androidx.room.Ignore;
 public class RoomNumber implements Parcelable {
 
     @ColumnInfo(name = "id_house")
-    @NonNull
     private long idHouse;
 
     @ColumnInfo(name = "id_room", index = true)
-    @NonNull
     private long idRoom;
 
-    @NonNull
     private int number;
 
     public RoomNumber(long idHouse, long idRoom, int number) {
@@ -93,9 +90,5 @@ public class RoomNumber implements Parcelable {
 
     public long getIdRoom() {
         return idRoom;
-    }
-
-    public void setIdRoom(int idRoom) {
-        this.idRoom = idRoom;
     }
 }

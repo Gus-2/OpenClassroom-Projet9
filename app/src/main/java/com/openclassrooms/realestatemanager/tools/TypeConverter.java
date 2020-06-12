@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.tools;
 
 import com.openclassrooms.realestatemanager.models.pojo.Address;
-import com.openclassrooms.realestatemanager.models.pojo.House;
 import com.openclassrooms.realestatemanager.models.pojo.HousePointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
@@ -10,7 +9,6 @@ import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
 import com.openclassrooms.realestatemanager.models.pojo.Room;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
 
-import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -58,7 +56,6 @@ public class TypeConverter {
     }
 
     public static HashMap<Long, ArrayList<Photo>> getPhotoListToHashMap(List<Photo> listPhoto){
-
         HashMap<Long, ArrayList<Photo>> hashMapPhoto = new HashMap<>();
         if(listPhoto != null){
             for(Photo photo : listPhoto){
@@ -92,22 +89,6 @@ public class TypeConverter {
         }
         return listRoomString;
     }
-
-    public static HashMap<String, Long> listRoom(List<Room> listRoom){
-        HashMap<String, Long> listRoomId = new HashMap<>();
-        for(Room room : listRoom){
-            listRoomId.put(room.getRoomType(), room.getIdRoom());
-        }
-        return listRoomId;
-    }
-
-    public static long getRoomId(HashMap<String, Long> listRoomId, String room){
-        for(String key : listRoomId.keySet()){
-            if(room.equals(key)) return listRoomId.get(key);
-        }
-        return -1;
-    }
-
 
     public static String convertDoubleToStringFormat(double price){
         NumberFormat nf = DecimalFormat.getInstance(Locale.ENGLISH);
@@ -172,6 +153,4 @@ public class TypeConverter {
         }
         return hashMapIdHouseToPointOfInterest;
     }
-
-
 }

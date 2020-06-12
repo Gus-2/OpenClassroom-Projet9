@@ -19,16 +19,13 @@ import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.tools.TypeConverter;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RealEstateListAdapter<fruits> extends RecyclerView.Adapter<RealEstateListAdapter.RealEstateListAdapterViewHolder> {
+public class RealEstateListAdapter extends RecyclerView.Adapter<RealEstateListAdapter.RealEstateListAdapterViewHolder> {
     private List<House> houses;
     private HashMap<Long, HouseType> hashMapHouseType;
     private HashMap<Long, Address> hashMapAddress;
@@ -83,7 +80,7 @@ public class RealEstateListAdapter<fruits> extends RecyclerView.Adapter<RealEsta
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public void onBindViewHolder(RealEstateListAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RealEstateListAdapterViewHolder holder, int position) {
 
         House house = houses.get(position);
         if(house.getPrice() > -1)
