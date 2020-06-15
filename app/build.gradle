@@ -85,4 +85,7 @@ dependencies {
 
     // ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.11.4'
+
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
 }

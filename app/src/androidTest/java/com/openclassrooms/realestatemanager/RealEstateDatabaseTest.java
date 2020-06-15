@@ -1,11 +1,13 @@
 package com.openclassrooms.realestatemanager;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.rule.ActivityTestRule;
 
 import com.openclassrooms.realestatemanager.database.RealEstateDatabase;
 import com.openclassrooms.realestatemanager.models.pojo.Address;
@@ -17,6 +19,10 @@ import com.openclassrooms.realestatemanager.models.pojo.PointOfInterest;
 import com.openclassrooms.realestatemanager.models.pojo.RealEstateAgent;
 import com.openclassrooms.realestatemanager.models.pojo.RoomNumber;
 import com.openclassrooms.realestatemanager.models.pojo.TypePointOfInterest;
+import com.openclassrooms.realestatemanager.tools.Utils;
+import com.openclassrooms.realestatemanager.ui.realestate.MainActivity;
+
+import junit.framework.TestCase;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,6 +33,7 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)

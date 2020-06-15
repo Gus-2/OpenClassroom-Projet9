@@ -46,7 +46,8 @@ public class EditRealEstateActivity extends AppCompatActivity {
             listPhoto = new ArrayList<>(getIntent().getParcelableArrayListExtra(MainActivity.PHOTOS));
             hashMapHouseTypes = (HashMap<Long, HouseType>) getIntent().getSerializableExtra(MainActivity.HOUSES_TYPES);
         }
-        startFragment();
+        if (savedInstanceState == null)
+            startFragment();
     }
 
     private void startFragment(){

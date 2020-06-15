@@ -110,8 +110,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         hashMapIdMarkerIdHouse = new HashMap<>();
     }
 
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -372,7 +370,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
+        if(mapView != null)
+            mapView.onDestroy();
     }
 
     @Override
@@ -380,7 +379,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         super.onLowMemory();
         mapView.onLowMemory();
     }
-
 
     @Override
     public void onMapLoaded() {

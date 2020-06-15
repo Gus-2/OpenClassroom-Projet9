@@ -6,6 +6,8 @@ import android.net.Uri;
 
 import androidx.room.TypeConverter;
 
+import com.openclassrooms.realestatemanager.models.pojo.House;
+import com.openclassrooms.realestatemanager.models.pojo.HouseType;
 import com.openclassrooms.realestatemanager.models.pojo.Photo;
 import com.openclassrooms.realestatemanager.models.pojo.Room;
 
@@ -98,6 +100,44 @@ public class Utils {
                         break;
                     }
                 }
+            }
+        }
+    }
+
+    public static void updateNumberRoomForEachPhoto(List<Room> listRoom, List<Photo> listPhotoToAdd, List<Photo> listPhotoToDisplay){
+        HashMap<String, Integer> numberRoomHashMap = new HashMap<>();
+        for(Room room : listRoom)
+            numberRoomHashMap.put(room.getRoomType(), 1);
+
+        for(Photo photoToAdd : listPhotoToAdd){
+            if(numberRoomHashMap.containsKey(photoToAdd.getSpecificRoom())){
+                for(Room room : listRoom){
+                    if(room.getRoomType().equals(photoToAdd.getSpecificRoom())){
+                        photoToAdd.setIdRoom(room.getIdRoom());
+                        break;
+                    }
+                }
+                photoToAdd.setNumOrderRoom(numberRoomHashMap.get(photoToAdd.getSpecificRoom()));
+                int i = numberRoomHashMap.get(photoToAdd.getSpecificRoom()).intValue();
+                i++;
+                numberRoomHashMap.put(photoToAdd.getSpecificRoom(), i);
+                photoToAdd.setSpecificRoom("");
+            }
+        }
+
+        for(Photo photoToDisplay : listPhotoToDisplay){
+            if(numberRoomHashMap.containsKey(photoToDisplay.getSpecificRoom())){
+                for(Room room : listRoom){
+                    if(room.getRoomType().equals(photoToDisplay.getSpecificRoom())){
+                        photoToDisplay.setIdRoom(room.getIdRoom());
+                        break;
+                    }
+                }
+                photoToDisplay.setNumOrderRoom(numberRoomHashMap.get(photoToDisplay.getSpecificRoom()));
+                int i = numberRoomHashMap.get(photoToDisplay.getSpecificRoom()).intValue();
+                i++;
+                numberRoomHashMap.put(photoToDisplay.getSpecificRoom(), i);
+                photoToDisplay.setSpecificRoom("");
             }
         }
     }

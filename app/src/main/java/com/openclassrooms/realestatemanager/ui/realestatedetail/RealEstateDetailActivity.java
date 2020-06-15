@@ -34,7 +34,8 @@ public class RealEstateDetailActivity extends AppCompatActivity {
             realEstateAgentList = new ArrayList<>(getIntent().getParcelableArrayListExtra(MainActivity.REAL_ESTATE_AGENT));
             longHouseTypeHashMap = new HashMap<>((HashMap<Long, HouseType>) getIntent().getSerializableExtra(MainActivity.HOUSES_TYPES));
         }
-        startFragment();
+        if (savedInstanceState == null)
+            startFragment();
     }
 
     public void startFragment(){
@@ -46,6 +47,4 @@ public class RealEstateDetailActivity extends AppCompatActivity {
         realEstateDetailFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container_view_detail, realEstateDetailFragment).commit();
     }
-
-
 }

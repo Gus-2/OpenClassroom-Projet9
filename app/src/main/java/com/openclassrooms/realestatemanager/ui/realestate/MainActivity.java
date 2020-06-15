@@ -77,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
             databaseValues = new HashMap<>();
             this.configureFabAddHouse();
             this.getDataFromDatabase();
-            configureAndShowMainFragment();
+            if (savedInstanceState == null)
+                configureAndShowMainFragment();
         }
     }
 

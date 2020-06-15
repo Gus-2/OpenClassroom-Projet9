@@ -279,7 +279,7 @@ public class RealEstateDetailFragment extends Fragment {
 
     private void initializeHouseDetail() {
         if(house.getPrice() != -1){
-            collapsingToolbar.setTitle(Utils.formatDisplayedPrice(house.getPrice()));
+            collapsingToolbar.setTitle(String.format(getString(R.string.number_format_double), house.getPrice()));
             collapsingToolbar.setExpandedTitleTextAppearance(R.style.Toolbar_TitleText);
         }
 
@@ -358,12 +358,6 @@ public class RealEstateDetailFragment extends Fragment {
     private void updateViewPagerPhoto(){
         picturePagerAdapter = null;
         configureViewPager();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 
     @Override

@@ -14,7 +14,8 @@ public class FormActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_activity);
-        startFragment();
+        if (savedInstanceState == null)
+            startFragment();
     }
 
     private void startFragment(){

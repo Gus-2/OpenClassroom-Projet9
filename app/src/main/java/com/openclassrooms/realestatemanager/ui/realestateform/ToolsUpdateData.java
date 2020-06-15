@@ -78,8 +78,7 @@ public class ToolsUpdateData {
         }else if(string.equals("")){
             return -1;
         }else{
-            string = string.replace(",", ".");
-            string = string.replaceAll(" ", "");
+            string = string.replace(",", "");
             return Double.parseDouble(string);
         }
     }
@@ -91,6 +90,4 @@ public class ToolsUpdateData {
             return string;
         }
     }
-
-
 }

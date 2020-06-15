@@ -54,7 +54,8 @@ public class PicturePagerAdapter extends PagerAdapter {
             if(photo.getIdRoom() == -1){
                 tvDescription.setText(photo.getSpecificRoom());
             }else{
-                tvDescription.setText(String.format(context.getResources().getString(R.string.picture_room_name_num_order_room),hashMapRoom.get(photo.getIdRoom()), photo.getNumOrderRoom()));
+                String stringFormatted = String.format(context.getResources().getString(R.string.picture_room_name_num_order_room),hashMapRoom.get(photo.getIdRoom()), photo.getNumOrderRoom());
+                tvDescription.setText(stringFormatted);
             }
         }else{
             tvDescription.setVisibility(View.GONE);

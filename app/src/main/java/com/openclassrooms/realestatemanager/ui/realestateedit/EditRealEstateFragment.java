@@ -144,7 +144,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
         listPhotoToAdd = new ArrayList<>();
         listPhotoDisplayed = new ArrayList<>(listPhoto);
         removeVideo = false;
-         listHouseTypes= new ArrayList<>();
+        listHouseTypes= new ArrayList<>();
         for(Long key : hashMapHouseTypes.keySet()){
             listHouseTypes.add(hashMapHouseTypes.get(key));
         }
@@ -205,7 +205,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
         recyclerViewPhoto.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManagerRecyclerViewPhoto = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         recyclerViewPhoto.setLayoutManager(layoutManagerRecyclerViewPhoto);
-        adapterPicturesHouse = new AdapterPicturesHouseEdit(context, listPhotoDisplayed, listRoom, TypeConverter.listToTableRoom(listRoom), this);
+        adapterPicturesHouse = new AdapterPicturesHouseEdit(context, listPhotoDisplayed, listPhotoToAdd, listRoom, TypeConverter.listToTableRoom(listRoom), this);
         recyclerViewPhoto.setAdapter(adapterPicturesHouse);
     }
 
@@ -237,7 +237,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
      */
     private void fillHouseContent() {
         if(house.getPrice() != -1)
-            binding.tvHousePrice.setText(Utils.formatDisplayedPrice(house.getPrice()));
+            binding.tvHousePrice.setText(String.format(getString(R.string.number_format_double), house.getPrice()));
         else
             binding.tvHousePrice.setText(R.string.non_specified);
 
@@ -422,7 +422,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
                 } catch (InterruptedException | ExecutionException e1) {
                     e1.printStackTrace();
                 }
-            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+            } else if(resultCode == AutocompleteActivity.RESULT_ERROR) {
                 Toast.makeText(context, R.string.error_retrieving_data, Toast.LENGTH_SHORT).show();
             }
         }else if(requestCode == LOAD_IMG_REQUEST && data != null){
@@ -455,7 +455,7 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
         photo.setPath(path);
         listPhotoToAdd.add(photo);
         listPhotoDisplayed.add(photo);
-        adapterPicturesHouse.notifyDataSetChanged();
+        configureRecyclerViewPhoto();
     }
 
     private void addPointOfInterest(int id){
@@ -483,8 +483,8 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
     @Override
     public void onDeletePhotoClickListener(int position) {
         Photo photoToRemove = listPhotoDisplayed.get(position);
-        listPhoto.remove(photoToRemove);
         listPhotoToRemove.add(photoToRemove);
+        if(listPhotoToAdd.contains(photoToRemove)) listPhotoToAdd.remove(photoToRemove);
         listPhotoDisplayed.remove(position);
         adapterPicturesHouse.notifyItemRemoved(position);
         Toast.makeText(context, R.string.photo_successfully_removed, Toast.LENGTH_SHORT).show();
@@ -562,6 +562,8 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
                 myAsyncTask.execute();
             }
 
+            Utils.updateNumberRoomForEachPhoto(listRoom, listPhotoToAdd, listPhotoDisplayed);
+
             if(listPhotoToAdd.size() > 0 || listPhotoToRemove.size() > 0){
                 if(listPhotoToAdd.size() > 0){
                     insertPhoto();
@@ -576,10 +578,8 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
                     });
                 }
             }
-
             listPhotoDisplayed.removeAll(listPhotoToRemove);
             updateList();
-
         });
     }
 
@@ -629,13 +629,6 @@ public class EditRealEstateFragment extends Fragment implements AdapterPointOfIn
         protected void onPostExecute(Void result) {
             insertHousePointOfInterest();
         }
-    }
-
-    private void deletePointOfInterests() {
-        realEstateViewModel.deleteListPointOfInterest(listPointOfInterestToRemove)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
     }
 
     private void deleteHousePointOfInterests() {

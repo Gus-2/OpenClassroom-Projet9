@@ -49,7 +49,7 @@
     <string name="real_estate_agent_name">%1$s %2$s</string>
     <string name="availability_date_not_specified">Availability date not specified</string>
     <string name="number_format_room">%d</string>
-    <string name="number_format_double">%1$,.2f</string>
+    <string name="number_format_double">%,.2f</string>
     <string name="couldnt_get_place_location">Couldn\'t get the place location</string>
     <string name="price_not_specified">Price not specified !</string>
     <string name="description_not_specified">Description not specified !</string>
@@ -90,6 +90,6 @@
     <string name="update_video">update video</string>
     <string name="unable_get_location">Unable to get your location ! Please allow the app to get your location.</string>
     <string name="not_retrieving_data_for_place">Coudn\'t retrieve data for this place !</string>
-    <string name="picture_room_name_num_order_room">%1$s %02d</string>
+    <string name="picture_room_name_num_order_room">%s %d</string>
     <string name="need_internet_access">You need internet to access to display the map !</string>
 </resources>

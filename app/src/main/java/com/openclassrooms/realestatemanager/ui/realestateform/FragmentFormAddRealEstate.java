@@ -554,7 +554,7 @@ public class FragmentFormAddRealEstate extends Fragment implements AdapterPointO
         hashMapUriBitmap.remove(uri);
         hashMapUriPhoto.remove(uri);
         Toast.makeText(getActivity().getApplicationContext(), R.string.photo_successfully_removed, Toast.LENGTH_SHORT).show();
-        adapterHousePicture.notifyDataSetChanged();
+        adapterHousePicture.notifyItemRemoved(position);
     }
 
     @Override

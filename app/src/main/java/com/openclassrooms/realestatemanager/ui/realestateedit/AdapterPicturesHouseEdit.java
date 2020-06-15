@@ -28,6 +28,7 @@ public class AdapterPicturesHouseEdit extends RecyclerView.Adapter<AdapterPictur
     private Context context;
     private PhotoOnClickListener photoOnClickListener;
     private List<Photo> listPhoto;
+    private List<Photo> listPhotoToAdd;
     private List<Room> listRoom;
     private String[] tabRooms;
 
@@ -50,12 +51,13 @@ public class AdapterPicturesHouseEdit extends RecyclerView.Adapter<AdapterPictur
         }
     }
 
-    AdapterPicturesHouseEdit(Context context, List<Photo> listPhoto, List<Room> listRoom, String[] tabRooms, PhotoOnClickListener photoOnClickListener) {
+    AdapterPicturesHouseEdit(Context context, List<Photo> listPhoto, List<Photo> listPhotoToAdd, List<Room> listRoom, String[] tabRooms, PhotoOnClickListener photoOnClickListener) {
         this.context = context;
         this.photoOnClickListener = photoOnClickListener;
         this.listPhoto = listPhoto;
         this.listRoom = listRoom;
         this.tabRooms = tabRooms;
+        this.listPhotoToAdd = listPhotoToAdd;
     }
 
     @NotNull
@@ -66,6 +68,7 @@ public class AdapterPicturesHouseEdit extends RecyclerView.Adapter<AdapterPictur
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+        int positionRet = position;
         Photo photo = listPhoto.get(position);
         Bitmap picture = ImageUtils.loadImageFromStorage(photo.getPath(), photo.getChildPath());
 
@@ -99,7 +102,7 @@ public class AdapterPicturesHouseEdit extends RecyclerView.Adapter<AdapterPictur
 
             @Override
             public void afterTextChanged(Editable s) {
-                listPhoto.get(position).setSpecificRoom(s.toString());
+                listPhoto.get(positionRet).setSpecificRoom(s.toString());
             }
         });
     }

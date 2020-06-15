@@ -105,7 +105,7 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
     @SuppressWarnings("unchecked")
     private void configureList() {
         sharedViewModel.getListData().observe(getViewLifecycleOwner(), databaseValue -> {
-            listHouses = (List<House>) databaseValue.get(MainActivity.HOUSES);
+            listHouses = new ArrayList<>((ArrayList<House>)databaseValue.get(MainActivity.HOUSES));
             if(listHouses != null) listHousesDisplayed = new ArrayList<>(listHouses);
             listHousesTypes = (ArrayList<HouseType>) databaseValue.get(MainActivity.HOUSES_TYPES);
             if(listHousesTypes != null) hashMapHouseType = TypeConverter.convertHouseTypeListToHashMap(listHousesTypes);
@@ -246,8 +246,9 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
 
     @Override
     public void search(long houseType, long minSurface, long maxSurface, long minPrice, long maxPrice, long availabilityDate, String district, long numberPhoto, HashMap<String, Boolean> nearbyTypesHashMap) {
-        listHousesDisplayed.addAll(SearchUtils.getListHouseFiltered(listHouses, hashMapAddress, hashMapPhoto, houseType, minSurface, maxSurface, minPrice, maxPrice,
-        availabilityDate, district, numberPhoto, nearbyTypesHashMap, getContext(), hashMapHouseTypePointOfInterest, hashMapPointOfInterest, hashMapTypePointOfInterest));
+        List<House> listHouseRetrieved = SearchUtils.getListHouseFiltered(listHouses, hashMapAddress, hashMapPhoto, houseType, minSurface, maxSurface, minPrice, maxPrice,
+                availabilityDate, district, numberPhoto, nearbyTypesHashMap, getContext(), hashMapHouseTypePointOfInterest, hashMapPointOfInterest, hashMapTypePointOfInterest);
+        listHousesDisplayed.addAll(listHouseRetrieved);
         realEstateListAdapter.notifyDataSetChanged();
     }
 
@@ -264,14 +265,10 @@ public class RealEstateListFragment extends Fragment implements RealEstateListAd
                     }
 
                     @Override
-                    public void onError(Throwable t) {
-
-                    }
+                    public void onError(Throwable t) { }
 
                     @Override
-                    public void onComplete() {
-
-                    }
+                    public void onComplete() { }
                 });
     }
 
