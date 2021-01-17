@@ -1,4 +1,4 @@
-# RealEstateManage
+# RealEstateManager
 
 <p align="center"><img src="images/sc1.jpg" height="400"/>  <img src="images/sc2.jpg" height="400"/> <img src="images/sc3.jpg" height="400"/> <img src="images/sc5.jpg" height="400"/></p>
 
